@@ -34,7 +34,8 @@ fun createHttpServer(applicationState: ApplicationState,
 
     install(Authentication) {
         jwt {
-            realm = ""
+            authHeader(useJwtFromCookie)
+            realm = "modiapersonoversikt-skrivestøtte"
             verifier(configuration.jwksUrl, configuration.jwtIssuer)
             validate { validateJWT(it) }
         }

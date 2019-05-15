@@ -1,4 +1,4 @@
-val ktorVersion = "1.1.3"
+val ktorVersion = "1.2.0"
 val prometheusVersion = "0.4.0"
 val logbackVersion = "1.2.3"
 val logstashVersion = "5.1"
