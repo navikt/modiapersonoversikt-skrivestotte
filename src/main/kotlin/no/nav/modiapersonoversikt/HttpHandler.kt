@@ -3,13 +3,15 @@ package no.nav.modiapersonoversikt
 import io.ktor.application.install
 import io.ktor.auth.Authentication
 import io.ktor.auth.authenticate
+import io.ktor.auth.authentication
+import io.ktor.auth.jwt.JWTPrincipal
 import io.ktor.auth.jwt.jwt
 import io.ktor.features.CallLogging
 import io.ktor.features.ContentNegotiation
 import io.ktor.features.StatusPages
 import io.ktor.http.ContentType
 import io.ktor.jackson.JacksonConverter
-import io.ktor.metrics.Metrics
+import io.ktor.metrics.dropwizard.DropwizardMetrics
 import io.ktor.request.path
 import io.ktor.routing.routing
 import io.ktor.server.engine.ApplicationEngine
@@ -46,11 +48,16 @@ fun createHttpServer(applicationState: ApplicationState,
     }
 
     install(CallLogging) {
-        level = Level.TRACE
+        level = Level.INFO
         filter { call -> call.request.path().startsWith("/skrivestotte") }
+        mdc("test") { "value "}
+        mdc("user") {
+            call -> call.authentication.principal<JWTPrincipal>()
+                    ?.let { it.payload.subject }
+        }
     }
 
-    install(Metrics) {
+    install(DropwizardMetrics) {
         CollectorRegistry.defaultRegistry.register(DropwizardExports(registry))
     }
 
