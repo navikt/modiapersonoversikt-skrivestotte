@@ -1,9 +1,12 @@
-import 'babel-polyfill';
-import 'whatwg-fetch';
-
-import React from 'react';
-import ReactDOM from 'react-dom';
+import 'react-app-polyfill/ie11';
+import 'react-app-polyfill/stable';
 import Application from './application';
-import './index.css';
+import NAVSPA from "./NAVSPA";
+import './index.less';
 
-ReactDOM.render(<Application />, document.getElementById('root'));
+if (process.env.REACT_APP_MOCK === 'true') {
+    require('./mock');
+}
+
+
+NAVSPA.eksporter('modiapersonoversikt-skrivestotte', Application);

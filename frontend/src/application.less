@@ -1,0 +1,19 @@
+/* autoprefixer grid: autoplace */
+.application {
+  display: grid;
+  grid-template-areas: "header" "content";
+  grid-template-columns: 1fr;
+  grid-template-rows: auto 1fr;
+
+  &__header {
+    grid-area: header;
+    background-color: #3e3832;
+    color: white;
+  }
+
+  &__content {
+    grid-area: content;
+    background-color: #e9e7e7;
+    padding: 2rem;
+  }
+}

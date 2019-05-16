@@ -2,25 +2,35 @@
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://localhost:8080/modiapersonoversikt-skrivestotte/",
+  "scripts": {
+    "start": "craco start",
+    "start:mock": "cross-env REACT_APP_MOCK=true craco start",
+    "build": "craco build",
+    "test": "craco test"
+  },
   "dependencies": {
+    "babel-polyfill": "^6.26.0",
+    "classnames": "^2.2.6",
+    "easy-peasy": "^2.2.0",
+    "nav-frontend-typografi": "^2.0.12",
+    "nav-frontend-typografi-style": "^1.0.13",
+    "react": "^16.8.6",
+    "react-app-polyfill": "^1.0.1",
+    "react-dom": "^16.8.6",
+    "react-scripts": "3.0.1",
+    "whatwg-fetch": "^3.0.0"
+  },
+  "devDependencies": {
+    "@craco/craco": "^5.1.0",
     "@types/jest": "^24.0.13",
     "@types/node": "^12.0.2",
     "@types/react": "^16.8.17",
     "@types/react-dom": "^16.8.4",
-    "babel-polyfill": "^6.26.0",
-    "easy-peasy": "^2.2.0",
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6",
-    "react-scripts": "3.0.1",
+    "craco-less": "^1.7.0",
+    "cross-env": "^5.2.0",
     "typescript": "^3.4.5",
-    "whatwg-fetch": "^3.0.0",
     "yet-another-fetch-mock": "^3.1.1"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -32,9 +42,9 @@
       "not op_mini all"
     ],
     "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
     ]
   }
 }

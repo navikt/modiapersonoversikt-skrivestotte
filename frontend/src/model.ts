@@ -6,12 +6,16 @@ export enum Locale {
     en_US = 'en_US'
 }
 
-export interface Tekst {
+export type Tekst = {
     id?: UUID;
     overskrift: string;
     tags: Array<string>;
     innhold: {
-        [key in Locale]: string
-    }
+        [key in Locale]?: string
+    };
+}
+
+export type Tekster = {
+    [key: string]: Tekst
 }
 
