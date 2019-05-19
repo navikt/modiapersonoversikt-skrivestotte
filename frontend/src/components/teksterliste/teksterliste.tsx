@@ -1,35 +1,16 @@
-import React, {DependencyList, Dispatch, SetStateAction, useCallback, useEffect, useState} from 'react';
+import React  from 'react';
 import { Input } from 'nav-frontend-skjema';
 import { Normaltekst } from 'nav-frontend-typografi';
 import classNames from 'classnames';
 import {Tekst, Tekster, UUID} from "../../model";
+import {cyclicgroup} from "../../utils";
+import {FieldState, useForceAllwaysInViewport} from "../../hooks";
 import './teksterliste.less';
 
 interface Props {
-    tekster: Tekster
-}
-
-function cyclicgroup(size: number, value: number): number {
-    let v = value % size;
-    while (v < 0) { v += size; }
-    return v;
-}
-
-function useFieldState(initialState: string | (() => string)): [string, React.ChangeEventHandler, Dispatch<SetStateAction<string>>] {
-    const [state, changeState] = useState(initialState);
-    const onChange = useCallback(
-        (event: React.ChangeEvent<HTMLInputElement>) => changeState(event.target.value),
-        [changeState]
-    );
-
-    return [state, onChange, changeState]
-}
-
-function useForceAllwaysInViewport(selector: string, deps: DependencyList = []) {
-    const query = React.useCallback(() => document.querySelector(selector), [selector]);
-    useEffect(() => {
-        query().scrollIntoView({ block: 'nearest', inline: 'nearest' });
-    }, [...deps, query]);
+    tekster: Tekster;
+    sok: FieldState;
+    checked: FieldState;
 }
 
 function TekstListeElement(props: { tekst: Tekst; checked: UUID, onChange: React.ChangeEventHandler }) {
@@ -59,8 +40,8 @@ function matcherSok(tekst: Tekst, sok: string, checked: UUID) {
 }
 
 function Teksterliste(props: Props) {
-    const [sok, setSok] = useFieldState('');
-    const [checked, setChecked, setRawChecked] = useFieldState(Object.keys(props.tekster)[0] || '');
+    const [sok, setSok] = props.sok;
+    const [checked, setChecked, setRawChecked] = props.checked;
     useForceAllwaysInViewport('.teksterliste__listeelement--checked', [checked]);
 
 

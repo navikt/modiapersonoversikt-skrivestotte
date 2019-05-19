@@ -6,6 +6,12 @@ export enum Locale {
     en_US = 'en_US'
 }
 
+export const localeString: { [key in Locale]: string } = {
+    nb_NO: 'Bokmål',
+    nn_NO: 'Nynorsk',
+    en_US: 'Engelsk'
+};
+
 export type Tekst = {
     id?: UUID;
     overskrift: string;

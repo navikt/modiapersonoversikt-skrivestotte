@@ -1,23 +1,30 @@
 import React from 'react';
+import {MaybeCls as Maybe} from "@nutgaard/maybe-ts";
 import Header from "./components/header/header";
 import Teksterliste from "./components/teksterliste/teksterliste";
+import TekstEditor from "./components/tekstereditor/tekstereditor"
 import {Tekster} from "./model";
+import {useFetch, useFieldState} from "./hooks";
 import './application.less';
 
-const tekster: Tekster = new Array(50)
-    .fill(0)
-    .map((_, id) => ({
-        id: `id${id}`, overskrift: `Overskrift ${id}`, tags: ['ks', 'arbeid'], innhold: {nb_NO: ''}
-    }))
-    .reduce((acc, tekst) => ({ ...acc, [tekst.id]: tekst}), {});
 
 function Application() {
+    const fetchState = useFetch<Tekster>('/skrivestotte');
+    const tekster = fetchState.data.withDefault<Tekster>({});
+
+    const sokFS = useFieldState('');
+    const checkedFS = useFieldState(Object.keys(tekster)[0] || '');
+    const [checked] = checkedFS;
+    const checkedTekst = Maybe.of(tekster[checked]);
+
     return (
         <div className="application">
             <Header/>
             <div className="application__content">
-                <Teksterliste tekster={tekster}/>
-                <div className="application__editor">Content here</div>
+                <Teksterliste tekster={tekster} sok={sokFS} checked={checkedFS}/>
+                <div className="application__editor">
+                    <TekstEditor tekst={checkedTekst}/>
+                </div>
             </div>
         </div>
     );

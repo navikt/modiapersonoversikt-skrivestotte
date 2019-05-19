@@ -34,7 +34,12 @@ const mock = FetchMock.configure({
 });
 
 const guid = () => "";
-const tekster: Tekster & JSONValue = {};
+const tekster: Tekster & JSONValue = new Array(50)
+    .fill(0)
+    .map((_, id) => ({
+        id: `id${id}`, overskrift: `Overskrift ${id}`, tags: ['ks', 'arbeid'], innhold: {nb_NO: '', en_US: ''}
+    }))
+    .reduce((acc, tekst) => ({ ...acc, [tekst.id]: tekst}), {});
 
 mock.get('/skrivestotte', tekster);
 mock.put('/skrivestotte', (args) => {
