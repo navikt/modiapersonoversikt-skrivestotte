@@ -2,7 +2,7 @@ val ktorVersion = "1.2.0"
 val prometheusVersion = "0.4.0"
 val logbackVersion = "1.2.3"
 val logstashVersion = "5.1"
-val amazonS3Version = "1.11.534"
+val amazonS3Version = "1.11.555"
 val konfigVersion = "1.6.10.0"
 
 val mainClass = "no.nav.modiapersonoversikt.ApplicationKt"
@@ -38,7 +38,7 @@ dependencies {
     implementation("io.prometheus:simpleclient_dropwizard:$prometheusVersion")
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
     implementation("net.logstash.logback:logstash-logback-encoder:$logstashVersion")
-    implementation("com.amazonaws:aws-java-sdk:$amazonS3Version")
+    implementation("com.amazonaws:aws-java-sdk-s3:$amazonS3Version")
     implementation("com.natpryce:konfig:$konfigVersion")
     
     testImplementation("io.mockk:mockk:1.9")

@@ -17,7 +17,7 @@ internal val useJwtFromCookie: (ApplicationCall) -> HttpAuthHeader? = { call ->
     try {
         val token = call.request.cookies["ID_token"]
         io.ktor.http.auth.parseAuthorizationHeader("Bearer $token")
-    } catch (ex: IllegalArgumentException) {
+    } catch (ex: Throwable) {
         log.error("Illegal HTTP auth header", ex)
         null
     }
