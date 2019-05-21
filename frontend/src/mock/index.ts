@@ -3,9 +3,8 @@ import {Tekst, Tekster} from "../model";
 
 const loggingMiddleware: Middleware = (request, response) => {
     // tslint:disable
-    console.groupCollapsed(request.url);
+    console.groupCollapsed(`${request.method} ${request.url}`);
     console.groupCollapsed('config');
-    console.log('url', request.url);
     console.log('queryParams', request.queryParams);
     console.log('pathParams', request.pathParams);
     console.log('body', request.body);
@@ -33,7 +32,8 @@ const mock = FetchMock.configure({
     )
 });
 
-const guid = () => "";
+const guid = () => Math.random().toString(16).slice(2);
+
 const tekster: Tekster & JSONValue = new Array(50)
     .fill(0)
     .map((_, id) => ({

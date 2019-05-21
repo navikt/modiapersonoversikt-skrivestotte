@@ -2,6 +2,9 @@
 @import (less) '~nav-frontend-core';
 
 .application {
+  box-sizing: border-box;
+  height: 100%;
+  overflow: hidden;
   display: grid;
   grid-template-areas: "header" "content";
   grid-template-columns: 1fr;
@@ -9,23 +12,25 @@
 
   &__header {
     grid-area: header;
-    background-color: #3e3832;
+    background-color: @navMorkGra;
     color: white;
   }
 
   &__content {
     min-height: 0;
     grid-area: content;
-    background-color: #e9e7e7;
+    background-color: @navLysGra;
     padding: 2rem;
 
     display: grid;
-    grid-template-areas: "search search" "list editor";
-    grid-template-columns: minmax(150px, 250px) minmax(150px, 1fr);
+    grid-template-areas: "search search ny" "list editor editor";
+    grid-template-columns: minmax(10rem, 16rem) minmax(10rem, 1fr) 8rem;
     grid-template-rows: min-content 1fr;
   }
 
-  &__editor {
+  &__editor-wrapper {
+    min-height: 0;
+    overflow-y: auto;
     grid-area: editor;
     padding: 0.5rem;
     border-top: 1px solid @navGra40;
@@ -36,8 +41,10 @@
   .teksterliste__sok {
     grid-area: search;
   }
+  .teksterliste__leggtilny {
+    grid-area: ny;
+  }
   .teksterliste__liste {
     grid-area: list;
-    overflow-y: scroll;
   }
 }

@@ -1,27 +1,25 @@
 @import (less) '~nav-frontend-core';
 
 .teksterliste {
-  &__sok {
-    input {
-      position: relative;
-      border-bottom-left-radius: 0;
-      border-bottom-right-radius: 0;
-    }
+  &__leggtilny {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding-top: 0.75rem;
   }
-
   &__liste {
+    overflow-y: scroll;
     display: flex;
     flex-direction: column;
     border: 1px solid @navGra40;
   }
-
 
   &__listeelement {
     cursor: pointer;
     border-bottom: 1px solid @navGra20;
     background: white;
 
-    input {
+    input[type="radio"] {
       .sr-only();
     }
 
@@ -33,10 +31,6 @@
 
   &__listeelement-content {
     padding: 0.45rem;
-
-    * {
-      display: block;
-    }
   }
 
   &__listeelement--checked {

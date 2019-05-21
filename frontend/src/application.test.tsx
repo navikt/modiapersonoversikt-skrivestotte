@@ -4,6 +4,6 @@ import Application from './application';
 
 it('renders without crashing', () => {
   const div = document.createElement('div');
-  ReactDOM.render(<Application />, div);
+  ReactDOM.render(<Application renderHead={true}/>, div);
   ReactDOM.unmountComponentAtNode(div);
 });
