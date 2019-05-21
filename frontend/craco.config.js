@@ -2,8 +2,8 @@ const path = require('path');
 const CracoLessPlugin = require('craco-less');
 const BUILD_PATH = path.resolve(__dirname, './build');
 
-const removeCssHashPlugin = {
-    overrideWebpackConfig: ({ webpackConfig, cracoConfig, pluginOptions, context: { env, paths } }) => {
+const RemoveCssHashPlugin = {
+    overrideWebpackConfig: ({webpackConfig, cracoConfig, pluginOptions, context: {env, paths}}) => {
         const plugins = webpackConfig.plugins;
         plugins.forEach(plugin => {
 
@@ -23,13 +23,10 @@ const removeCssHashPlugin = {
     }
 };
 
-module.exports = {
-    plugins: [
-        { plugin: CracoLessPlugin },
-        { plugin: removeCssHashPlugin },
-    ],
-    webpack: {
-        configure: {
+const RemoveJsHashPlugin = {
+    overrideCracoConfig: ({cracoConfig, pluginOptions, context: {env, paths}}) => {
+        const webpack = cracoConfig.webpack || {};
+        webpack.configure = {
             optimization: {
                 splitChunks: {
                     cacheGroups: {
@@ -43,6 +40,15 @@ module.exports = {
                 path: BUILD_PATH,
                 filename: 'static/js/[name].js',
             },
-        }
+        };
+        return cracoConfig
     }
+};
+
+module.exports = {
+    plugins: [
+        {plugin: CracoLessPlugin},
+        {plugin: RemoveCssHashPlugin},
+        {plugin: RemoveJsHashPlugin}
+    ]
 };
