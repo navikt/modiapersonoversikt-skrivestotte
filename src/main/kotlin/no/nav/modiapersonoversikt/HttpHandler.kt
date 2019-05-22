@@ -2,7 +2,6 @@ package no.nav.modiapersonoversikt
 
 import io.ktor.application.install
 import io.ktor.auth.Authentication
-import io.ktor.auth.authenticate
 import io.ktor.auth.authentication
 import io.ktor.auth.jwt.JWTPrincipal
 import io.ktor.auth.jwt.jwt
@@ -27,19 +26,22 @@ import org.slf4j.event.Level
 fun createHttpServer(applicationState: ApplicationState,
                      provider: StorageProvider,
                      port: Int = 7070,
-                     configuration: Configuration): ApplicationEngine = embeddedServer(Netty, port) {
+                     configuration: Configuration,
+                     useAuthentication: Boolean = true): ApplicationEngine = embeddedServer(Netty, port) {
 
     install(StatusPages) {
         notFoundHandler()
         exceptionHandler()
     }
 
-    install(Authentication) {
-        jwt {
-            authHeader(useJwtFromCookie)
-            realm = "modiapersonoversikt-skrivestøtte"
-            verifier(configuration.jwksUrl, configuration.jwtIssuer)
-            validate { validateJWT(it) }
+    if (useAuthentication) {
+        install(Authentication) {
+            jwt {
+                authHeader(useJwtFromCookie)
+                realm = "modiapersonoversikt-skrivestøtte"
+                verifier(configuration.jwksUrl, configuration.jwtIssuer)
+                validate { validateJWT(it) }
+            }
         }
     }
 
@@ -50,9 +52,9 @@ fun createHttpServer(applicationState: ApplicationState,
     install(CallLogging) {
         level = Level.INFO
         filter { call -> call.request.path().startsWith("/skrivestotte") }
-        mdc("test") { "value "}
-        mdc("user") {
-            call -> call.authentication.principal<JWTPrincipal>()
+        mdc("test") { "value " }
+        mdc("user") { call ->
+            call.authentication.principal<JWTPrincipal>()
                     ?.let { it.payload.subject }
         }
     }
@@ -63,10 +65,7 @@ fun createHttpServer(applicationState: ApplicationState,
 
     routing {
         naisRoutes(readinessCheck = { applicationState.initialized }, livenessCheck = { applicationState.running })
-
-        authenticate {
-            skrivestotteRoutes(provider)
-        }
+        skrivestotteRoutes(provider, useAuthentication)
     }
 
     applicationState.initialized = true
