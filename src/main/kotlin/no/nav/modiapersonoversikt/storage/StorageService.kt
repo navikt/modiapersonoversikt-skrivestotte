@@ -58,7 +58,6 @@ class StorageService(private val s3: AmazonS3) : StorageProvider {
 
     private fun lagreTekster(tekster: Tekster) {
         timed("lagre_tekster") {
-
             s3.putObject(SKRIVESTOTTE_BUCKET_NAME, SKRIVESTOTTE_KEY_NAME, objectMapper.writeValueAsString(tekster))
         }
     }

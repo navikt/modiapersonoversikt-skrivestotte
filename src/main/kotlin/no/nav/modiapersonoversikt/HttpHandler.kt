@@ -2,8 +2,6 @@ package no.nav.modiapersonoversikt
 
 import io.ktor.application.install
 import io.ktor.auth.Authentication
-import io.ktor.auth.authentication
-import io.ktor.auth.jwt.JWTPrincipal
 import io.ktor.auth.jwt.jwt
 import io.ktor.features.CallLogging
 import io.ktor.features.ContentNegotiation
@@ -52,11 +50,7 @@ fun createHttpServer(applicationState: ApplicationState,
     install(CallLogging) {
         level = Level.INFO
         filter { call -> call.request.path().startsWith("/skrivestotte") }
-        mdc("test") { "value " }
-        mdc("user") { call ->
-            call.authentication.principal<JWTPrincipal>()
-                    ?.let { it.payload.subject }
-        }
+        mdc("userId", getSubjectFromApplicationCall)
     }
 
     install(DropwizardMetrics) {
