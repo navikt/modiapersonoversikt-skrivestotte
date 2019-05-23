@@ -6,14 +6,14 @@ import java.util.concurrent.TimeUnit
 
 private val log = LoggerFactory.getLogger("modiapersonoversikt-skrivestotte.LocalRun")
 
-fun main() {
+fun runLocally(useAuthentication: Boolean) {
     val applicationState = ApplicationState()
     val applicationServer = createHttpServer(
             applicationState,
             StorageService(createS3Stub()),
             7070,
             Configuration(),
-            false
+            true
     )
 
     Runtime.getRuntime().addShutdownHook(Thread {
@@ -23,4 +23,8 @@ fun main() {
     })
 
     applicationServer.start(wait = true)
+}
+
+fun main() {
+    runLocally(true)
 }

@@ -1,5 +1,6 @@
 const path = require('path');
 const CracoLessPlugin = require('craco-less');
+const argv = require('yargs').argv;
 const BUILD_PATH = path.resolve(__dirname, './build');
 
 const RemoveCssHashPlugin = {
@@ -25,23 +26,40 @@ const RemoveCssHashPlugin = {
 
 const RemoveJsHashPlugin = {
     overrideCracoConfig: ({cracoConfig, pluginOptions, context: {env, paths}}) => {
-        const webpack = cracoConfig.webpack || {};
-        webpack.configure = {
-            optimization: {
-                splitChunks: {
-                    cacheGroups: {
-                        default: false,
-                        vendors: false
+        cracoConfig.webpack = {
+            configure:{
+                optimization: {
+                    splitChunks: {
+                        cacheGroups: {
+                            default: false,
+                            vendors: false
+                        },
                     },
+                    runtimeChunk: false
                 },
-                runtimeChunk: false
-            },
-            output: {
-                path: BUILD_PATH,
-                filename: 'static/js/[name].js',
-            },
+                output: {
+                    path: BUILD_PATH,
+                    filename: 'static/js/[name].js',
+                },
+            }
         };
+
         return cracoConfig
+    }
+};
+
+const ConfigurableProxyTarget = {
+    overrideCracoConfig: ({cracoConfig, pluginOptions, context: {env, paths}}) => {
+        cracoConfig.devServer = (devServerConfig, { env, paths, proxy, allowedHost }) => {
+            const proxyOverrides = Array.isArray(argv.proxy) ? argv.proxy : [ argv.proxy ];
+            for (let i = 0; i < Math.min(proxyOverrides.length, devServerConfig.proxy.length); i++) {
+                devServerConfig.proxy[i].target = proxyOverrides[i]
+            }
+
+            return devServerConfig;
+        };
+
+        return cracoConfig;
     }
 };
 
@@ -49,6 +67,7 @@ module.exports = {
     plugins: [
         {plugin: CracoLessPlugin},
         {plugin: RemoveCssHashPlugin},
-        {plugin: RemoveJsHashPlugin}
+        {plugin: RemoveJsHashPlugin},
+        {plugin: ConfigurableProxyTarget}
     ]
 };
