@@ -2,6 +2,10 @@ package no.nav.modiapersonoversikt
 
 import com.auth0.jwk.JwkProvider
 import com.auth0.jwk.JwkProviderBuilder
+import com.auth0.jwt.JWT
+import com.auth0.jwt.impl.JWTParser
+import com.auth0.jwt.interfaces.DecodedJWT
+import com.auth0.jwt.interfaces.Payload
 import io.ktor.application.ApplicationCall
 import io.ktor.auth.Principal
 import io.ktor.auth.jwt.JWTCredential
@@ -9,6 +13,7 @@ import io.ktor.auth.jwt.JWTPrincipal
 import io.ktor.http.auth.HttpAuthHeader
 import org.slf4j.LoggerFactory
 import java.net.URL
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 private val log = LoggerFactory.getLogger("modiapersonoversikt-skrivestotte.JwtConfig")
@@ -20,6 +25,17 @@ internal val useJwtFromCookie: (ApplicationCall) -> HttpAuthHeader? = { call ->
     } catch (ex: Throwable) {
         log.error("Illegal HTTP auth header", ex)
         null
+    }
+}
+
+internal val getSubjectFromApplicationCall: (ApplicationCall) -> String = { call ->
+    try {
+        useJwtFromCookie(call)
+                ?.getBlob()
+                ?.let { blob -> JWT.decode(blob).parsePayload().subject }
+                ?: "Unauthenticated"
+    } catch (e: Throwable) {
+        "JWT not found"
     }
 }
 
@@ -37,4 +53,14 @@ fun validateJWT(credentials: JWTCredential): Principal? {
         log.error("Failed to validateJWT token", e)
         null
     }
+}
+
+internal fun HttpAuthHeader.getBlob() = when {
+    this is HttpAuthHeader.Single -> blob
+    else -> null
+}
+
+internal fun DecodedJWT.parsePayload(): Payload {
+    val payloadString = String(Base64.getUrlDecoder().decode(payload))
+    return JWTParser().parsePayload(payloadString)
 }

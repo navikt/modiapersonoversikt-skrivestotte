@@ -12,7 +12,8 @@ fun main() {
             applicationState,
             StorageService(createS3Stub()),
             7070,
-            Configuration()
+            Configuration(),
+            false
     )
 
     Runtime.getRuntime().addShutdownHook(Thread {
