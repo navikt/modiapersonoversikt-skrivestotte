@@ -18,49 +18,53 @@ import java.util.concurrent.TimeUnit
 
 private val log = LoggerFactory.getLogger("modiapersonoversikt-skrivestotte.JwtConfig")
 
-internal val useJwtFromCookie: (ApplicationCall) -> HttpAuthHeader? = { call ->
-    try {
-        val token = call.request.cookies["ID_token"]
-        io.ktor.http.auth.parseAuthorizationHeader("Bearer $token")
-    } catch (ex: Throwable) {
-        log.error("Illegal HTTP auth header", ex)
-        null
+class JwtUtil {
+    companion object {
+        fun useJwtFromCookie(call: ApplicationCall): HttpAuthHeader? {
+            return try {
+                val token = call.request.cookies["ID_token"]
+                io.ktor.http.auth.parseAuthorizationHeader("Bearer $token")
+            } catch (ex: Throwable) {
+                log.error("Illegal HTTP auth header", ex)
+                null
+            }
+        }
+
+        fun getSubject(call: ApplicationCall): String {
+            return try {
+                useJwtFromCookie(call)
+                        ?.getBlob()
+                        ?.let { blob -> JWT.decode(blob).parsePayload().subject }
+                        ?: "Unauthenticated"
+            } catch (e: Throwable) {
+                "JWT not found"
+            }
+        }
+
+        fun makeJwkProvider(jwksUrl: String): JwkProvider =
+                JwkProviderBuilder(URL(jwksUrl))
+                        .cached(10, 24, TimeUnit.HOURS)
+                        .rateLimited(10, 1, TimeUnit.MINUTES)
+                        .build()
+
+        fun validateJWT(credentials: JWTCredential): Principal? {
+            return try {
+                requireNotNull(credentials.payload.audience) { "Audience not present" }
+                JWTPrincipal(credentials.payload)
+            } catch (e: Exception) {
+                log.error("Failed to validateJWT token", e)
+                null
+            }
+        }
+
+        private fun HttpAuthHeader.getBlob() = when {
+            this is HttpAuthHeader.Single -> blob
+            else -> null
+        }
+
+        private fun DecodedJWT.parsePayload(): Payload {
+            val payloadString = String(Base64.getUrlDecoder().decode(payload))
+            return JWTParser().parsePayload(payloadString)
+        }
     }
-}
-
-internal val getSubjectFromApplicationCall: (ApplicationCall) -> String = { call ->
-    try {
-        useJwtFromCookie(call)
-                ?.getBlob()
-                ?.let { blob -> JWT.decode(blob).parsePayload().subject }
-                ?: "Unauthenticated"
-    } catch (e: Throwable) {
-        "JWT not found"
-    }
-}
-
-fun makeJwkProvider(jwksUrl: String): JwkProvider =
-        JwkProviderBuilder(URL(jwksUrl))
-                .cached(10, 24, TimeUnit.HOURS)
-                .rateLimited(10, 1, TimeUnit.MINUTES)
-                .build()
-
-fun validateJWT(credentials: JWTCredential): Principal? {
-    return try {
-        requireNotNull(credentials.payload.audience) { "Audience not present" }
-        JWTPrincipal(credentials.payload)
-    } catch (e: Exception) {
-        log.error("Failed to validateJWT token", e)
-        null
-    }
-}
-
-internal fun HttpAuthHeader.getBlob() = when {
-    this is HttpAuthHeader.Single -> blob
-    else -> null
-}
-
-internal fun DecodedJWT.parsePayload(): Payload {
-    val payloadString = String(Base64.getUrlDecoder().decode(payload))
-    return JWTParser().parsePayload(payloadString)
 }

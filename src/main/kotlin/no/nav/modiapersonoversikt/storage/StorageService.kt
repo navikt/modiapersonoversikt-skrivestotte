@@ -5,10 +5,10 @@ import com.amazonaws.services.s3.model.CannedAccessControlList
 import com.amazonaws.services.s3.model.CreateBucketRequest
 import com.fasterxml.jackson.module.kotlin.readValue
 import io.ktor.features.BadRequestException
-import no.nav.modiapersonoversikt.objectMapper
+import no.nav.modiapersonoversikt.Metrics.Companion.timed
+import no.nav.modiapersonoversikt.ObjectMapperProvider.Companion.objectMapper
 import no.nav.modiapersonoversikt.model.Tekst
 import no.nav.modiapersonoversikt.model.Tekster
-import no.nav.modiapersonoversikt.timed
 import java.util.*
 
 private const val SKRIVESTOTTE_BUCKET_NAME = "modiapersonoversikt-skrivestotte-bucket"

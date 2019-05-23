@@ -16,10 +16,12 @@ import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.prometheus.client.CollectorRegistry
 import io.prometheus.client.dropwizard.DropwizardExports
+import no.nav.modiapersonoversikt.ObjectMapperProvider.Companion.objectMapper
 import no.nav.modiapersonoversikt.routes.naisRoutes
 import no.nav.modiapersonoversikt.routes.skrivestotteRoutes
 import no.nav.modiapersonoversikt.storage.StorageProvider
 import org.slf4j.event.Level
+import no.nav.modiapersonoversikt.JwtUtil.Companion as JwtUtil
 
 fun createHttpServer(applicationState: ApplicationState,
                      provider: StorageProvider,
@@ -35,10 +37,10 @@ fun createHttpServer(applicationState: ApplicationState,
     if (useAuthentication) {
         install(Authentication) {
             jwt {
-                authHeader(useJwtFromCookie)
+                authHeader(JwtUtil::useJwtFromCookie)
                 realm = "modiapersonoversikt-skrivestøtte"
                 verifier(configuration.jwksUrl, configuration.jwtIssuer)
-                validate { validateJWT(it) }
+                validate { JwtUtil.validateJWT(it) }
             }
         }
     }
@@ -50,7 +52,7 @@ fun createHttpServer(applicationState: ApplicationState,
     install(CallLogging) {
         level = Level.INFO
         filter { call -> call.request.path().startsWith("/skrivestotte") }
-        mdc("userId", getSubjectFromApplicationCall)
+        mdc("userId", JwtUtil::getSubject)
     }
 
     install(DropwizardMetrics) {
