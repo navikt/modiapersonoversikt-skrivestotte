@@ -13,7 +13,7 @@ fun runLocally(useAuthentication: Boolean) {
             StorageService(createS3Stub()),
             7070,
             Configuration(),
-            true
+            useAuthentication
     )
 
     Runtime.getRuntime().addShutdownHook(Thread {

@@ -51,7 +51,7 @@ const RemoveJsHashPlugin = {
 const ConfigurableProxyTarget = {
     overrideCracoConfig: ({cracoConfig, pluginOptions, context: {env, paths}}) => {
         cracoConfig.devServer = (devServerConfig, { env, paths, proxy, allowedHost }) => {
-            const proxyOverrides = Array.isArray(argv.proxy) ? argv.proxy : [ argv.proxy ];
+            const proxyOverrides = Array.isArray(argv.proxy) ? argv.proxy : [ argv.proxy ].filter((override) => override);
             for (let i = 0; i < Math.min(proxyOverrides.length, devServerConfig.proxy.length); i++) {
                 devServerConfig.proxy[i].target = proxyOverrides[i]
             }

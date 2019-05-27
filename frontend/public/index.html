@@ -15,41 +15,15 @@
       body {
         margin: 0;
       }
-      html, body, #root, #root2 {
+      html, body, #root {
         height: 100%;
         overflow: hidden;
-      }
-      .scoper, .ex {
-        height: 100%;
-        overflow: hidden;
-      }
-      .scoper {
-        padding-bottom: 2rem;
-        display: flex;
-        justify-content: space-around;
-      }
-      .scoper .ex {
-        flex: 1;
-        padding-left: 1rem;
-        padding-right: 1rem;
-      }
-      #root, #root2 {
-        height: calc(100% - 5rem) !important;
       }
     </style>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div class="scoper">
-      <div class="ex">
-        <h1>Med header</h1>
-        <div id="root"></div>
-      </div>
-      <div class="ex">
-        <h1>Uten header</h1>
-        <div id="root2"></div>
-      </div>
-    </div>
+    <div id="root"></div>
   </body>
   <script type="application/javascript">
     window.frontendlogger = { info: function(){}, warn: function(){}, error: function(){}, event: function(){}};
@@ -58,7 +32,6 @@
   <script>
     function render() {
       NAVSPA['modiapersonoversikt-skrivestotte'](document.getElementById('root'), { renderHead: true });
-      NAVSPA['modiapersonoversikt-skrivestotte'](document.getElementById('root2'), { renderHead: false });
     }
     render();
   </script>

@@ -7,6 +7,7 @@ import io.ktor.features.CallLogging
 import io.ktor.features.ContentNegotiation
 import io.ktor.features.StatusPages
 import io.ktor.http.ContentType
+import io.ktor.http.content.*
 import io.ktor.jackson.JacksonConverter
 import io.ktor.metrics.dropwizard.DropwizardMetrics
 import io.ktor.request.path
@@ -60,6 +61,11 @@ fun createHttpServer(applicationState: ApplicationState,
     }
 
     routing {
+        static {
+            resources("webapp")
+            defaultResource("index.html", "webapp")
+        }
+
         naisRoutes(readinessCheck = { applicationState.initialized }, livenessCheck = { applicationState.running })
         skrivestotteRoutes(provider, useAuthentication)
     }

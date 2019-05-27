@@ -1,3 +1,5 @@
+import com.moowork.gradle.node.npm.NpmTask
+
 val ktorVersion = "1.2.0"
 val prometheusVersion = "0.4.0"
 val logbackVersion = "1.2.3"
@@ -10,6 +12,7 @@ val mainClass = "no.nav.modiapersonoversikt.ApplicationKt"
 plugins {
     application
     kotlin("jvm") version "1.3.21"
+    id("com.moowork.node") version "1.2.0"
 }
 
 buildscript {
@@ -40,7 +43,7 @@ dependencies {
     implementation("net.logstash.logback:logstash-logback-encoder:$logstashVersion")
     implementation("com.amazonaws:aws-java-sdk-s3:$amazonS3Version")
     implementation("com.natpryce:konfig:$konfigVersion")
-    
+
     testImplementation("io.mockk:mockk:1.9")
 }
 
@@ -53,6 +56,10 @@ repositories {
     mavenCentral()
 }
 
+node {
+    version = "10.15.3"
+}
+
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
@@ -62,22 +69,42 @@ tasks.withType<Wrapper> {
     gradleVersion = "5.3.1"
 }
 
+task<NpmTask>("npmCI") {
+    setWorkingDir(file("${project.projectDir}/frontend"))
+    setArgs(listOf("ci"))
+}
 
-tasks.named<Jar>("jar") {
+task<NpmTask>("npmBuild") {
+    setWorkingDir(file("${project.projectDir}/frontend"))
+    dependsOn("npmCI")
+    setArgs(listOf("run", "build"))
+
+    doLast {
+        copy {
+            from("frontend/build")
+            into("build/resources/main/webapp")
+        }
+    }
+}
+
+task<Jar>("fatJar") {
     baseName = "app"
-    
+
     manifest {
         attributes["Main-Class"] = mainClass
-        attributes["Class-Path"] = configurations["compile"].joinToString(separator = " ") {
+        configurations.runtimeClasspath.get().joinToString(separator = " ") {
             it.name
         }
     }
+    from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
+    with(tasks.jar.get() as CopySpec)
+}
 
-    doLast {
-        configurations["compile"].forEach {
-            val file = File("$buildDir/libs/${it.name}")
-            if (!file.exists())
-                it.copyTo(file)
-        }
+tasks {
+    "build" {
+        dependsOn("npmBuild")
+    }
+    "jar" {
+        dependsOn("fatJar")
     }
 }
