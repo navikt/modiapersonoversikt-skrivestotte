@@ -1,10 +1,11 @@
 import React, {ChangeEvent} from 'react';
-import {Input} from 'nav-frontend-skjema';
-import {Fareknapp, Hovedknapp} from 'nav-frontend-knapper';
+import {Input, Select} from 'nav-frontend-skjema';
+import {Fareknapp, Hovedknapp, Knapp} from 'nav-frontend-knapper';
 import {MaybeCls as Maybe} from "@nutgaard/maybe-ts";
-import {Locale, localeString, Tekst} from "../../model";
-import {FieldState, FormState, ObjectState, useFormState} from "../../hooks";
+import {Locale, localeString, LocaleValues, Tekst} from "../../model";
+import {FieldState, FormState, ListState, ObjectState, useFieldState, useFormState, useListState} from "../../hooks";
 import './tekstereditor.less';
+import {fjernTomtInnhold} from "../../utils";
 
 interface Props {
     visEditor: ObjectState<boolean>;
@@ -19,6 +20,7 @@ function getTekst(maybeTekst: Maybe<Tekst>, locale: Locale): string {
         .flatMap((tekst) => Maybe.of(tekst.innhold[locale]))
         .withDefault('');
 }
+
 const defaultFetchConfig: RequestInit = {
     headers: {
         'Content-Type': 'application/json'
@@ -26,15 +28,27 @@ const defaultFetchConfig: RequestInit = {
     credentials: 'include'
 };
 
-function LocaleEditor(props: { locale: Locale; fieldState: FieldState }) {
-    const {value, onChange} = props.fieldState;
+function LocaleEditor(props: { locale: Locale; fieldState: FieldState, newLanguage: ListState<string> }) {
     return (
         <div className="skjemaelement">
             <label>
-                <span className="skjemaelement__label">{localeString[props.locale]}</span>
+                <span className="skjemaelement__label">
+                    <button
+                        type="button"
+                        className="skjemaelement__slett"
+                        title={`Slett språk: ${localeString[props.locale]}`}
+                        onClick={() => {
+                            props.fieldState.setValue('');
+                            props.newLanguage.remove(props.locale);
+                        }}
+                    >
+                        X
+                    </button>
+                    {localeString[props.locale]}
+                </span>
                 <textarea
-                    value={value}
-                    onChange={(e) => onChange(e as ChangeEvent)}
+                    value={props.fieldState.value}
+                    onChange={(e) => props.fieldState.onChange(e as ChangeEvent)}
                     rows={6}
                     className="skjemaelement__input textarea--medMeta tekstereditor__textarea"
                 />
@@ -44,13 +58,17 @@ function LocaleEditor(props: { locale: Locale; fieldState: FieldState }) {
 }
 
 function Tekstereditor(props: Props) {
+    const newLanguage = useListState<string>([]);
+    const leggTil = useFieldState('');
     const formState = useFormState({
         overskrift: props.tekst.map((tekst) => tekst.overskrift).withDefault(''),
         tags: props.tekst.map((tekst) => tekst.tags.join(' ')).withDefault(''),
-        [`${Locale.nb_NO}`]: getTekst(props.tekst, Locale.nb_NO),
-        [`${Locale.nn_NO}`]: getTekst(props.tekst, Locale.nn_NO),
-        [`${Locale.en_US}`]: getTekst(props.tekst, Locale.en_US)
+        ...LocaleValues.reduce((acc, locale) => ({
+            ...acc,
+            [locale]: getTekst(props.tekst, locale)
+        }), {})
     });
+
     const overskrift = formState.getProps('overskrift');
     const tags = formState.getProps('tags');
 
@@ -59,7 +77,7 @@ function Tekstereditor(props: Props) {
             const submitHandler = async (data: FormState<any>) => {
                 const {overskrift, tags, ...innhold} = data;
                 const method = tekst.id ? 'PUT' : 'POST';
-                const body = JSON.stringify({...tekst, overskrift, tags: tags.split(' '), innhold});
+                const body = JSON.stringify({...tekst, overskrift, tags: tags.split(' '), innhold: fjernTomtInnhold(innhold)});
 
                 try {
                     const resp = await fetch('/skrivestotte', {...defaultFetchConfig, method, body});
@@ -80,18 +98,55 @@ function Tekstereditor(props: Props) {
                 }
             };
 
+            const localesMedEditor = LocaleValues
+                .filter((locale) => {
+                    const hasValue = formState.getProps(locale).value.trim().length > 0;
+                    const isNewlyAdded = newLanguage.value.includes(locale);
+                    return hasValue || isNewlyAdded;
+                });
+
+            const localesEditor = localesMedEditor
+                .map((locale) => (
+                    <LocaleEditor
+                        key={locale}
+                        locale={locale}
+                        fieldState={formState.getProps(locale)}
+                        newLanguage={newLanguage}
+                    />
+                ));
+            const localesSomKanLeggesTil = LocaleValues
+                .filter((locale) => !localesMedEditor.includes(locale))
+                .map((locale) => (
+                    <option key={locale} value={locale}>{localeString[locale]}</option>
+                ));
+
             return (
                 <form className="application__editor tekstereditor" onSubmit={formState.onSubmit(submitHandler)}>
                     {props.visEditor.value && <h3>Ny tekst</h3>}
                     <Input label="Overskrift" value={overskrift.value} onChange={overskrift.onChange}/>
                     <Input label="Tags" value={tags.value} onChange={tags.onChange}/>
-                    <LocaleEditor locale={Locale.nb_NO} fieldState={formState.getProps(Locale.nb_NO)}/>
-                    <LocaleEditor locale={Locale.nn_NO} fieldState={formState.getProps(Locale.nn_NO)}/>
-                    <LocaleEditor locale={Locale.en_US} fieldState={formState.getProps(Locale.en_US)}/>
+
+                    {localesEditor}
 
                     <div className="tekstereditor__knapper">
                         <Hovedknapp disabled={formState.isAllPristine(true)}>Lagre</Hovedknapp>
-                        <Fareknapp htmlType="button" onClick={slettHandler}>Slett tekst</Fareknapp>
+                        <div>
+                            <Select label="Legg til språk" value={leggTil.value} onChange={leggTil.onChange}>
+                                <option value="">Velg</option>
+                                {localesSomKanLeggesTil}
+                            </Select>
+                            <Knapp
+                                htmlType="button"
+                                disabled={leggTil.value === ''}
+                                onClick={() => {
+                                    newLanguage.push(leggTil.value);
+                                    leggTil.setValue('')
+                                }}
+                            >
+                                Legg til
+                            </Knapp>
+                        </div>
+                        <Fareknapp htmlType="button" onClick={slettHandler}>Slett alle</Fareknapp>
                     </div>
                 </form>
             );
