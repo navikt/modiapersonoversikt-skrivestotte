@@ -43,6 +43,6 @@ spec:
     - name: S3_REGION
       value: us-east-1
     - name: ISSO_JWKS_URL
-      value: https://isso-q.adeo.no:443/isso/oauth2/connect/jwk_uri
+      value: https://isso-q.adeo.no/isso/oauth2/connect/jwk_uri
     - name: ISSO_ISSUER
       value: https://isso-q.adeo.no:443/isso/oauth2
