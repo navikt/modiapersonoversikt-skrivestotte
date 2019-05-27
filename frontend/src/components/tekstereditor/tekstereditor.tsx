@@ -28,7 +28,7 @@ const defaultFetchConfig: RequestInit = {
     credentials: 'include'
 };
 
-function LocaleEditor(props: { locale: Locale; fieldState: FieldState, newLanguage: ListState<string> }) {
+function LocaleEditor(props: { locale: Locale; fieldState: FieldState, newLanguage: ListState<string>, kanSlettes: boolean }) {
     return (
         <div className="localeeditor skjemaelement">
             <label>
@@ -46,6 +46,7 @@ function LocaleEditor(props: { locale: Locale; fieldState: FieldState, newLangua
                 type="button"
                 className="skjemaelement__slett"
                 title={`Slett språk: ${localeString[props.locale]}`}
+                disabled={!props.kanSlettes}
                 onClick={() => {
                     props.fieldState.setValue('');
                     props.newLanguage.remove(props.locale);
@@ -112,6 +113,7 @@ function Tekstereditor(props: Props) {
                         locale={locale}
                         fieldState={formState.getProps(locale)}
                         newLanguage={newLanguage}
+                        kanSlettes={localesMedEditor.length > 1}
                     />
                 ));
             const localesSomKanLeggesTil = LocaleValues
