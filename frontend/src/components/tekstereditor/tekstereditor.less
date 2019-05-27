@@ -10,11 +10,20 @@
   &__textarea {
     overflow: auto;
   }
+  .localeeditor__label {
+    margin-left: 2rem;
+  }
+
+  .skjemaelement {
+    position: relative;
+  }
 
   .skjemaelement__slett {
     border: none;
     border-radius: @border-radius-small;
     .knappfylt-mixin-override(@redError, @white, darken(@redError, 5%), lighten(@redError, 5%));
+    position: absolute;
+    top: 0;
     padding: 0 0.5rem;
     margin-right: 0.5rem;
   }

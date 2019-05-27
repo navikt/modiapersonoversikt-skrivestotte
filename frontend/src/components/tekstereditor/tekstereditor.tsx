@@ -30,20 +30,9 @@ const defaultFetchConfig: RequestInit = {
 
 function LocaleEditor(props: { locale: Locale; fieldState: FieldState, newLanguage: ListState<string> }) {
     return (
-        <div className="skjemaelement">
+        <div className="localeeditor skjemaelement">
             <label>
-                <span className="skjemaelement__label">
-                    <button
-                        type="button"
-                        className="skjemaelement__slett"
-                        title={`Slett språk: ${localeString[props.locale]}`}
-                        onClick={() => {
-                            props.fieldState.setValue('');
-                            props.newLanguage.remove(props.locale);
-                        }}
-                    >
-                        X
-                    </button>
+                <span className="localeeditor__label skjemaelement__label">
                     {localeString[props.locale]}
                 </span>
                 <textarea
@@ -53,6 +42,17 @@ function LocaleEditor(props: { locale: Locale; fieldState: FieldState, newLangua
                     className="skjemaelement__input textarea--medMeta tekstereditor__textarea"
                 />
             </label>
+            <button
+                type="button"
+                className="skjemaelement__slett"
+                title={`Slett språk: ${localeString[props.locale]}`}
+                onClick={() => {
+                    props.fieldState.setValue('');
+                    props.newLanguage.remove(props.locale);
+                }}
+            >
+                X
+            </button>
         </div>
     );
 }
