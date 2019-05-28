@@ -29,8 +29,8 @@ function TekstListeElement(props: { tekst: Tekst; checked: UUID, onChange: React
                 onChange={props.onChange}
             />
             <div className="teksterliste__listeelement-content">
-                <Element>{props.tekst.overskrift}</Element>
-                <Normaltekst>{joinWithPrefix(props.tekst.tags)}</Normaltekst>
+                <Element className="teksterliste__overskrift">{props.tekst.overskrift}</Element>
+                <Normaltekst className="teksterliste__tags">{joinWithPrefix(props.tekst.tags)}</Normaltekst>
             </div>
         </label>
     );

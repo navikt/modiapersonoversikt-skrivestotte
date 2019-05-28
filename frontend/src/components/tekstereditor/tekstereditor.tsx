@@ -1,11 +1,21 @@
-import React, {ChangeEvent} from 'react';
-import {Input, Select} from 'nav-frontend-skjema';
+import React from 'react';
+import {Input} from 'nav-frontend-skjema';
 import {Fareknapp, Hovedknapp, Knapp} from 'nav-frontend-knapper';
 import {MaybeCls as Maybe} from "@nutgaard/maybe-ts";
 import {Locale, localeString, LocaleValues, Tekst} from "../../model";
-import {FieldState, FormState, ListState, ObjectState, useFieldState, useFormState, useListState} from "../../hooks";
-import './tekstereditor.less';
+import {
+    FieldState,
+    FormState,
+    ObjectState,
+    useFormState,
+    useListState,
+    useObjectState
+} from "../../hooks";
 import {fjernTomtInnhold} from "../../utils";
+import * as Fetcher from './fetch-utils';
+import LocaleEditor from "./localeeditor";
+import './tekstereditor.less';
+import {getTekst} from "./utils";
 
 interface Props {
     visEditor: ObjectState<boolean>;
@@ -15,52 +25,44 @@ interface Props {
     refetch(): void;
 }
 
-function getTekst(maybeTekst: Maybe<Tekst>, locale: Locale): string {
-    return maybeTekst
-        .flatMap((tekst) => Maybe.of(tekst.innhold[locale]))
-        .withDefault('');
+function onSubmit(tekst: Tekst, lagrer: ObjectState<boolean>, props: Props) {
+    return async (data: FormState<any>) => {
+        const {overskrift, tags, ...innhold} = data;
+        const lagreTekst = tekst.id ? Fetcher.put : Fetcher.post;
+        const body = JSON.stringify({
+            ...tekst,
+            overskrift,
+            tags: tags.split(' '),
+            innhold: fjernTomtInnhold(innhold)
+        });
+
+        try {
+            lagrer.setValue(true);
+            const nyTekst = await lagreTekst<Tekst>('/skrivestotte', {body});
+
+            props.refetch();
+            props.checked.setValue(nyTekst.id!);
+            props.visEditor.setValue(false);
+            lagrer.setValue(false);
+        } catch (e) {
+            alert(e)
+        }
+    }
 }
-
-const defaultFetchConfig: RequestInit = {
-    headers: {
-        'Content-Type': 'application/json'
-    },
-    credentials: 'include'
-};
-
-function LocaleEditor(props: { locale: Locale; fieldState: FieldState, newLanguage: ListState<string>, kanSlettes: boolean }) {
-    return (
-        <div className="localeeditor skjemaelement">
-            <label>
-                <span className="localeeditor__label skjemaelement__label">
-                    {localeString[props.locale]}
-                </span>
-                <textarea
-                    value={props.fieldState.value}
-                    onChange={(e) => props.fieldState.onChange(e as ChangeEvent)}
-                    rows={6}
-                    className="skjemaelement__input textarea--medMeta tekstereditor__textarea"
-                />
-            </label>
-            <button
-                type="button"
-                className="skjemaelement__slett"
-                title={`Slett språk: ${localeString[props.locale]}`}
-                disabled={!props.kanSlettes}
-                onClick={() => {
-                    props.fieldState.setValue('');
-                    props.newLanguage.remove(props.locale);
-                }}
-            >
-                X
-            </button>
-        </div>
-    );
+function onDelete(tekst: Tekst, props: Props) {
+    return async () => {
+        if (window.confirm(`Er du sikker på at du vil slette '${tekst.overskrift}'?`)) {
+            await Fetcher.del(`/skrivestotte/${tekst.id}`);
+            props.refetch();
+            alert(`'${tekst.overskrift}' slettet...`);
+        }
+    }
 }
 
 function Tekstereditor(props: Props) {
     const newLanguage = useListState<string>([]);
-    const leggTil = useFieldState('');
+    const focusSteal = useObjectState<Locale | null>(null);
+    const lagrer = useObjectState<boolean>(false);
     const formState = useFormState({
         overskrift: props.tekst.map((tekst) => tekst.overskrift).withDefault(''),
         tags: props.tekst.map((tekst) => tekst.tags.join(' ')).withDefault(''),
@@ -70,34 +72,13 @@ function Tekstereditor(props: Props) {
         }), {})
     });
 
-    const overskrift = formState.getProps('overskrift');
-    const tags = formState.getProps('tags');
-
     return props.tekst
         .map((tekst) => {
-            const submitHandler = async (data: FormState<any>) => {
-                const {overskrift, tags, ...innhold} = data;
-                const method = tekst.id ? 'PUT' : 'POST';
-                const body = JSON.stringify({...tekst, overskrift, tags: tags.split(' '), innhold: fjernTomtInnhold(innhold)});
+            const overskrift = formState.getProps('overskrift');
+            const tags = formState.getProps('tags');
 
-                try {
-                    const resp = await fetch('/skrivestotte', {...defaultFetchConfig, method, body});
-                    const nyTekst = await (resp.json() as Promise<Tekst>);
-
-                    props.refetch();
-                    props.checked.setValue(nyTekst.id!);
-                    props.visEditor.setValue(false);
-                } catch (e) {
-                    alert(e)
-                }
-            };
-            const slettHandler = async () => {
-                if (window.confirm(`Er du sikker på at du vil slette '${tekst.overskrift}'?`)) {
-                    await fetch(`/skrivestotte/${tekst.id}`, {method: 'DELETE'});
-                    props.refetch();
-                    alert(`'${tekst.overskrift}' slettet...`);
-                }
-            };
+            const submitHandler = onSubmit(tekst, lagrer, props);
+            const slettHandler = onDelete(tekst, props);
 
             const localesMedEditor = LocaleValues
                 .filter((locale) => {
@@ -106,20 +87,38 @@ function Tekstereditor(props: Props) {
                     return hasValue || isNewlyAdded;
                 });
 
-            const localesEditor = localesMedEditor
+            const localesMedInnhold = localesMedEditor
+                .filter((locale) => formState.getProps(locale).value.trim().length > 0)
+                .length;
+
+            const disableLagring = localesMedInnhold === 0 || formState.isAllPristine(true);
+
+            const editors = localesMedEditor
                 .map((locale) => (
                     <LocaleEditor
                         key={locale}
                         locale={locale}
                         fieldState={formState.getProps(locale)}
+                        focusSteal={focusSteal}
                         newLanguage={newLanguage}
                         kanSlettes={localesMedEditor.length > 1}
                     />
                 ));
+
             const localesSomKanLeggesTil = LocaleValues
                 .filter((locale) => !localesMedEditor.includes(locale))
                 .map((locale) => (
-                    <option key={locale} value={locale}>{localeString[locale]}</option>
+                    <Knapp
+                        mini
+                        key={locale}
+                        htmlType="button"
+                        onClick={() => {
+                            newLanguage.push(locale);
+                            focusSteal.setValue(locale);
+                        }}
+                    >
+                        Legg til {localeString[locale]}
+                    </Knapp>
                 ));
 
             return (
@@ -128,26 +127,15 @@ function Tekstereditor(props: Props) {
                     <Input label="Overskrift" value={overskrift.value} onChange={overskrift.onChange}/>
                     <Input label="Tags" value={tags.value} onChange={tags.onChange}/>
 
-                    {localesEditor}
+                    {editors}
 
+                    <div className="tekstereditor__ekstrasprak">
+                        {localesSomKanLeggesTil}
+                    </div>
                     <div className="tekstereditor__knapper">
-                        <Hovedknapp disabled={formState.isAllPristine(true)}>Lagre</Hovedknapp>
-                        <div>
-                            <Select label="Legg til språk" value={leggTil.value} onChange={leggTil.onChange}>
-                                <option value="">Velg</option>
-                                {localesSomKanLeggesTil}
-                            </Select>
-                            <Knapp
-                                htmlType="button"
-                                disabled={leggTil.value === ''}
-                                onClick={() => {
-                                    newLanguage.push(leggTil.value);
-                                    leggTil.setValue('')
-                                }}
-                            >
-                                Legg til
-                            </Knapp>
-                        </div>
+                        <Hovedknapp disabled={disableLagring} spinner={lagrer.value} autoDisableVedSpinner>
+                            Lagre
+                        </Hovedknapp>
                         <Fareknapp htmlType="button" onClick={slettHandler}>Slett alle</Fareknapp>
                     </div>
                 </form>
