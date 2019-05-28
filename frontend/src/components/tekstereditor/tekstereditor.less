@@ -1,10 +1,87 @@
+/* autoprefixer grid: autoplace */
+@import (less) '~nav-frontend-knapper-style';
+
 .tekstereditor {
   &__knapper {
     display: flex;
     justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  &__ekstrasprak {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    grid-gap: 1rem;
+  }
+
+  &__knapper, &__ekstrasprak {
+    margin-bottom: 1.5rem;
   }
 
   &__textarea {
     overflow: auto;
+    resize: vertical;
+  }
+  .localeeditor__label {
+    margin-left: 2rem;
+  }
+
+  .skjemaelement {
+    position: relative;
+  }
+
+  .skjemaelement__slett {
+    border: none;
+    border-radius: @border-radius-small;
+    .knappfylt-mixin-override(@redError, @white, darken(@redError, 5%), lighten(@redError, 5%));
+    position: absolute;
+    top: 0;
+    padding: 0 0.5rem;
+    margin-right: 0.5rem;
+  }
+}
+
+// Saksa i stor grad fra nav-frontend
+.knappfylt-mixin-override(@bgColor, @textColor, @activeColor, @highlighColor) {
+  color: @textColor;
+  border-color: @bgColor;
+  background-color: @bgColor;
+  position: relative;
+
+  &:active,
+  &:active:hover,
+  &:active:focus {
+    box-shadow: none;
+    border-color: @activeColor;
+    background-color: @activeColor;
+  }
+
+  &:focus {
+    background-color: darken(@bgColor, 5%);
+    color: @textColor;
+    outline: 0;
+    box-shadow: 0 0 0 3px #254b6d;
+  }
+
+  &:hover {
+    color: @textColor;
+    border-color: @highlighColor;
+    background-color: @highlighColor;
+  }
+
+  &:visited {
+    color: @textColor;
+  }
+
+  &:disabled {
+    top: 0;
+    background-color: @grayIcon;
+    box-shadow: none;
+  }
+
+  &:disabled:hover {
+    border-color: @grayIcon;
+    transform: none;
   }
 }

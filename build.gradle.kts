@@ -58,6 +58,7 @@ repositories {
 
 node {
     version = "10.15.3"
+    download = true
 }
 
 java {

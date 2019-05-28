@@ -1,4 +1,4 @@
-import {Dispatch, SetStateAction, useState} from "react";
+import {Dispatch, SetStateAction, useMemo, useState} from "react";
 
 export interface ObjectState<T> {
     value: T;
@@ -7,8 +7,8 @@ export interface ObjectState<T> {
 
 export default function useObjectState<T>(initialState: T): ObjectState<T> {
     const [value, setValue] = useState(initialState);
-    return {
+    return useMemo(() => ({
         value,
         setValue
-    };
+    }), [value, setValue]);
 }

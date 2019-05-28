@@ -13,3 +13,9 @@ export function joinWithPrefix(list: Array<string>) {
         .map(prepend('#'))
         .join(' ');
 }
+
+export function fjernTomtInnhold(obj: { [key: string]: string }):{ [key: string]: string } {
+    return Object.entries(obj)
+        .filter(([, value]) => value && value.trim().length > 0)
+        .reduce((acc, [key, value]) => ({...acc, [key]: value}), {});
+}

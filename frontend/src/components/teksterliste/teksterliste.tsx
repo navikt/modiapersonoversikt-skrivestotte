@@ -29,17 +29,18 @@ function TekstListeElement(props: { tekst: Tekst; checked: UUID, onChange: React
                 onChange={props.onChange}
             />
             <div className="teksterliste__listeelement-content">
-                <Element>{props.tekst.overskrift}</Element>
-                <Normaltekst>{joinWithPrefix(props.tekst.tags)}</Normaltekst>
+                <Element className="teksterliste__overskrift">{props.tekst.overskrift}</Element>
+                <Normaltekst className="teksterliste__tags">{joinWithPrefix(props.tekst.tags)}</Normaltekst>
             </div>
         </label>
     );
 }
 
 function matcher(sok: string, checked: UUID) {
+    const fragmenter = sok.toLocaleLowerCase().split(' ');
     return (tekst: Tekst) => {
-        const corpus = `${tekst.overskrift} ${tekst.tags.join(' ')} ${Object.values(tekst.innhold).join(' ')}`;
-        return tekst.id === checked || corpus.toLocaleLowerCase().includes(sok.toLocaleLowerCase());
+        const corpus = `${tekst.overskrift} ${tekst.tags.join(' ')} ${Object.values(tekst.innhold).join(' ')}`.toLocaleLowerCase();
+        return tekst.id === checked || fragmenter.every((fragment) => corpus.includes(fragment));
     }
 }
 

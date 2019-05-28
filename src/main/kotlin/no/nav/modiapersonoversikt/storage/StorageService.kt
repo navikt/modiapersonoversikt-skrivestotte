@@ -7,12 +7,15 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import io.ktor.features.BadRequestException
 import no.nav.modiapersonoversikt.Metrics.Companion.timed
 import no.nav.modiapersonoversikt.ObjectMapperProvider.Companion.objectMapper
+import no.nav.modiapersonoversikt.XmlLoader
 import no.nav.modiapersonoversikt.model.Tekst
 import no.nav.modiapersonoversikt.model.Tekster
+import org.slf4j.LoggerFactory
 import java.util.*
 
 private const val SKRIVESTOTTE_BUCKET_NAME = "modiapersonoversikt-skrivestotte-bucket"
 private const val SKRIVESTOTTE_KEY_NAME = "skrivestotte"
+private val log = LoggerFactory.getLogger("modiapersonoversikt-skrivestotte.StorageService")
 
 class StorageService(private val s3: AmazonS3) : StorageProvider {
     init {
@@ -71,6 +74,16 @@ class StorageService(private val s3: AmazonS3) : StorageProvider {
                     .forEach {
                         s3.createBucket(CreateBucketRequest(it).withCannedAcl(CannedAccessControlList.Private))
                     }
+
+            if (missingBuckets.isNotEmpty()) {
+                log.info("Buckets måtte opprettes, populerer disse med data fra xml-fil...")
+                val xmlTekster = XmlLoader.get("/data.xml")
+                        .map { it.id!! to it }
+
+                lagreTekster(hentTekster().plus(xmlTekster))
+
+                log.info("Lagret ${xmlTekster.size} predefinerte tekster")
+            }
         }
     }
 }
