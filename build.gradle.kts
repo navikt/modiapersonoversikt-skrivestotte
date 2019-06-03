@@ -77,7 +77,6 @@ task<NpmTask>("npmCI") {
 
 task<NpmTask>("npmBuild") {
     setWorkingDir(file("${project.projectDir}/frontend"))
-    dependsOn("npmCI")
     setArgs(listOf("run", "build"))
 
     doLast {
@@ -102,7 +101,10 @@ task<Jar>("fatJar") {
 }
 
 tasks {
-    "build" {
+    "npmBuild" {
+        dependsOn("npmCI")
+    }
+    "fatJar" {
         dependsOn("npmBuild")
     }
     "jar" {
