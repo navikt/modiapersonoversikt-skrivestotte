@@ -38,11 +38,11 @@ spec:
   vault:
     enabled: true
   env:
-    - name: SECURITY_TOKEN_SERVICE_JWKS_URL
-      value: https://security-token-service.nais.preprod.local/rest/v1/sts/jwks
-    - name: SECURITY_TOKEN_SERVICE_ISSUER
-      value: https://security-token-service.nais.preprod.local
     - name: S3_URL
       value: s3.nais.preprod.local
     - name: S3_REGION
       value: us-east-1
+    - name: ISSO_JWKS_URL
+      value: https://isso-q.adeo.no/isso/oauth2/connect/jwk_uri
+    - name: ISSO_ISSUER
+      value: https://isso-q.adeo.no:443/isso/oauth2
