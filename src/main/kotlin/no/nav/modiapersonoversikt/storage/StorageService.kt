@@ -75,7 +75,9 @@ class StorageService(private val s3: AmazonS3) : StorageProvider {
                         s3.createBucket(CreateBucketRequest(it).withCannedAcl(CannedAccessControlList.Private))
                     }
 
-            if (missingBuckets.isNotEmpty()) {
+            val tekster = hentTekster()
+
+            if (tekster.isEmpty()) {
                 log.info("Buckets måtte opprettes, populerer disse med data fra xml-fil...")
                 val xmlTekster = XmlLoader.get("/data.xml")
                         .map { it.id!! to it }
