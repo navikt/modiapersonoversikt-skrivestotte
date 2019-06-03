@@ -1,5 +1,6 @@
 import React, {ChangeEvent, useEffect, useRef} from "react";
 import {Locale, localeString} from "../../model";
+import AutosizingTextarea from './../autosizing-textarea/autosizing-textarea';
 import {FieldState} from "../../hooks/use-field-state";
 import {ListState} from "../../hooks/use-list-state";
 import {ObjectState} from "../../hooks/use-object-state";
@@ -26,11 +27,10 @@ function LocaleEditor(props: Props) {
                 <span className="localeeditor__label skjemaelement__label">
                     {localeString[props.locale]}
                 </span>
-                <textarea
+                <AutosizingTextarea
                     ref={ref}
                     value={props.fieldState.value}
                     onChange={(e) => props.fieldState.onChange(e as ChangeEvent)}
-                    rows={6}
                     className="skjemaelement__input textarea--medMeta tekstereditor__textarea"
                 />
             </label>
