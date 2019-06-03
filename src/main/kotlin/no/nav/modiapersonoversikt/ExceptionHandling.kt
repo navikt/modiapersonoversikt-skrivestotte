@@ -18,7 +18,7 @@ fun StatusPages.Configuration.exceptionHandler() {
 
     exception<IllegalArgumentException> { cause ->
         call.logErrorAndRespond(cause, HttpStatusCode.BadRequest) {
-            "The request was either invalid or lacked required parameters"
+            "The request was either invalid or lacked required parameters."
         }
     }
 
