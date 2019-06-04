@@ -21,6 +21,7 @@ function LocaleEditor(props: Props) {
             props.focusSteal.setValue(null);
         }
     }, [props.focusSteal, props.focusSteal.value, props.locale]);
+
     return (
         <div className="localeeditor skjemaelement">
             <label>
@@ -30,7 +31,7 @@ function LocaleEditor(props: Props) {
                 <AutosizingTextarea
                     ref={ref}
                     value={props.fieldState.value}
-                    onChange={(e) => props.fieldState.onChange(e as ChangeEvent)}
+                    onChange={(event) => props.fieldState.onChange(event)}
                     className="skjemaelement__input textarea--medMeta tekstereditor__textarea"
                 />
             </label>
