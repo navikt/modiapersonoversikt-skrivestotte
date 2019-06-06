@@ -3,10 +3,12 @@ package no.nav.modiapersonoversikt
 import io.ktor.application.install
 import io.ktor.auth.Authentication
 import io.ktor.auth.jwt.jwt
+import io.ktor.features.CORS
 import io.ktor.features.CallLogging
 import io.ktor.features.ContentNegotiation
 import io.ktor.features.StatusPages
 import io.ktor.http.ContentType
+import io.ktor.http.HttpMethod
 import io.ktor.http.content.*
 import io.ktor.jackson.JacksonConverter
 import io.ktor.metrics.dropwizard.DropwizardMetrics
@@ -33,6 +35,13 @@ fun createHttpServer(applicationState: ApplicationState,
     install(StatusPages) {
         notFoundHandler()
         exceptionHandler()
+    }
+
+    install(CORS) {
+        anyHost()
+        method(HttpMethod.Put)
+        method(HttpMethod.Delete)
+        allowCredentials = true
     }
 
     if (useAuthentication) {
