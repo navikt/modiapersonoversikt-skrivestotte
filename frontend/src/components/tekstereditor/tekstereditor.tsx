@@ -21,6 +21,7 @@ interface Props {
     visEditor: ObjectState<boolean>;
     checked: FieldState;
     tekst: Maybe<Tekst>;
+    customDomain?: string;
 
     refetch(): void;
 }
@@ -38,23 +39,23 @@ function onSubmit(tekst: Tekst, lagrer: ObjectState<boolean>, props: Props) {
 
         try {
             lagrer.setValue(true);
-            const nyTekst = await lagreTekst<Tekst>('/skrivestotte', {body});
+            const nyTekst = await lagreTekst<Tekst>(`${props.customDomain || ''}/skrivestotte`, {body});
 
             props.refetch();
             props.checked.setValue(nyTekst.id!);
             props.visEditor.setValue(false);
             lagrer.setValue(false);
         } catch (e) {
-            alert(e)
+            window.alert(e);
         }
     }
 }
 function onDelete(tekst: Tekst, props: Props) {
     return async () => {
         if (window.confirm(`Er du sikker på at du vil slette '${tekst.overskrift}'?`)) {
-            await Fetcher.del(`/skrivestotte/${tekst.id}`);
+            await Fetcher.del(`${props.customDomain || ''}/skrivestotte/${tekst.id}`);
             props.refetch();
-            alert(`'${tekst.overskrift}' slettet...`);
+            window.alert(`'${tekst.overskrift}' slettet...`);
         }
     }
 }
