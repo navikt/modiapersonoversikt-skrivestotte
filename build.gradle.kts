@@ -75,17 +75,18 @@ task<NpmTask>("npmCI") {
     setArgs(listOf("ci"))
 }
 
+val syncFrontend = copy {
+    from("frontend/build")
+    into("src/main/resources/webapp")
+}
 task<NpmTask>("npmBuild") {
     setWorkingDir(file("${project.projectDir}/frontend"))
     setArgs(listOf("run", "build"))
 
-    doLast {
-        copy {
-            from("frontend/build")
-            into("build/resources/main/webapp")
-        }
-    }
+    doLast { syncFrontend }
 }
+
+task("syncFrontend") { syncFrontend }
 
 task<Jar>("fatJar") {
     baseName = "app"
