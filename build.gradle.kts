@@ -20,7 +20,7 @@ buildscript {
         maven("https://repo.adeo.no/repository/maven-releases")
         maven("https://repo.adeo.no/repository/maven-central")
     }
-    
+
     dependencies {
         classpath("org.junit.platform:junit-platform-gradle-plugin:1.2.0")
     }
@@ -83,10 +83,20 @@ task<NpmTask>("npmBuild") {
     setWorkingDir(file("${project.projectDir}/frontend"))
     setArgs(listOf("run", "build"))
 
-    doLast { syncFrontend }
+    doLast {
+        copy {
+            from("frontend/build")
+            into("build/resources/main/webapp")
+        }
+    }
 }
 
-task("syncFrontend") { syncFrontend }
+task("syncFrontend") {
+    copy {
+        from("frontend/build")
+        into("src/main/resources/webapp")
+    }
+}
 
 task<Jar>("fatJar") {
     baseName = "app"
