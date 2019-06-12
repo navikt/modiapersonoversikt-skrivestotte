@@ -5,14 +5,15 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.response.respondText
 import io.ktor.response.respondTextWriter
+import io.ktor.routing.Route
 import io.ktor.routing.Routing
 import io.ktor.routing.get
 import io.prometheus.client.CollectorRegistry
 import io.prometheus.client.exporter.common.TextFormat
 
-fun Routing.naisRoutes(readinessCheck: () -> Boolean,
-                       livenessCheck: () -> Boolean = { true },
-                       collectorRegistry: CollectorRegistry = CollectorRegistry.defaultRegistry) {
+fun Route.naisRoutes(readinessCheck: () -> Boolean,
+                     livenessCheck: () -> Boolean = { true },
+                     collectorRegistry: CollectorRegistry = CollectorRegistry.defaultRegistry) {
 
     get("/isAlive") {
         if (livenessCheck()) {

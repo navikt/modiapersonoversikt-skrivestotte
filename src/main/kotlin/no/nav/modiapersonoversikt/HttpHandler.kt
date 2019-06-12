@@ -13,6 +13,7 @@ import io.ktor.http.content.*
 import io.ktor.jackson.JacksonConverter
 import io.ktor.metrics.dropwizard.DropwizardMetrics
 import io.ktor.request.path
+import io.ktor.routing.route
 import io.ktor.routing.routing
 import io.ktor.server.engine.ApplicationEngine
 import io.ktor.server.engine.embeddedServer
@@ -70,13 +71,15 @@ fun createHttpServer(applicationState: ApplicationState,
     }
 
     routing {
-        static {
-            resources("webapp")
-            defaultResource("index.html", "webapp")
-        }
+        route("modiapersonoversikt-skrivestotte") {
+            static {
+                resources("webapp")
+                defaultResource("index.html", "webapp")
+            }
 
-        naisRoutes(readinessCheck = { applicationState.initialized }, livenessCheck = { applicationState.running })
-        skrivestotteRoutes(provider, useAuthentication)
+            naisRoutes(readinessCheck = { applicationState.initialized }, livenessCheck = { applicationState.running })
+            skrivestotteRoutes(provider, useAuthentication)
+        }
     }
 
     applicationState.initialized = true
