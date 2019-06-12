@@ -56,11 +56,6 @@ jobs:
       - checkout
       - setup_remote_docker
       - run:
-          name: Find released version
-          command: |
-            echo 'export RELEASE_VERSION="$(git fetch || true && git rev-list --count $CIRCLE_SHA1)"' >> $BASH_ENV
-            source $BASH_ENV
-      - run:
           name: Create deployment request for development
           command: |
             export RELEASE_VERSION="$(git fetch || true && git rev-list --count $CIRCLE_SHA1)"
