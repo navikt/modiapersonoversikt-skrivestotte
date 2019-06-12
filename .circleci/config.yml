@@ -56,10 +56,16 @@ jobs:
       - checkout
       - setup_remote_docker
       - run:
-          name: Create deployment request for development
+          name: Find released version
           command: |
-            export RELEASE_VERSION="$(git fetch || true && git rev-list --count $CIRCLE_SHA1)"
-            deployment-cli deploy create --environment=dev-fss --repository=$DOCKER_IMG_NAME --team=personoversikt -r=deploy/preprod.yaml --version=$RELEASE_VERSION
+            echo 'export RELEASE_VERSION="$(git fetch || true && git rev-list --count $CIRCLE_SHA1)"' >> $BASH_ENV
+            source $BASH_ENV
+      - run:
+          name: Create deployment request for development
+          command: deployment-cli deploy create --environment=dev-fss --repository=$DOCKER_IMG_NAME --team=personoversikt -r=deploy/preprod.yaml --version=$RELEASE_VERSION
+      - run:
+          name: Create deployment request for prod
+          command: deployment-cli deploy create --environment=prod-fss --repository=$DOCKER_IMG_NAME --team=personoversikt -r=deploy/prod.yaml --version=$RELEASE_VERSION
 workflows:
   version: 2
   build_and_deploy:
