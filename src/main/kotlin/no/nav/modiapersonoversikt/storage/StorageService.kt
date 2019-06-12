@@ -70,6 +70,10 @@ class StorageService(private val s3: AmazonS3) : StorageProvider {
             val s3BucketNames = s3.listBuckets().map { it.name }
             val missingBuckets = buckets.filter { !s3BucketNames.contains(it) }
 
+            println("Wanted Buckets: ${buckets.joinToString(", ")}")
+            println("Found Buckets: ${s3BucketNames.joinToString(", ")}")
+            println("Missing Buckets: ${missingBuckets.joinToString(", ")}")
+
             missingBuckets
                     .forEach {
                         s3.createBucket(CreateBucketRequest(it).withCannedAcl(CannedAccessControlList.Private))
