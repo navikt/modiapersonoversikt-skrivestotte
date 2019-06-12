@@ -9,12 +9,11 @@ import './application.less';
 
 interface Props {
     renderHead: boolean;
-    customDomain?: string;
 }
 
 function Application(props: Props) {
     const visEditor = useObjectState<boolean>(false);
-    const fetchState = useFetch<Tekster>(`${props.customDomain || ''}/skrivestotte`);
+    const fetchState = useFetch<Tekster>('/modiapersonoversikt-skrivestotte/skrivestotte');
     const tekster = fetchState.data.withDefault<Tekster>({});
 
     const sokFS = useFieldState('');
@@ -47,7 +46,6 @@ function Application(props: Props) {
                         checked={checked}
                         tekst={visEditorFor}
                         refetch={fetchState.refetch}
-                        customDomain={props.customDomain}
                     />
                 </div>
             </div>
