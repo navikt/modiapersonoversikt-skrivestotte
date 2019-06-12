@@ -10,13 +10,13 @@ spec:
   port: 7070
   team: personoversikt
   liveness:
-    path: /isAlive
+    path: /modiapersonoversikt-skrivestotte/isAlive
     initialDelay: 20
     timeout: 1
     periodSeconds: 5
     failureThreshold: 10
   readiness:
-    path: /isReady
+    path: /modiapersonoversikt-skrivestotte/isReady
     initialDelay: 20
     timeout: 1
   resources:
@@ -38,7 +38,7 @@ spec:
     cpuThresholdPercentage: 90
   prometheus:
     enabled: true
-    path: /metrics
+    path: /modiapersonoversikt-skrivestotte/metrics
   vault:
     enabled: true
   env:
