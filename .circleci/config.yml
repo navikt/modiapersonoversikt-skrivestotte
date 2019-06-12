@@ -63,8 +63,8 @@ jobs:
       - run:
           name: Create deployment request for prod
           command: |
-          export RELEASE_VERSION="$(git fetch || true && git rev-list --count $CIRCLE_SHA1)"
-          deployment-cli deploy create --environment=prod-fss --repository=$DOCKER_IMG_NAME --team=personoversikt -r=deploy/prod.yaml --version=$RELEASE_VERSION
+            export RELEASE_VERSION="$(git fetch || true && git rev-list --count $CIRCLE_SHA1)"
+            deployment-cli deploy create --environment=prod-fss --repository=$DOCKER_IMG_NAME --team=personoversikt -r=deploy/prod.yaml --version=$RELEASE_VERSION
 workflows:
   version: 2
   build_and_deploy:
