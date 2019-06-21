@@ -62,7 +62,7 @@ fun createHttpServer(applicationState: ApplicationState,
 
     install(CallLogging) {
         level = Level.INFO
-        filter { call -> call.request.path().startsWith("/skrivestotte") }
+        filter { call -> call.request.path().startsWith("/modiapersonoversikt-skrivestotte/skrivestotte") }
         mdc("userId", JwtUtil::getSubject)
     }
 
