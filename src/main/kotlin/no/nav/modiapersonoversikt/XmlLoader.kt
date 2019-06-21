@@ -1,23 +1,34 @@
 package no.nav.modiapersonoversikt
 
+import io.ktor.client.HttpClient
+import io.ktor.client.request.get
+import kotlinx.coroutines.runBlocking
 import no.nav.modiapersonoversikt.model.Locale
 import no.nav.modiapersonoversikt.model.Tekst
 import org.w3c.dom.Element
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
+import java.io.InputStream
 import java.util.*
 import javax.xml.parsers.DocumentBuilderFactory
 
 class XmlLoader {
     companion object {
-        fun get(path: String): List<Tekst> {
+        fun get(resourceAsStream: InputStream): List<Tekst> {
             return DocumentBuilderFactory
                     .newInstance()
                     .newDocumentBuilder()
-                    .parse(this::class.java.getResourceAsStream(path))
+                    .parse(resourceAsStream)
                     .getElementsByTagName("contentdata")
                     .asList()
                     .map { createTekst(it) }
+        }
+
+        fun getFromUrl(url: String): List<Tekst> = runBlocking {
+            val content = HttpClient().use {
+                client -> client.get<String>(url)
+            }
+            get(content.byteInputStream())
         }
 
         private fun createTekst(node: Node): Tekst {
@@ -63,9 +74,4 @@ class XmlLoader {
             }
         }
     }
-}
-
-fun main() {
-    val tekster = XmlLoader.get("/data.xml")
-    println(tekster.size)
 }
