@@ -125,7 +125,7 @@ function Tekstereditor(props: Props) {
                 <form className="application__editor tekstereditor" onSubmit={formState.onSubmit(submitHandler)}>
                     {props.visEditor.value && <h3>Ny tekst</h3>}
                     <Input label="Overskrift" value={overskrift.value} onChange={overskrift.onChange}/>
-                    <Input label="Tags" value={tags.value} onChange={tags.onChange}/>
+                    <Input label="Tags, skill med mellomrom:" value={tags.value} onChange={tags.onChange}/>
 
                     {editors}
 
@@ -136,7 +136,7 @@ function Tekstereditor(props: Props) {
                         <Hovedknapp disabled={disableLagring} spinner={lagrer.value} autoDisableVedSpinner>
                             Lagre
                         </Hovedknapp>
-                        <Fareknapp htmlType="button" onClick={slettHandler}>Slett alle</Fareknapp>
+                        <Fareknapp htmlType="button" onClick={slettHandler}>Slett</Fareknapp>
                     </div>
                 </form>
             );

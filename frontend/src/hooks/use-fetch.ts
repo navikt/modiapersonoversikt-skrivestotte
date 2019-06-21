@@ -51,6 +51,7 @@ export default function useFetch<TYPE>(url: RequestInfo, option?: RequestInit): 
                 if (!didCancel) {
                     dispatch({type: "FETCH_ERROR"});
                 }
+                throw e;
             }
         }
 

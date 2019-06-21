@@ -56,8 +56,8 @@ const tekster: Tekster & JSONValue = new Array(50)
     }))
     .reduce((acc, tekst) => ({ ...acc, [tekst.id]: tekst}), {});
 
-mock.get('/skrivestotte', tekster);
-mock.put('/skrivestotte', (args) => {
+mock.get('/modiapersonoversikt-skrivestotte/skrivestotte', tekster);
+mock.put('/modiapersonoversikt-skrivestotte/skrivestotte', (args) => {
     const tekst = args.body as Tekst & JSONValue;
     if (tekst.id) {
         tekster[tekst.id] = tekst;
@@ -65,14 +65,14 @@ mock.put('/skrivestotte', (args) => {
     }
     return Promise.resolve({ status: 400 });
 });
-mock.post('/skrivestotte', ({ body }) => {
+mock.post('/modiapersonoversikt-skrivestotte/skrivestotte', ({ body }) => {
     const id = guid();
     const tekst = body as Tekst & JSONValue;
     tekst.id = id;
     tekster[id] = tekst;
     return tekst;
 });
-mock.delete('/skrivestotte/:id', ({ pathParams }) => {
+mock.delete('/modiapersonoversikt-skrivestotte/skrivestotte/:id', ({ pathParams }) => {
     if (tekster[pathParams.id]) {
         delete tekster[pathParams.id];
         return Promise.resolve({ status: 200 });
