@@ -11,7 +11,10 @@ import no.nav.modiapersonoversikt.XmlLoader
 import no.nav.modiapersonoversikt.model.Tekst
 import no.nav.modiapersonoversikt.model.Tekster
 import org.slf4j.LoggerFactory
+import java.time.Duration
+import java.time.temporal.ChronoUnit.MINUTES
 import java.util.*
+import kotlin.concurrent.scheduleAtFixedRate
 
 private const val SKRIVESTOTTE_BUCKET_NAME = "modiapersonoversikt-skrivestotte-bucket"
 private const val SKRIVESTOTTE_KEY_NAME = "skrivestotte"
@@ -20,6 +23,13 @@ private val log = LoggerFactory.getLogger("modiapersonoversikt-skrivestotte.Stor
 class StorageService(private val s3: AmazonS3) : StorageProvider {
     init {
         lagS3BucketsHvisNodvendig(SKRIVESTOTTE_BUCKET_NAME)
+
+        // Kjører med update fra enonic (prod) i en periode før vi får formidlet til brukerne at endringer må gjøres i appen.
+        // TODO Fjern da man slutter å bruke enonic
+        val refreshRate = Duration.of(30, MINUTES).toMillis()
+        Timer().scheduleAtFixedRate(0L, refreshRate) {
+            refreshTekster()
+        }
     }
 
     override fun hentTekster(): Tekster =
@@ -65,6 +75,18 @@ class StorageService(private val s3: AmazonS3) : StorageProvider {
         }
     }
 
+    private fun refreshTekster() {
+        log.info("Refresher tekster fra enonic.")
+        val tekster = XmlLoader.getFromUrl("https://appres.adeo.no/app/modiabrukerdialog/skrivestotte")
+                .map { it.id!! to it }
+                .toTypedArray()
+
+        log.info("Fant ${tekster.size} tekster")
+        lagreTekster(mapOf(*tekster))
+
+        log.info("Tekster refreshed ok.")
+    }
+
     private fun lagS3BucketsHvisNodvendig(vararg buckets: String) {
         timed("lag_buckets_hvis_nodvendig") {
             val s3BucketNames = s3.listBuckets().map { it.name }
@@ -78,18 +100,6 @@ class StorageService(private val s3: AmazonS3) : StorageProvider {
                     .forEach {
                         s3.createBucket(CreateBucketRequest(it).withCannedAcl(CannedAccessControlList.Private))
                     }
-
-            val tekster = hentTekster()
-
-            if (tekster.isEmpty()) {
-                log.info("Buckets måtte opprettes, populerer disse med data fra xml-fil...")
-                val xmlTekster = XmlLoader.get("/data.xml")
-                        .map { it.id!! to it }
-
-                lagreTekster(hentTekster().plus(xmlTekster))
-
-                log.info("Lagret ${xmlTekster.size} predefinerte tekster")
-            }
         }
     }
 }
