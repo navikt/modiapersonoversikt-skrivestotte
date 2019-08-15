@@ -1,8 +1,5 @@
 package no.nav.modiapersonoversikt
 
-import io.ktor.client.HttpClient
-import io.ktor.client.request.get
-import kotlinx.coroutines.runBlocking
 import no.nav.modiapersonoversikt.model.Locale
 import no.nav.modiapersonoversikt.model.Tekst
 import org.w3c.dom.Element
@@ -14,21 +11,14 @@ import javax.xml.parsers.DocumentBuilderFactory
 
 class XmlLoader {
     companion object {
-        fun get(resourceAsStream: InputStream): List<Tekst> {
+        fun get(path: String): List<Tekst> {
             return DocumentBuilderFactory
                     .newInstance()
                     .newDocumentBuilder()
-                    .parse(resourceAsStream)
+                    .parse(this::class.java.getResourceAsStream(path))
                     .getElementsByTagName("contentdata")
                     .asList()
                     .map { createTekst(it) }
-        }
-
-        fun getFromUrl(url: String): List<Tekst> = runBlocking {
-            val content = HttpClient().use {
-                client -> client.get<String>(url)
-            }
-            get(content.byteInputStream())
         }
 
         private fun createTekst(node: Node): Tekst {
