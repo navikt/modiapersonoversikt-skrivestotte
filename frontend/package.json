@@ -32,6 +32,7 @@
   },
   "devDependencies": {
     "@craco/craco": "5.1.0",
+    "@navikt/craco-plugins": "^1.0.1",
     "@types/classnames": "2.2.7",
     "@types/jest": "24.0.13",
     "@types/node": "12.0.2",
