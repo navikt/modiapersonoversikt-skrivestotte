@@ -22,11 +22,17 @@ class StorageService(private val s3: AmazonS3) : StorageProvider {
         lagS3BucketsHvisNodvendig(SKRIVESTOTTE_BUCKET_NAME)
     }
 
-    override fun hentTekster(): Tekster =
+    override fun hentTekster(tagFilter: List<String>?): Tekster =
             timed("hent_tekster") {
                 try {
                     val teksterContent = s3.getObject(SKRIVESTOTTE_BUCKET_NAME, SKRIVESTOTTE_KEY_NAME)
-                    objectMapper.readValue(teksterContent.objectContent)
+                    val tekster: Tekster = objectMapper.readValue(teksterContent.objectContent)
+
+                    tagFilter
+                            ?.let {
+                                tags -> tekster.filter { it.value.tags.containsAll(tags) }
+                            }
+                            ?: tekster
                 } catch (e: Exception) {
                     emptyMap()
                 }
@@ -35,7 +41,7 @@ class StorageService(private val s3: AmazonS3) : StorageProvider {
     override fun oppdaterTekst(tekst: Tekst): Tekst {
         val nyeTekster = tekst.id
                 ?.let {
-                    hentTekster().plus(it to tekst)
+                    hentTekster(null).plus(it to tekst)
                 }
                 ?: throw BadRequestException("id må være definert")
 
@@ -47,7 +53,7 @@ class StorageService(private val s3: AmazonS3) : StorageProvider {
     override fun leggTilTekst(tekst: Tekst): Tekst {
         val id = UUID.randomUUID()
         val tekstTilLagring = tekst.copy(id = id)
-        val tekster = hentTekster().plus(id to tekstTilLagring)
+        val tekster = hentTekster(null).plus(id to tekstTilLagring)
 
         lagreTekster(tekster)
 
@@ -55,7 +61,7 @@ class StorageService(private val s3: AmazonS3) : StorageProvider {
     }
 
     override fun slettTekst(id: UUID) {
-        val nyeTekster = hentTekster().minus(id)
+        val nyeTekster = hentTekster(null).minus(id)
         lagreTekster(nyeTekster)
     }
 
@@ -79,7 +85,7 @@ class StorageService(private val s3: AmazonS3) : StorageProvider {
                         s3.createBucket(CreateBucketRequest(it).withCannedAcl(CannedAccessControlList.Private))
                     }
 
-            val tekster = hentTekster()
+            val tekster = hentTekster(null)
 
             if (tekster.isEmpty()) {
                 log.info("Buckets måtte opprettes, populerer disse med data fra xml-fil...")
