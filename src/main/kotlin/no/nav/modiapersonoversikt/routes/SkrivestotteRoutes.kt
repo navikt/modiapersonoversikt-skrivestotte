@@ -24,7 +24,8 @@ fun Route.skrivestotteRoutes(provider: StorageProvider, useAuthentication: Boole
 
     route("/skrivestotte") {
         get {
-            call.respond(provider.hentTekster())
+            val tagsFilter = call.request.queryParameters.getAll("tags")
+            call.respond(provider.hentTekster(tagsFilter))
         }
 
         conditionalAuthenticate(useAuthentication) {
