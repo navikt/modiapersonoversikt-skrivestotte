@@ -31,7 +31,7 @@
     "react-scripts": "3.0.1"
   },
   "devDependencies": {
-    "@craco/craco": "5.1.0",
+    "@craco/craco": "^5.5.0",
     "@navikt/craco-plugins": "^1.0.1",
     "@types/classnames": "2.2.7",
     "@types/jest": "24.0.13",
