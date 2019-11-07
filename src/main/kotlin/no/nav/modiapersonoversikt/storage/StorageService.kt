@@ -24,18 +24,14 @@ class StorageService(private val s3: AmazonS3) : StorageProvider {
 
     override fun hentTekster(tagFilter: List<String>?): Tekster =
             timed("hent_tekster") {
-                try {
-                    val teksterContent = s3.getObject(SKRIVESTOTTE_BUCKET_NAME, SKRIVESTOTTE_KEY_NAME)
-                    val tekster: Tekster = objectMapper.readValue(teksterContent.objectContent)
+                val teksterContent = s3.getObject(SKRIVESTOTTE_BUCKET_NAME, SKRIVESTOTTE_KEY_NAME)
+                val tekster: Tekster = objectMapper.readValue(teksterContent.objectContent)
 
-                    tagFilter
-                            ?.let {
-                                tags -> tekster.filter { it.value.tags.containsAll(tags) }
-                            }
-                            ?: tekster
-                } catch (e: Exception) {
-                    emptyMap()
-                }
+                tagFilter
+                        ?.let {
+                            tags -> tekster.filter { it.value.tags.containsAll(tags) }
+                        }
+                        ?: tekster
             }
 
     override fun oppdaterTekst(tekst: Tekst): Tekst {
@@ -87,14 +83,14 @@ class StorageService(private val s3: AmazonS3) : StorageProvider {
 
             val tekster = hentTekster(null)
 
+            val xmlTekster = XmlLoader.get("/data.xml")
+                    .map { it.id!! to it }
+
+            lagreTekster(tekster.plus(xmlTekster))
+
+            log.info("Lagret ${xmlTekster.size} predefinerte tekster")
             if (tekster.isEmpty()) {
                 log.info("Buckets måtte opprettes, populerer disse med data fra xml-fil...")
-                val xmlTekster = XmlLoader.get("/data.xml")
-                        .map { it.id!! to it }
-
-                lagreTekster(tekster.plus(xmlTekster))
-
-                log.info("Lagret ${xmlTekster.size} predefinerte tekster")
             }
         }
     }
