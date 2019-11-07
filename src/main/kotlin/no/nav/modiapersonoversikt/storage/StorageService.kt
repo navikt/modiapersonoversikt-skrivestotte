@@ -24,18 +24,14 @@ class StorageService(private val s3: AmazonS3) : StorageProvider {
 
     override fun hentTekster(tagFilter: List<String>?): Tekster =
             timed("hent_tekster") {
-                try {
-                    val teksterContent = s3.getObject(SKRIVESTOTTE_BUCKET_NAME, SKRIVESTOTTE_KEY_NAME)
-                    val tekster: Tekster = objectMapper.readValue(teksterContent.objectContent)
+                val teksterContent = s3.getObject(SKRIVESTOTTE_BUCKET_NAME, SKRIVESTOTTE_KEY_NAME)
+                val tekster: Tekster = objectMapper.readValue(teksterContent.objectContent)
 
-                    tagFilter
-                            ?.let {
-                                tags -> tekster.filter { it.value.tags.containsAll(tags) }
-                            }
-                            ?: tekster
-                } catch (e: Exception) {
-                    emptyMap()
-                }
+                tagFilter
+                        ?.let {
+                            tags -> tekster.filter { it.value.tags.containsAll(tags) }
+                        }
+                        ?: tekster
             }
 
     override fun oppdaterTekst(tekst: Tekst): Tekst {
