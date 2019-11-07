@@ -87,14 +87,14 @@ class StorageService(private val s3: AmazonS3) : StorageProvider {
 
             val tekster = hentTekster(null)
 
+            val xmlTekster = XmlLoader.get("/data.xml")
+                    .map { it.id!! to it }
+
+            lagreTekster(tekster.plus(xmlTekster))
+
+            log.info("Lagret ${xmlTekster.size} predefinerte tekster")
             if (tekster.isEmpty()) {
                 log.info("Buckets måtte opprettes, populerer disse med data fra xml-fil...")
-                val xmlTekster = XmlLoader.get("/data.xml")
-                        .map { it.id!! to it }
-
-                lagreTekster(tekster.plus(xmlTekster))
-
-                log.info("Lagret ${xmlTekster.size} predefinerte tekster")
             }
         }
     }

@@ -6378,14 +6378,56 @@
                 -gå til www.nav.no/klage &#xD;
                 -trykk på lenken for "klage på vedtak"&#xD;
                 -velg tema (stønad)&#xD;
-                -tast inn fødsels - og personnummer og NAV- enhet som i dette tilfellet er (NAV enhet).&#xD;
-                -trykk neste og last ned førstesiden.&#xD;
+                -velg aktuell søknad&#xD;
+                -velg "ettersendelse" og følg instruksjonene&#xD;
                 &#xD;
                 Merknadene/opplysningene skal sendes til adressen som står øverst til venstre på førstesiden.&#xD;
                 &#xD;
                 Ønsker du å sende inn en uttalelse elektronisk, kan det gjøres på www.nav.no/beskjedtilnav &#xD;
                 &#xD;
                 Ytterligere informasjon om klagerettigheter og saksgang finner du på www.nav.no/klage </fritekst>
+        </innhold>
+        <innhold>
+            <locale>nn_NO</locale>
+            <fritekst>[bruker.fornavn] ringer NAV Klageinstans i samband med oversending av klagesak YTING og har spørsmål om status og vidare saksgang.&#xD;
+                &#xD;
+                Eg har informert deg om følgjande:&#xD;
+                - Saka vert behandla innan oppgjeven sakshandsamingstid, sjå www.nav.no/saksbehandlingstider&#xD;
+                - Har du nye opplysningar du meiner vil vere av betydning for saka, har du høve til å sende inn dette.&#xD;
+                &#xD;
+                Dokumenter sendast inn på følgjande måte:&#xD;
+                -gå til www.nav.no/klage&#xD;
+                -trykk på lenka "klage på vedtak"&#xD;
+                -velg tema (stønad)&#xD;
+                -velg aktuell søknad&#xD;
+                -velg "ettersendelse" og følg instruksjonane&#xD;
+                &#xD;
+                Merknadane/opplysningane skal sendast til adressa øvst til venstre på førstesida.&#xD;
+                &#xD;
+                Ønskjer du å sende inn eit utsegn elektronisk, kan det gjerast på www.nav.no/beskjedtilnav&#xD;
+
+                Meir informasjon om klagerettar og saksgang finn du på www.nav.no/klage</fritekst>
+        </innhold>
+        <innhold>
+            <locale>en_US</locale>
+            <fritekst>[bruker.navn] contacts NAV Klageinstans with an enquiry about the appeal regarding BENEFIT. You would like information regarding further proceedings.&#xD;
+                &#xD;
+                I have given the following information to NAME OF PERSON:&#xD;
+                -The appeal will be processed according to processing times stated here:  www.nav.no/saksbehandlingstider&#xD;
+                -If you have further information that is relevant to the appeal, you can send this information to NAV whilst the appeal is still being processed.&#xD;
+                &#xD;
+                You can send documentation to NAV by following the instructions below:&#xD;
+                -click on the link: www.nav.no/klage&#xD;
+                -click on the link "klage på vedtak"&#xD;
+                -choose the correct topic («tema»)&#xD;
+                -choose the correct application&#xD;
+                -choose "ettersendelse" and follow the instructions&#xD;
+                &#xD;
+                Please send the information to the address stated in the top left-hand corner on the first page.&#xD;
+                &#xD;
+                If you prefer to send a statement digitally, you can do that here: www.nav.no/beskjedtilnav&#xD;
+                &#xD;
+                You can find more information regarding the right to appeal and proceedings here: www.nav.no/appeals</fritekst>
         </innhold>
     </contentdata>
     <contentdata>
