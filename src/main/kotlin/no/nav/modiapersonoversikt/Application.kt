@@ -4,6 +4,7 @@ import com.amazonaws.auth.AWSStaticCredentialsProvider
 import com.amazonaws.auth.BasicAWSCredentials
 import com.amazonaws.client.builder.AwsClientBuilder
 import com.amazonaws.services.s3.AmazonS3ClientBuilder
+import no.nav.modiapersonoversikt.storage.LocalOnlyStorageService
 import no.nav.modiapersonoversikt.storage.StorageService
 import org.slf4j.LoggerFactory
 import java.util.concurrent.TimeUnit
@@ -23,7 +24,7 @@ fun main() {
     val applicationState = ApplicationState()
     val applicationServer = createHttpServer(
             applicationState = applicationState,
-            provider = StorageService(s3),
+            provider = LocalOnlyStorageService(),
             configuration = configuration
     )
 
