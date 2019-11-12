@@ -1791,7 +1791,7 @@
     </contentdata>
     <contentdata>
         <overskrift>Signatur</overskrift>
-        <tags>signatur </tags>
+        <tags>signatur</tags>
         <innhold>
             <locale>nb_NO</locale>
             <fritekst>Med vennlig hilsen&#xD;
@@ -11858,31 +11858,6 @@
                   - It may take time before you receive a response.&#xD;
                 &#xD;
                 Sincerely&#xD;
-                [saksbehandler.fornavn]&#xD;
-                NAV Kontaktsenter
-            </fritekst>
-        </innhold>
-    </contentdata>
-    <contentdata>
-        <overskrift>Signatur</overskrift>
-        <tags>signatur</tags>
-        <innhold>
-            <locale>nb_NO</locale>
-            <fritekst>Med vennlig hilsen&#xD;
-                [saksbehandler.fornavn]&#xD;
-                NAV Kontaktsenter&#xD;
-            </fritekst>
-        </innhold>
-        <innhold>
-            <locale>nn_NO</locale>
-            <fritekst>Med venleg helsing&#xD;
-                [saksbehandler.fornavn]&#xD;
-                NAV Kontaktsenter&#xD;
-            </fritekst>
-        </innhold>
-        <innhold>
-            <locale>en_US</locale>
-            <fritekst>Sincerely&#xD;
                 [saksbehandler.fornavn]&#xD;
                 NAV Kontaktsenter
             </fritekst>
