@@ -52,7 +52,9 @@ function onSubmit(tekst: Tekst, lagrer: ObjectState<boolean>, props: Props) {
 function onDelete(tekst: Tekst, props: Props) {
     return async () => {
         if (window.confirm(`Er du sikker på at du vil slette '${tekst.overskrift}'?`)) {
+            console.log('starter sletting');
             await Fetcher.del(`/modiapersonoversikt-skrivestotte/skrivestotte/${tekst.id}`);
+            console.log('sletting ok, henter ny data');
             props.refetch();
             window.alert(`'${tekst.overskrift}' slettet...`);
         }

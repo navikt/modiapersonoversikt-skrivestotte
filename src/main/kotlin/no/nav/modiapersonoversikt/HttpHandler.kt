@@ -9,7 +9,9 @@ import io.ktor.features.ContentNegotiation
 import io.ktor.features.StatusPages
 import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
-import io.ktor.http.content.*
+import io.ktor.http.content.defaultResource
+import io.ktor.http.content.resources
+import io.ktor.http.content.static
 import io.ktor.jackson.JacksonConverter
 import io.ktor.metrics.dropwizard.DropwizardMetrics
 import io.ktor.request.path
@@ -23,15 +25,20 @@ import io.prometheus.client.dropwizard.DropwizardExports
 import no.nav.modiapersonoversikt.ObjectMapperProvider.Companion.objectMapper
 import no.nav.modiapersonoversikt.routes.naisRoutes
 import no.nav.modiapersonoversikt.routes.skrivestotteRoutes
+import no.nav.modiapersonoversikt.storage.JdbcStorageProvider
 import no.nav.modiapersonoversikt.storage.StorageProvider
 import org.slf4j.event.Level
+import javax.sql.DataSource
 import no.nav.modiapersonoversikt.JwtUtil.Companion as JwtUtil
 
 fun createHttpServer(applicationState: ApplicationState,
-                     provider: StorageProvider,
                      port: Int = 7070,
                      configuration: Configuration,
+                     userDataSource: DataSource = userDataSource(),
+                     adminDatasource: DataSource = adminDataSource(),
                      useAuthentication: Boolean = true): ApplicationEngine = embeddedServer(Netty, port) {
+
+    migrateDb(adminDatasource)
 
     install(StatusPages) {
         notFoundHandler()
@@ -78,7 +85,7 @@ fun createHttpServer(applicationState: ApplicationState,
             }
 
             naisRoutes(readinessCheck = { applicationState.initialized }, livenessCheck = { applicationState.running })
-            skrivestotteRoutes(provider, useAuthentication)
+            skrivestotteRoutes(JdbcStorageProvider(userDataSource), useAuthentication)
         }
     }
 

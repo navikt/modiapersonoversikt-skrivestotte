@@ -1,6 +1,5 @@
 package no.nav.modiapersonoversikt
 
-import no.nav.modiapersonoversikt.storage.StorageService
 import org.slf4j.LoggerFactory
 import java.util.concurrent.TimeUnit
 
@@ -8,11 +7,13 @@ private val log = LoggerFactory.getLogger("modiapersonoversikt-skrivestotte.Loca
 
 fun runLocally(useAuthentication: Boolean) {
     val applicationState = ApplicationState()
+    val testDbDataSource = h2DataSource()
     val applicationServer = createHttpServer(
             applicationState,
-            StorageService(createS3Stub()),
             7070,
             Configuration(),
+            testDbDataSource,
+            testDbDataSource,
             useAuthentication
     )
 

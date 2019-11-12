@@ -43,8 +43,12 @@ dependencies {
     implementation("net.logstash.logback:logstash-logback-encoder:$logstashVersion")
     implementation("com.amazonaws:aws-java-sdk-s3:$amazonS3Version")
     implementation("com.natpryce:konfig:$konfigVersion")
+    implementation("no.nav:vault-jdbc:1.3.1")
+    implementation("org.flywaydb:flyway-core:5.2.4")
+    implementation("com.github.seratch:kotliquery:1.3.0")
 
     testImplementation("io.mockk:mockk:1.9")
+    testImplementation("com.h2database:h2:1.4.195")
 }
 
 repositories {

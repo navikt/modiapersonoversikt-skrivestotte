@@ -25,7 +25,10 @@ class StorageService(private val s3: AmazonS3) : StorageProvider {
     override fun hentTekster(tagFilter: List<String>?): Tekster =
             timed("hent_tekster") {
                 val teksterContent = s3.getObject(SKRIVESTOTTE_BUCKET_NAME, SKRIVESTOTTE_KEY_NAME)
-                val tekster: Tekster = objectMapper.readValue(teksterContent.objectContent)
+                val tekster: Tekster = if (teksterContent.objectContent.available() > 1)
+                    objectMapper.readValue(teksterContent.objectContent)
+                else
+                    emptyMap()
 
                 tagFilter
                         ?.let {
