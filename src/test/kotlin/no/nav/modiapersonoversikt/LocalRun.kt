@@ -1,6 +1,6 @@
 package no.nav.modiapersonoversikt
 
-import no.nav.modiapersonoversikt.storage.StorageService
+import no.nav.modiapersonoversikt.storage.LocalOnlyStorageService
 import org.slf4j.LoggerFactory
 import java.util.concurrent.TimeUnit
 
@@ -10,7 +10,7 @@ fun runLocally(useAuthentication: Boolean) {
     val applicationState = ApplicationState()
     val applicationServer = createHttpServer(
             applicationState,
-            StorageService(createS3Stub()),
+            LocalOnlyStorageService(),
             7070,
             Configuration(),
             useAuthentication
