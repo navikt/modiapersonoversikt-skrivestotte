@@ -44,9 +44,7 @@ spec:
       value: https://isso.adeo.no/isso/oauth2/connect/jwk_uri
     - name: ISSO_ISSUER
       value: https://isso.adeo.no:443/isso/oauth2
-    - name: DATABASE_HOST
-      value: A01DBVL009.adeo.no
-    - name: DATABASE_PORT
-      value: "5432"
-    - name: DATABASE_NAME
-      value: modiapersonoversikt-skrivestotte
+    - name: DATABASE_JDBC_URL
+      value: jdbc:postgresql://A01DBVL009.adeo.no:5432/modiapersonoversikt-skrivestotte
+    - name: VAULT_MOUNTPATH
+      value: postgresql/prod-fss/

@@ -1,12 +1,5 @@
 import com.moowork.gradle.node.npm.NpmTask
 
-val ktorVersion = "1.2.0"
-val prometheusVersion = "0.4.0"
-val logbackVersion = "1.2.3"
-val logstashVersion = "5.1"
-val amazonS3Version = "1.11.555"
-val konfigVersion = "1.6.10.0"
-
 val mainClass = "no.nav.modiapersonoversikt.ApplicationKt"
 
 plugins {
@@ -30,6 +23,8 @@ application {
     mainClassName = mainClass
 }
 
+val ktorVersion = "1.2.0"
+val prometheusVersion = "0.4.0"
 dependencies {
     implementation(kotlin("stdlib"))
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
@@ -39,10 +34,9 @@ dependencies {
     implementation("io.prometheus:simpleclient_hotspot:$prometheusVersion")
     implementation("io.prometheus:simpleclient_common:$prometheusVersion")
     implementation("io.prometheus:simpleclient_dropwizard:$prometheusVersion")
-    implementation("ch.qos.logback:logback-classic:$logbackVersion")
-    implementation("net.logstash.logback:logstash-logback-encoder:$logstashVersion")
-    implementation("com.amazonaws:aws-java-sdk-s3:$amazonS3Version")
-    implementation("com.natpryce:konfig:$konfigVersion")
+    implementation("ch.qos.logback:logback-classic:1.2.3")
+    implementation("net.logstash.logback:logstash-logback-encoder:5.1")
+    implementation("com.natpryce:konfig:1.6.10.0")
     implementation("no.nav:vault-jdbc:1.3.1")
     implementation("org.flywaydb:flyway-core:5.2.4")
     implementation("com.github.seratch:kotliquery:1.3.0")

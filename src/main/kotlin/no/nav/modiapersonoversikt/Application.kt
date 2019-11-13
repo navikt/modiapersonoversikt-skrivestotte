@@ -9,11 +9,14 @@ data class ApplicationState(var running: Boolean = true, var initialized: Boolea
 
 fun main() {
     val configuration = Configuration()
+    val dbConfig = DataSourceConfiguration(configuration)
 
     val applicationState = ApplicationState()
     val applicationServer = createHttpServer(
             applicationState = applicationState,
-            configuration = configuration
+            configuration = configuration,
+            adminDatasource = dbConfig.adminDataSource(),
+            userDataSource = dbConfig.userDataSource()
     )
 
     Runtime.getRuntime().addShutdownHook(Thread {

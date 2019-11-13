@@ -26,7 +26,6 @@ import no.nav.modiapersonoversikt.ObjectMapperProvider.Companion.objectMapper
 import no.nav.modiapersonoversikt.routes.naisRoutes
 import no.nav.modiapersonoversikt.routes.skrivestotteRoutes
 import no.nav.modiapersonoversikt.storage.JdbcStorageProvider
-import no.nav.modiapersonoversikt.storage.StorageProvider
 import org.slf4j.event.Level
 import javax.sql.DataSource
 import no.nav.modiapersonoversikt.JwtUtil.Companion as JwtUtil
@@ -34,11 +33,11 @@ import no.nav.modiapersonoversikt.JwtUtil.Companion as JwtUtil
 fun createHttpServer(applicationState: ApplicationState,
                      port: Int = 7070,
                      configuration: Configuration,
-                     userDataSource: DataSource = userDataSource(),
-                     adminDatasource: DataSource = adminDataSource(),
+                     userDataSource: DataSource,
+                     adminDatasource: DataSource,
                      useAuthentication: Boolean = true): ApplicationEngine = embeddedServer(Netty, port) {
 
-    migrateDb(adminDatasource)
+    DataSourceConfiguration.migrateDb(adminDatasource)
 
     install(StatusPages) {
         notFoundHandler()
