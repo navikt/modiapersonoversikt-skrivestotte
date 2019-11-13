@@ -36,7 +36,7 @@ class JdbcStorageProvider(dataSource: DataSource) : StorageProvider {
     }
 
     override fun hentTekster(tagFilter: List<String>?): Tekster {
-        val tekster = hentAlleTekster(session)
+        val tekster = session.transaction { tx -> hentAlleTekster(tx) }
         return tagFilter
                 ?.let { tags ->
                     tekster.filter { it.value.tags.containsAll(tags) }
@@ -67,7 +67,7 @@ class JdbcStorageProvider(dataSource: DataSource) : StorageProvider {
         return tekstTilLagring
     }
 
-    override fun slettTekst(id: UUID) = slettTekst(session, id)
+    override fun slettTekst(id: UUID) = session.transaction { tx -> slettTekst(tx, id) }
 
     fun lagreTekst(tx: Session, tekst: Tekst) {
         tx.run(
@@ -126,7 +126,7 @@ class JdbcStorageProvider(dataSource: DataSource) : StorageProvider {
 
         return mapOf(
                 *tx.run(
-                        queryOf("SELECT * FROM tekst")
+                        queryOf("SELECT * FROM tekst order by id")
                                 .map { row ->
                                     val id = UUID.fromString(row.string("id"))
 

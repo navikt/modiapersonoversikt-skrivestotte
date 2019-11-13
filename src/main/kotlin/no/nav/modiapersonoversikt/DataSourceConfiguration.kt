@@ -22,6 +22,7 @@ class DataSourceConfiguration(val env: Configuration) {
         config.jdbcUrl = env.jdbcUrl
         config.minimumIdle = 0
         config.maximumPoolSize = 4
+        config.isAutoCommit = false
 
         log.info("Creating DataSource to: ${env.jdbcUrl}")
 
