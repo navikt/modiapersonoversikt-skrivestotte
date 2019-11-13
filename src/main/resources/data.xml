@@ -1791,7 +1791,7 @@
     </contentdata>
     <contentdata>
         <overskrift>Signatur</overskrift>
-        <tags>signatur </tags>
+        <tags>signatur</tags>
         <innhold>
             <locale>nb_NO</locale>
             <fritekst>Med vennlig hilsen&#xD;
@@ -11541,6 +11541,325 @@
                 Med vennlig hilsen&#xD;
                 [saksbehandler.navn]&#xD;
                 NAV Økonomi stønad&#xD;
+            </fritekst>
+        </innhold>
+    </contentdata>
+    <contentdata>
+        <overskrift>Generell - Praksisendring EØS</overskrift>
+        <tags>ks generell eøs praksis endring nyvurdering</tags>
+        <innhold>
+            <locale>nb_NO</locale>
+            <fritekst>[bruker.navn] ringer angående YTELSE.&#xD;
+                &#xD;
+                Du opplyser om at du kan være berørt av praksisendringen på EØS-saker, fordi du oppholdt deg i [navn på EØS-land] i perioden XX - XX, og fikk stans i [ytelse] som følge av oppholdet.&#xD;
+                Du ønsker en ny vurdering av din sak, som ble behandlet i måned/år.&#xD;
+                &#xD;
+                Du har fått informasjon om:&#xD;
+                  - jeg videreformidler henvendelsen til innsatsteamet, slik at de kan vurdere om du er berørt av praksisendringen og om du i så fall har krav på kompensasjon.&#xD;
+                  - du vil bli kontaktet når vi har vurdert saken din.&#xD;
+                  - Det kan ta tid før du får svar på saken din.&#xD;
+            </fritekst>
+        </innhold>
+    </contentdata>
+    <contentdata>
+        <overskrift>Generell - EØS - andre ytelser og andre årstall</overskrift>
+        <tags>ks generell eøs andre ytelser årstall</tags>
+        <innhold>
+            <locale>nb_NO</locale>
+            <fritekst>[bruker.navn] spør om sin tidligere sak på YTELSE kan være berørt av praksisendring på eksport av trygdeytelser innenfor EU/EØS.&#xD;
+                &#xD;
+                Saken ble behandlet i MÅNED/ÅR.&#xD;
+                NAV undersøker nå om det er andre ytelser eller andre årstall som kan være berørt.&#xD;
+                &#xD;
+                Jeg ber om at du følger med på nav.no for oppdatert informasjon.&#xD;
+                Jeg sender i tillegg en beskjed til spesialenheten som behandler sakene, men gjør oppmerksom på at henvendelsen vil bli lagt på vent inntil spørsmålet om andre ytelser eller årstall er avklart.&#xD;
+            </fritekst>
+        </innhold>
+    </contentdata>
+    <contentdata>
+        <overskrift>EØS praksisendring (sykpenger)</overskrift>
+        <tags>ks eøs praksis endring nyvurdering</tags>
+        <innhold>
+            <locale>nb_NO</locale>
+            <fritekst>[bruker.navn] ringer angående sykepenger.&#xD;
+                Du opplyser om at du kan være berørt av praksisendringen på EØS-saker.&#xD;
+                Du ønsker en ny vurdering av din sak, som ble behandlet i måned/år.&#xD;
+                &#xD;
+                Jeg informerer om at:&#xD;
+                  - Jeg videreformidler henvendelsen til behandlende enhet, slik at de kan vurdere om du er berørt av praksisendringen og om du i så fall har krav på kompensasjon.&#xD;
+                  - Du vil bli kontaktet når vi har vurdert saken din.&#xD;
+                  - Det kan ta tid før du får svar på saken din.&#xD;
+            </fritekst>
+        </innhold>
+        <innhold>
+            <locale>nn_NO</locale>
+            <fritekst>[bruker.navn] ringer om sjukepengar.&#xD;
+                Du opplys om at du kan ha vorte råka av praksisendringa på EØS-saker.&#xD;
+                Du ynskjer ei ny vurdering av di sak, som vart handsama i månad/år.&#xD;
+                &#xD;
+                Eg informerar at:&#xD;
+                  - Eg sender henvendinga di til behandlande einheit, slik at vi kan vurdere om du er råka av praksisendringa og om du kan ha krav på kompensasjon.&#xD;
+                  - Du vert kontakta når vi har vurdert saka di.&#xD;
+                  - Det kan ta tid før du får svar på saka di.&#xD;
+            </fritekst>
+        </innhold>
+        <innhold>
+            <locale>en_US</locale>
+            <fritekst>[bruker.navn] has contacted NAV regarding sick leave benefit.&#xD;
+                You have informed us that you may be affected by the change in execution of EEA cases.&#xD;
+                You have requested a new evaluation of your case, which was processed MONTH/YEAR.&#xD;
+                &#xD;
+                I have informed you that:&#xD;
+                  - I will forward your message to the correct department, who will evaluate whether you are affected by the change and whether you are entitled to compensation.&#xD;
+                  - You will be contacted when we have evaluated your case.&#xD;
+                  - It may take time before you receive a response.&#xD;
+            </fritekst>
+        </innhold>
+    </contentdata>
+    <contentdata>
+        <overskrift>EØS praksisendring (sykpenger) STO</overskrift>
+        <tags>ks eøs praksis endring nyvurdering</tags>
+        <innhold>
+            <locale>nb_NO</locale>
+            <fritekst>Hei [bruker.fornavn]&#xD;
+                &#xD;
+                Du opplyser om at du kan være berørt av praksisendringen på EØS-saker.&#xD;
+                Du ønsker en ny vurdering av din sak, som ble behandlet i måned/år.&#xD;
+                &#xD;
+                Jeg informerer om at: &#xD;
+                  - Jeg videreformidler henvendelsen til behandlende enhet, slik at de kan vurdere om du er berørt av praksisendringen og om du i så fall har krav på kompensasjon.&#xD;
+                  - Du vil bli kontaktet når vi har vurdert saken din.&#xD;
+                  - Det kan ta tid før du får svar på saken din.&#xD;
+                &#xD;
+                Med vennlig hilsen&#xD;
+                [saksbehandler.fornavn]&#xD;
+                NAV Kontaktsenter&#xD;
+            </fritekst>
+        </innhold>
+        <innhold>
+            <locale>nn_NO</locale>
+            <fritekst>Hei, [bruker.fornavn]&#xD;
+                &#xD;
+                Du opplys om at du kan ha vorte råka av praksisendringa på EØS-saker.&#xD;
+                Du ynskjer ei ny vurdering av di sak, som vart handsama i månad/år.&#xD;
+                &#xD;
+                Eg informerar at: &#xD;
+                  - Eg sender henvendinga di til behandlande einheit, slik at vi kan vurdere om du er råka av praksisendringa og om du kan ha krav på kompensasjon.&#xD;
+                  - Du vert kontakta når vi har vurdert saka di.&#xD;
+                  - Det kan ta tid før du får svar på saka di.&#xD;
+                &#xD;
+                Med venleg helsing&#xD;
+                [saksbehandler.fornavn]&#xD;
+                NAV Kontaktsenter&#xD;
+            </fritekst>
+        </innhold>
+        <innhold>
+            <locale>en_US</locale>
+            <fritekst>Hi, [bruker.fornavn]&#xD;
+                &#xD;
+                You have informed us that you may be affected by the change in execution of EEA cases.&#xD;
+                You have requested a new evaluation of your case, which was processed MONTH/YEAR.&#xD;
+                &#xD;
+                I have informed you that:&#xD;
+                  - I will forward your message to the correct department, who will evaluate whether you are affected by the change and whether you are entitled to compensation.&#xD;
+                  - You will be contacted when we have evaluated your case.&#xD;
+                  - It may take time before you receive a response.&#xD;
+                &#xD;
+                Sincerely&#xD;
+                [saksbehandler.fornavn]&#xD;
+                NAV Kontaktsenter&#xD;
+            </fritekst>
+        </innhold>
+    </contentdata>
+    <contentdata>
+        <overskrift>EØS praksisendring (arbeidsavklaringspenger)</overskrift>
+        <tags>ks eøs praksis endring nyvurdering</tags>
+        <innhold>
+            <locale>nb_NO</locale>
+            <fritekst>[bruker.navn] ringer angående arbeidsavklaringspenger.&#xD;
+                Du opplyser om at du kan være berørt av praksisendringen på EØS-saker.&#xD;
+                Du ønsker en ny vurdering av din sak, som ble behandlet i måned/år.&#xD;
+                &#xD;
+                Jeg informerer om at:&#xD;
+                  - Jeg videreformidler henvendelsen til behandlende enhet, slik at de kan vurdere om du er berørt av praksisendringen og om du i så fall har krav på kompensasjon.&#xD;
+                  - Du vil bli kontaktet når vi har vurdert saken din.&#xD;
+                  - Det kan ta tid før du får svar på saken din.&#xD;
+            </fritekst>
+        </innhold>
+        <innhold>
+            <locale>nn_NO</locale>
+            <fritekst>[bruker.navn] ringer om arbeidsavklaringspengar.&#xD;
+                Du opplys om at du kan ha vorte råka av praksisendringa på EØS-saker.&#xD;
+                Du ynskjer ei ny vurdering av di sak, som vart handsama i månad/år.&#xD;
+                &#xD;
+                Eg informerar at:&#xD;
+                  - Eg sender henvendinga di til behandlande einheit, slik at vi kan vurdere om du er råka av praksisendringa og om du kan ha krav på kompensasjon.&#xD;
+                  - Du vert kontakta når vi har vurdert saka di.&#xD;
+                  - Det kan ta tid før du får svar på saka di.&#xD;
+            </fritekst>
+        </innhold>
+        <innhold>
+            <locale>en_US</locale>
+            <fritekst>[bruker.navn] has contacted NAV regarding work assessment allowance.&#xD;
+                You have informed us that you may be affected by the change in execution of EEA cases.&#xD;
+                You have requested a new evaluation of your case, which was processed MONTH/YEAR.&#xD;
+                &#xD;
+                I have informed you that:&#xD;
+                  - I will forward your message to the correct department, who will evaluate whether you are affected by the change and whether you are entitled to compensation.&#xD;
+                  - You will be contacted when we have evaluated your case.&#xD;
+                  - It may take time before you receive a response.&#xD;
+            </fritekst>
+        </innhold>
+    </contentdata>
+    <contentdata>
+        <overskrift>EØS praksisendring (arbeidsavklaringspenger) STO</overskrift>
+        <tags>ks eøs praksis endring nyvurdering</tags>
+        <innhold>
+            <locale>nb_NO</locale>
+            <fritekst>Hei [bruker.fornavn]&#xD;
+                &#xD;
+                Du opplyser om at du kan være berørt av praksisendringen på EØS-saker.&#xD;
+                Du ønsker en ny vurdering av din sak, som ble behandlet i måned/år.&#xD;
+                &#xD;
+                Jeg informerer om at: &#xD;
+                - Jeg videreformidler henvendelsen til behandlende enhet, slik at de kan vurdere om du er berørt av praksisendringen og om du i så fall har krav på kompensasjon.&#xD;
+                - Du vil bli kontaktet når vi har vurdert saken din.&#xD;
+                - Det kan ta tid før du får svar på saken din.&#xD;
+                &#xD;
+                Med vennlig hilsen&#xD;
+                [saksbehandler.fornavn]&#xD;
+                NAV Kontaktsenter&#xD;
+            </fritekst>
+        </innhold>
+        <innhold>
+            <locale>nn_NO</locale>
+            <fritekst>Hei, [bruker.fornavn]&#xD;
+                &#xD;
+                Du opplys om at du kan ha vorte råka av praksisendringa på EØS-saker.&#xD;
+                Du ynskjer ei ny vurdering av di sak, som vart handsama i månad/år.&#xD;
+                &#xD;
+                Eg informerar at: &#xD;
+                - Eg sender henvendinga di til behandlande einheit, slik at vi kan vurdere om du er råka av praksisendringa og om du kan ha krav på kompensasjon.&#xD;
+                - Du vert kontakta når vi har vurdert saka di.&#xD;
+                - Det kan ta tid før du får svar på saka di.&#xD;
+                &#xD;
+                Med venleg helsing&#xD;
+                [saksbehandler.fornavn]&#xD;
+                NAV Kontaktsenter&#xD;
+            </fritekst>
+        </innhold>
+        <innhold>
+            <locale>en_US</locale>
+            <fritekst>Hi, [bruker.fornavn]&#xD;
+                &#xD;
+                You have informed us that you may be affected by the change in execution of EEA cases.&#xD;
+                You have requested a new evaluation of your case, which was processed MONTH/YEAR.&#xD;
+                &#xD;
+                I have informed you that: &#xD;
+                  - I will forward your message to the correct department, who will evaluate whether you are affected by the change and whether you are entitled to compensation.&#xD;
+                  - You will be contacted when we have evaluated your case.&#xD;
+                  - It may take time before you receive a response.&#xD;
+                &#xD;
+                Sincerely&#xD;
+                [saksbehandler.fornavn]&#xD;
+                NAV Kontaktsenter&#xD;
+            </fritekst>
+        </innhold>
+    </contentdata>
+    <contentdata>
+        <overskrift>Pleiepenger - EØS praksisendring</overskrift>
+        <tags>ks eøs praksis endring nyvurdering</tags>
+        <innhold>
+            <locale>nb_NO</locale>
+            <fritekst>[bruker.navn] ringer angående pleiepenger.&#xD;
+                Du opplyser om at du kan være berørt av praksisendringen på EØS-saker.&#xD;
+                Du ønsker en ny vurdering av din sak, som ble behandlet i måned/år.&#xD;
+                &#xD;
+                Jeg informerer om at:&#xD;
+                  - Jeg videreformidler henvendelsen til behandlende enhet, slik at de kan vurdere om du er berørt av praksisendringen og om du i så fall har krav på kompensasjon.&#xD;
+                  - Du vil bli kontaktet når vi har vurdert saken din.&#xD;
+                  - Det kan ta tid før du får svar på saken din.&#xD;
+            </fritekst>
+        </innhold>
+        <innhold>
+            <locale>nn_NO</locale>
+            <fritekst>[bruker.navn] ringer om pleiepengar.&#xD;
+                Du opplys om at du kan ha vorte råka av praksisendringa på EØS-saker.&#xD;
+                Du ynskjer ei ny vurdering av di sak, som vart handsama i månad/år.&#xD;
+                &#xD;
+                Eg informerar at:&#xD;
+                  - Eg sender henvendinga di til behandlande einheit, slik at vi kan vurdere om du er råka av praksisendringa og om du kan ha krav på kompensasjon.&#xD;
+                  - Du vert kontakta når vi har vurdert saka di.&#xD;
+                  - Det kan ta tid før du får svar på saka di.&#xD;
+            </fritekst>
+        </innhold>
+        <innhold>
+            <locale>en_US</locale>
+            <fritekst>[bruker.navn] has contacted NAV regarding attendance allowance.&#xD;
+                You have informed us that you may be affected by the change in execution of EEA cases.&#xD;
+                You have requested a new evaluation of your case, which was processed MONTH/YEAR.&#xD;
+                &#xD;
+                I have informed you that:&#xD;
+                  - I will forward your message to the correct department, who will evaluate whether you are affected by the change and whether you are entitled to compensation.&#xD;
+                  - You will be contacted when we have evaluated your case.&#xD;
+                  - It may take time before you receive a response.&#xD;
+            </fritekst>
+        </innhold>
+    </contentdata>
+    <contentdata>
+        <overskrift>Pleiepenger - EØS praksisendring STO</overskrift>
+        <tags>ks eøs praksis endring nyvurdering</tags>
+        <innhold>
+            <locale>nb_NO</locale>
+            <fritekst>Hei [bruker.fornavn]&#xD;
+                &#xD;
+                Du opplyser om at du kan være berørt av praksisendringen på EØS-saker.&#xD;
+                Du ønsker en ny vurdering av din sak, som ble behandlet i måned/år.&#xD;
+                &#xD;
+                Jeg informerer om at:&#xD;
+                  - Jeg videreformidler henvendelsen til behandlende enhet, slik at de kan vurdere om du er berørt av praksisendringen og om du i så fall har krav på kompensasjon.&#xD;
+                  - Du vil bli kontaktet når vi har vurdert saken din.&#xD;
+                  - Det kan ta tid før du får svar på saken din.&#xD;
+                &#xD;
+                Med vennlig hilsen&#xD;
+                [saksbehandler.fornavn]&#xD;
+                NAV Kontaktsenter&#xD;
+            </fritekst>
+        </innhold>
+        <innhold>
+            <locale>nn_NO</locale>
+            <fritekst>Hei, [bruker.fornavn]&#xD;
+                &#xD;
+                Eg har sendt meldinga di om pleiepengar til ENHET/VEILEDER.&#xD;
+                Du opplys om at du kan ha vorte råka av praksisendringa på EØS-saker.&#xD;
+                Du ynskjer ei ny vurdering av di sak, som vart handsama i månad/år.&#xD;
+                &#xD;
+                Eg informerar at:&#xD;
+                  - Eg sender henvendinga di til behandlande einheit, slik at vi kan vurdere om du er råka av praksisendringa og om du kan ha krav på kompensasjon.&#xD;
+                  - Du vert kontakta når vi har vurdert saka di.&#xD;
+                  - Det kan ta tid før du får svar på saka di.&#xD;
+                &#xD;
+                Med venleg helsing&#xD;
+                [saksbehandler.fornavn]&#xD;
+                NAV Kontaktsenter&#xD;
+            </fritekst>
+        </innhold>
+        <innhold>
+            <locale>en_US</locale>
+            <fritekst>Hi, [bruker.fornavn]&#xD;
+                &#xD;
+                I have sent your message regarding attendance allowance to DEPARTMENT/CONTACT PERSON.&#xD;
+                You have informed us that you may be affected by the change in execution of EEA cases.&#xD;
+                You have requested a new evaluation of your case, which was processed MONTH/YEAR.&#xD;
+                &#xD;
+                I have informed you that:&#xD;
+                  - I will forward your message to the correct department, who will evaluate whether you are affected by the change and whether you are entitled to compensation.&#xD;
+                  - You will be contacted when we have evaluated your case.&#xD;
+                  - It may take time before you receive a response.&#xD;
+                &#xD;
+                Sincerely&#xD;
+                [saksbehandler.fornavn]&#xD;
+                NAV Kontaktsenter
             </fritekst>
         </innhold>
     </contentdata>
