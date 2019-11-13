@@ -52,7 +52,7 @@ class JdbcStorageProvider(dataSource: DataSource) : StorageProvider {
 
         session.transaction { tx ->
             slettTekst(tx, tekst.id)
-            leggTilTekst(tekst)
+            lagreTekst(tx, tekst)
         }
 
         return tekst
