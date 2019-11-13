@@ -44,11 +44,11 @@ spec:
   vault:
     enabled: true
   env:
-    - name: S3_URL
-      value: s3.nais.preprod.local
-    - name: S3_REGION
-      value: us-east-1
     - name: ISSO_JWKS_URL
       value: https://isso-q.adeo.no/isso/oauth2/connect/jwk_uri
     - name: ISSO_ISSUER
       value: https://isso-q.adeo.no:443/isso/oauth2
+    - name: DATABASE_JDBC_URL
+      value: jdbc:postgresql://b27dbvl008.preprod.local:5432/modiapersonoversikt-skrivestotte
+    - name: VAULT_MOUNTPATH
+      value: postgresql/preprod-fss

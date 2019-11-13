@@ -1,19 +1,22 @@
 package no.nav.modiapersonoversikt
 
-import no.nav.modiapersonoversikt.storage.LocalOnlyStorageService
 import org.slf4j.LoggerFactory
 import java.util.concurrent.TimeUnit
 
 private val log = LoggerFactory.getLogger("modiapersonoversikt-skrivestotte.LocalRun")
 
 fun runLocally(useAuthentication: Boolean) {
+    val configuration = Configuration()
+    val dbConfig = DataSourceConfiguration(configuration)
     val applicationState = ApplicationState()
+
     val applicationServer = createHttpServer(
-            applicationState,
-            LocalOnlyStorageService(),
-            7070,
-            Configuration(),
-            useAuthentication
+            applicationState = applicationState,
+            port = 7070,
+            configuration = Configuration(),
+            adminDatasource = dbConfig.adminDataSource(),
+            userDataSource = dbConfig.userDataSource(),
+            useAuthentication = useAuthentication
     )
 
     Runtime.getRuntime().addShutdownHook(Thread {

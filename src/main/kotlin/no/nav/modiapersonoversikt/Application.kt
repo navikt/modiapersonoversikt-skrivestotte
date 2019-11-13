@@ -1,11 +1,5 @@
 package no.nav.modiapersonoversikt
 
-import com.amazonaws.auth.AWSStaticCredentialsProvider
-import com.amazonaws.auth.BasicAWSCredentials
-import com.amazonaws.client.builder.AwsClientBuilder
-import com.amazonaws.services.s3.AmazonS3ClientBuilder
-import no.nav.modiapersonoversikt.storage.LocalOnlyStorageService
-import no.nav.modiapersonoversikt.storage.StorageService
 import org.slf4j.LoggerFactory
 import java.util.concurrent.TimeUnit
 
@@ -15,17 +9,14 @@ data class ApplicationState(var running: Boolean = true, var initialized: Boolea
 
 fun main() {
     val configuration = Configuration()
-    val credentials = BasicAWSCredentials(configuration.s3AccessKey, configuration.s3SecretKey)
-    val s3 = AmazonS3ClientBuilder.standard()
-            .withEndpointConfiguration(AwsClientBuilder.EndpointConfiguration(configuration.s3Url, configuration.s3Region))
-            .enablePathStyleAccess()
-            .withCredentials(AWSStaticCredentialsProvider(credentials)).build()
+    val dbConfig = DataSourceConfiguration(configuration)
 
     val applicationState = ApplicationState()
     val applicationServer = createHttpServer(
             applicationState = applicationState,
-            provider = LocalOnlyStorageService(),
-            configuration = configuration
+            configuration = configuration,
+            adminDatasource = dbConfig.adminDataSource(),
+            userDataSource = dbConfig.userDataSource()
     )
 
     Runtime.getRuntime().addShutdownHook(Thread {

@@ -18,6 +18,6 @@ export function put<T>(url: RequestInfo, init: RequestInit = {}) {
     return fetchJson<T>(url, { method: 'PUT', ...init });
 }
 
-export function del<T>(url: RequestInfo, init: RequestInit = {}) {
-    return fetchJson<T>(url, { method: 'DELETE', ...init });
+export function del(url: RequestInfo, init: RequestInit = {}) {
+    return fetch(url, { method: 'DELETE', ...defaultFetchConfig, ...init });
 }
