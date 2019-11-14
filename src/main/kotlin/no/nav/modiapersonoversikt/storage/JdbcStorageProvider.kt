@@ -14,11 +14,9 @@ import javax.sql.DataSource
 
 private val log = LoggerFactory.getLogger("modiapersonoversikt-skrivestotte.StorageService")
 
-class JdbcStorageProvider(dataSource: DataSource) : StorageProvider {
-    val session = sessionOf(dataSource)
-
+class JdbcStorageProvider(val dataSource: DataSource) : StorageProvider {
     init {
-        session.transaction { tx ->
+        sessionOf(dataSource).transaction { tx ->
             val antallTekster = tx.run(
                     queryOf("SELECT COUNT(*) AS antall FROM TEKST")
                             .map { row -> row.int("antall") }
@@ -36,7 +34,7 @@ class JdbcStorageProvider(dataSource: DataSource) : StorageProvider {
     }
 
     override fun hentTekster(tagFilter: List<String>?): Tekster {
-        val tekster = session.transaction { tx -> hentAlleTekster(tx) }
+        val tekster = sessionOf(dataSource).transaction { tx -> hentAlleTekster(tx) }
         return tagFilter
                 ?.let { tags ->
                     tekster.filter { it.value.tags.containsAll(tags) }
@@ -50,7 +48,7 @@ class JdbcStorageProvider(dataSource: DataSource) : StorageProvider {
             throw BadRequestException("\"id\" må være definert for oppdatering")
         }
 
-        session.transaction { tx ->
+        sessionOf(dataSource).transaction { tx ->
             slettTekst(tx, tekst.id)
             lagreTekst(tx, tekst)
         }
@@ -62,12 +60,12 @@ class JdbcStorageProvider(dataSource: DataSource) : StorageProvider {
         val id = tekst.id ?: UUID.randomUUID()
         val tekstTilLagring = tekst.copy(id = id)
 
-        session.transaction { tx -> lagreTekst(tx, tekstTilLagring) }
+        sessionOf(dataSource).transaction { tx -> lagreTekst(tx, tekstTilLagring) }
 
         return tekstTilLagring
     }
 
-    override fun slettTekst(id: UUID) = session.transaction { tx -> slettTekst(tx, id) }
+    override fun slettTekst(id: UUID) =sessionOf(dataSource).transaction { tx -> slettTekst(tx, id) }
 
     fun lagreTekst(tx: Session, tekst: Tekst) {
         tx.run(
