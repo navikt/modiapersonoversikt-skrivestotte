@@ -4,6 +4,7 @@ import io.ktor.features.BadRequestException
 import kotliquery.Session
 import kotliquery.queryOf
 import kotliquery.sessionOf
+import kotliquery.using
 import no.nav.modiapersonoversikt.XmlLoader
 import no.nav.modiapersonoversikt.model.Locale
 import no.nav.modiapersonoversikt.model.Tekst
@@ -16,25 +17,28 @@ private val log = LoggerFactory.getLogger("modiapersonoversikt-skrivestotte.Stor
 
 class JdbcStorageProvider(val dataSource: DataSource) : StorageProvider {
     init {
-        sessionOf(dataSource).transaction { tx ->
-            val antallTekster = tx.run(
-                    queryOf("SELECT COUNT(*) AS antall FROM TEKST")
-                            .map { row -> row.int("antall") }
-                            .asSingle
-            )
+        using(sessionOf(dataSource)) {
+            it.transaction { tx ->
+                val antallTekster = tx.run(
+                        queryOf("SELECT COUNT(*) AS antall FROM TEKST")
+                                .map { row -> row.int("antall") }
+                                .asSingle
+                )
 
-            log.info("Starter JdbcStorageProvider, fant $antallTekster tekster")
+                log.info("Starter JdbcStorageProvider, fant $antallTekster tekster")
 
-            if (antallTekster == 0) {
-                log.info("Ingen tekster funnet, laster fra data.xml")
-                XmlLoader.get("/data.xml")
-                        .forEach { lagreTekst(tx, it) }
+                if (antallTekster == 0) {
+                    log.info("Ingen tekster funnet, laster fra data.xml")
+                    XmlLoader.get("/data.xml")
+                            .forEach { lagreTekst(tx, it) }
+                }
             }
+
         }
     }
 
     override fun hentTekster(tagFilter: List<String>?): Tekster {
-        val tekster = sessionOf(dataSource).transaction { tx -> hentAlleTekster(tx) }
+        val tekster = using(sessionOf(dataSource)) { it .transaction { tx -> hentAlleTekster(tx) } }
         return tagFilter
                 ?.let { tags ->
                     tekster.filter { it.value.tags.containsAll(tags) }
@@ -48,9 +52,11 @@ class JdbcStorageProvider(val dataSource: DataSource) : StorageProvider {
             throw BadRequestException("\"id\" må være definert for oppdatering")
         }
 
-        sessionOf(dataSource).transaction { tx ->
-            slettTekst(tx, tekst.id)
-            lagreTekst(tx, tekst)
+        using(sessionOf(dataSource)) {
+            it.transaction { tx ->
+                slettTekst(tx, tekst.id)
+                lagreTekst(tx, tekst)
+            }
         }
 
         return tekst
@@ -60,12 +66,12 @@ class JdbcStorageProvider(val dataSource: DataSource) : StorageProvider {
         val id = tekst.id ?: UUID.randomUUID()
         val tekstTilLagring = tekst.copy(id = id)
 
-        sessionOf(dataSource).transaction { tx -> lagreTekst(tx, tekstTilLagring) }
+        using(sessionOf(dataSource)) { it.transaction { tx -> lagreTekst(tx, tekstTilLagring) } }
 
         return tekstTilLagring
     }
 
-    override fun slettTekst(id: UUID) =sessionOf(dataSource).transaction { tx -> slettTekst(tx, id) }
+    override fun slettTekst(id: UUID) = using(sessionOf(dataSource)) { it.transaction { tx -> slettTekst(tx, id) } }
 
     fun lagreTekst(tx: Session, tekst: Tekst) {
         tx.run(
