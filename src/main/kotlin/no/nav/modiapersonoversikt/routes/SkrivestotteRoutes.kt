@@ -30,20 +30,23 @@ fun Route.skrivestotteRoutes(provider: StorageProvider, useAuthentication: Boole
 
         conditionalAuthenticate(useAuthentication) {
             put {
-                call.respond(provider.oppdaterTekst(call.receive()))
+                call.respond(HttpStatusCode.Forbidden, "Midlertidig skrudd av pga migrering")
+//                call.respond(provider.oppdaterTekst(call.receive()))
             }
 
             post {
-                call.respond(provider.leggTilTekst(call.receive()))
+                call.respond(HttpStatusCode.Forbidden, "Midlertidig skrudd av pga migrering")
+//                call.respond(provider.leggTilTekst(call.receive()))
             }
 
             delete("/{id}") {
-                call.parameters["id"]
-                        ?.let {
-                            provider.slettTekst(UUID.fromString(it))
-                            call.respond(HttpStatusCode.OK, "Deleted $it")
-                        }
-                        ?: call.respond(HttpStatusCode.BadRequest)
+                call.respond(HttpStatusCode.Forbidden, "Midlertidig skrudd av pga migrering")
+//                call.parameters["id"]
+//                        ?.let {
+//                            provider.slettTekst(UUID.fromString(it))
+//                            call.respond(HttpStatusCode.OK, "Deleted $it")
+//                        }
+//                        ?: call.respond(HttpStatusCode.BadRequest)
             }
         }
     }
