@@ -22,6 +22,7 @@ class DataSourceConfiguration(val env: Configuration) {
         config.jdbcUrl = env.jdbcUrl
         config.minimumIdle = 0
         config.maximumPoolSize = 4
+        config.connectionTimeout = 5000
         config.maxLifetime = 30000
         config.isAutoCommit = false
 

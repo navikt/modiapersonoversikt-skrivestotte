@@ -12,3 +12,4 @@ src/generated
 .DS_Store
 
 src/main/resources/webapp/
+testdb.mv.db
