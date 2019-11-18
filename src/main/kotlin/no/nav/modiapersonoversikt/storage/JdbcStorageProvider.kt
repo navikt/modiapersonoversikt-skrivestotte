@@ -30,8 +30,8 @@ class JdbcStorageProvider(val dataSource: DataSource) : StorageProvider {
             log.info("Starter JdbcStorageProvider, fant $antallTekster tekster")
 
             if (antallTekster == 0) {
-                log.info("Ingen tekster funnet, laster fra data.xml")
-                XmlLoader.get("/data.xml")
+                log.info("Ingen tekster funnet, laster fra backup-august.xml")
+                XmlLoader.get("/sammenstilt.xml")
                         .forEach { lagreTekst(tx, it) }
             }
         }
