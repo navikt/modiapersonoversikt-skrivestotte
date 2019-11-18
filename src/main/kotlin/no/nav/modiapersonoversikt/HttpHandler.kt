@@ -76,6 +76,7 @@ fun createHttpServer(applicationState: ApplicationState,
         CollectorRegistry.defaultRegistry.register(DropwizardExports(registry))
     }
 
+    val storageProvider = JdbcStorageProvider(userDataSource)
     routing {
         route("modiapersonoversikt-skrivestotte") {
             static {
@@ -83,8 +84,8 @@ fun createHttpServer(applicationState: ApplicationState,
                 defaultResource("index.html", "webapp")
             }
 
-            naisRoutes(readinessCheck = { applicationState.initialized }, livenessCheck = { applicationState.running })
-            skrivestotteRoutes(JdbcStorageProvider(userDataSource), useAuthentication)
+            naisRoutes(readinessChecks = listOf({ applicationState.initialized }), livenessChecks = listOf({ applicationState.running }, { storageProvider.ping() }))
+            skrivestotteRoutes(storageProvider, useAuthentication)
         }
     }
 

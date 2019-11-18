@@ -6,17 +6,16 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.response.respondText
 import io.ktor.response.respondTextWriter
 import io.ktor.routing.Route
-import io.ktor.routing.Routing
 import io.ktor.routing.get
 import io.prometheus.client.CollectorRegistry
 import io.prometheus.client.exporter.common.TextFormat
 
-fun Route.naisRoutes(readinessCheck: () -> Boolean,
-                     livenessCheck: () -> Boolean = { true },
+fun Route.naisRoutes(readinessChecks: List<() -> Boolean>,
+                     livenessChecks: List<() -> Boolean>,
                      collectorRegistry: CollectorRegistry = CollectorRegistry.defaultRegistry) {
 
     get("/isAlive") {
-        if (livenessCheck()) {
+        if (livenessChecks.all { it() }) {
             call.respondText("Alive")
         } else {
             call.respondText("Not alive", status = HttpStatusCode.InternalServerError)
@@ -24,7 +23,7 @@ fun Route.naisRoutes(readinessCheck: () -> Boolean,
     }
 
     get("/isReady") {
-        if (readinessCheck()) {
+        if (readinessChecks.all { it() }) {
             call.respondText("Ready")
         } else {
             call.respondText("Not ready", status = HttpStatusCode.InternalServerError)

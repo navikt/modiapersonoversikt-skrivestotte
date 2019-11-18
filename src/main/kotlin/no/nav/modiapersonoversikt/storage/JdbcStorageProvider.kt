@@ -73,6 +73,21 @@ class JdbcStorageProvider(val dataSource: DataSource) : StorageProvider {
 
     override fun slettTekst(id: UUID) = transactional(dataSource) { tx -> slettTekst(tx, id) }
 
+    fun ping(): Boolean {
+        val status: String = try {
+            transactional(dataSource) { tx ->
+                tx.run(queryOf("select 'ok' as status").map { row ->
+                    row.string("status")
+                }.asSingle)
+            } ?: "nok ok"
+        } catch (e: Exception) {
+            log.error("Ping Database failed", e)
+            "not ok"
+        }
+
+        return status == "ok"
+    }
+
     fun lagreTekst(tx: Session, tekst: Tekst) {
         tx.run(
                 queryOf(
