@@ -19,6 +19,7 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+          continue-on-error: true     
       - name: Install dependencies
         run: npm ci
       - name: Test
@@ -38,6 +39,7 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+          continue-on-error: true  
       - name: Build
         run: gradle build jar
       - name: Publish Docker image
