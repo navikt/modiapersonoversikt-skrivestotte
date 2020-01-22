@@ -21,7 +21,7 @@ jobs:
             ${{ runner.os }}-gradle-
         continue-on-error: true     
       - name: Build
-        run: gradle build jar
+        run:  ./gradlew test build jar
 
   build-and-push:
     name: Build and push Docker container
