@@ -37,7 +37,7 @@ jobs:
             ${{ runner.os }}-gradle-
         continue-on-error: true  
       - name: Build
-        run: gradle build jar
+        run: ./gradlew test build jar
       - name: Publish Docker image
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
