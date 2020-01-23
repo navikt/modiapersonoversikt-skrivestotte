@@ -37,7 +37,7 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-        continue-on-error: true
+        continue-on-error: true        
       - name: Build
         run: ./gradlew test build jar
       - name: Publish Docker image
