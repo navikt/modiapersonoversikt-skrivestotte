@@ -19,9 +19,7 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-        continue-on-error: true     
-      - name: Make gradlew executable
-        run: chmod +x ./gradlew
+        continue-on-error: true
       - name: Build
         run:  ./gradlew test build jar
 
