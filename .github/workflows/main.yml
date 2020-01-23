@@ -37,9 +37,7 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-        continue-on-error: true  
-      - name: Make gradlew executable
-        run: chmod +x ./gradlew  
+        continue-on-error: true        
       - name: Build
         run: ./gradlew test build jar
       - name: Publish Docker image
@@ -62,21 +60,7 @@ jobs:
           PRINT_PAYLOAD: true
           CLUSTER: dev-fss
           RESOURCE: .nais/qa-template.yaml
-          VARS: .nais/q0.json
-      - uses: nais/deploy/actions/deploy@v1
-        env:
-          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
-          PRINT_PAYLOAD: true
-          CLUSTER: dev-fss
-          RESOURCE: .nais/qa-template.yaml
-          VARS: .nais/q1.json
-      - uses: nais/deploy/actions/deploy@v1
-        env:
-          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
-          PRINT_PAYLOAD: true
-          CLUSTER: dev-fss
-          RESOURCE: .nais/qa-template.yaml
-          VARS: .nais/q6.json
+          VARS: .nais/default.json
 
   deploy-prod:
     name: Deploy to prod
