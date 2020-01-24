@@ -2,7 +2,7 @@ apiVersion: "nais.io/v1alpha1"
 kind: "Application"
 metadata:
   name: modiapersonoversikt-skrivestotte
-  namespace: {{ namespace }}
+  namespace: default
   labels:
     team: personoversikt
 spec:

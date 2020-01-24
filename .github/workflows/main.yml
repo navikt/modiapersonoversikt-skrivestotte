@@ -21,7 +21,7 @@ jobs:
             ${{ runner.os }}-gradle-
         continue-on-error: true
       - name: Build
-        run:  ./gradlew test build jar
+        run:  ./gradlew build
 
   build-and-push:
     name: Build and push Docker container
@@ -35,9 +35,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-        continue-on-error: true        
+        continue-on-error: true
       - name: Build
-        run: ./gradlew test build jar
+        run: ./gradlew build
       - name: Publish Docker image
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -58,7 +58,6 @@ jobs:
           PRINT_PAYLOAD: true
           CLUSTER: dev-fss
           RESOURCE: .nais/qa-template.yaml
-          VARS: .nais/default.json
 
   deploy-prod:
     name: Deploy to prod
