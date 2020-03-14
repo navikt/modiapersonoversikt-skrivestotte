@@ -25,6 +25,7 @@ import io.prometheus.client.dropwizard.DropwizardExports
 import no.nav.modiapersonoversikt.ObjectMapperProvider.Companion.objectMapper
 import no.nav.modiapersonoversikt.routes.naisRoutes
 import no.nav.modiapersonoversikt.routes.skrivestotteRoutes
+import no.nav.modiapersonoversikt.storage.JdbcStatisticsProvider
 import no.nav.modiapersonoversikt.storage.JdbcStorageProvider
 import org.slf4j.event.Level
 import javax.sql.DataSource
@@ -77,6 +78,7 @@ fun createHttpServer(applicationState: ApplicationState,
     }
 
     val storageProvider = JdbcStorageProvider(userDataSource)
+    val statisticsProvider = JdbcStatisticsProvider(userDataSource)
     routing {
         route("modiapersonoversikt-skrivestotte") {
             static {
@@ -85,7 +87,7 @@ fun createHttpServer(applicationState: ApplicationState,
             }
 
             naisRoutes(readinessChecks = listOf({ applicationState.initialized }), livenessChecks = listOf({ applicationState.running }, { storageProvider.ping() }))
-            skrivestotteRoutes(storageProvider, useAuthentication)
+            skrivestotteRoutes(storageProvider, statisticsProvider, useAuthentication)
         }
     }
 

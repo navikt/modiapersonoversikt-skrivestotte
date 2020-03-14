@@ -12,12 +12,6 @@ import javax.sql.DataSource
 
 private val log = LoggerFactory.getLogger("modiapersonoversikt-skrivestotte.StorageService")
 
-private fun <A> transactional(dataSource: DataSource, operation: (TransactionalSession) -> A): A {
-    return using(sessionOf(dataSource)) { session ->
-        session.transaction(operation)
-    }
-}
-
 class JdbcStorageProvider(val dataSource: DataSource) : StorageProvider {
     init {
         transactional(dataSource) { tx ->
@@ -145,7 +139,12 @@ class JdbcStorageProvider(val dataSource: DataSource) : StorageProvider {
 
         return mapOf(
                 *tx.run(
-                        queryOf("SELECT * FROM tekst order by id")
+                        queryOf(
+                            """
+                                SELECT * FROM tekst t
+                                LEFT JOIN statistikk s ON (t.id = s.id)
+                                ORDER BY s.brukt DESC, t.overskrift
+                            """.trimIndent())
                                 .map { row ->
                                     val id = UUID.fromString(row.string("id"))
 

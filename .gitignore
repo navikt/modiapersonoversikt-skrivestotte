@@ -13,3 +13,4 @@ src/generated
 
 src/main/resources/webapp/
 testdb.mv.db
+testdb.trace.db
