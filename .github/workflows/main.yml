@@ -13,13 +13,13 @@ jobs:
     if: github.ref != 'refs/heads/dev' && github.ref != 'refs/heads/master'
     steps:
       - uses: actions/checkout@v1
-      - uses: actions/cache@preview
+      - uses: actions/cache@v1
         with:
           path: ~/.gradle
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/build.gradle.kts') }}
           restore-keys: |
-            ${{ runner.os }}-gradle-
-        continue-on-error: true
+            ${{ runner.os }}-gradle-        
+          continue-on-error: true  
       - name: Build
         run:  ./gradlew build
 
@@ -29,10 +29,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - uses: actions/cache@preview
+      - uses: actions/cache@v1
         with:
           path: ~/.gradle
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/build.gradle.kts') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
         continue-on-error: true
