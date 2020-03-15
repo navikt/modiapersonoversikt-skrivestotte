@@ -30,7 +30,7 @@ class JdbcStatisticsProvider(val dataSource: DataSource) : StatisticsProvider {
     private fun hentStatistikk(tx: Session, id: UUID): Int {
         val lagretVerdi: Int? = tx.run(
                 queryOf(
-                        "SELECT * FROM $table WHERE id = :id",
+                        "SELECT * FROM $table WHERE id = :id FOR UPDATE",
                         mapOf("id" to id.toString())
                 )
                         .map { row -> row.int("brukt") }
