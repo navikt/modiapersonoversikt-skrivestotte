@@ -39,7 +39,7 @@ function TekstListeElement(props: { tekst: Tekst; checked: UUID, onChange: React
 function matcher(sok: string, checked: UUID) {
     const fragmenter = sok.toLocaleLowerCase().split(' ');
     return (tekst: Tekst) => {
-        const corpus = `${tekst.overskrift} ${tekst.tags.join(' ')} ${Object.values(tekst.innhold).join(' ')}`.toLocaleLowerCase();
+        const corpus = `${tekst.id} ${tekst.overskrift} ${tekst.tags.join(' ')} ${Object.values(tekst.innhold).join(' ')}`.toLocaleLowerCase();
         return tekst.id === checked || fragmenter.every((fragment) => corpus.includes(fragment));
     }
 }
