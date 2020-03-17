@@ -83,14 +83,14 @@ class JdbcStatisticsProvider(private val dataSource: DataSource, private val con
 
     private fun createSqlInterval(amount: Long, unit: PostgreSqlIntervalUnits): String {
         if (configuration.jdbcUrl.contains(":h2:")) {
-            val fraction = Duration.of(amount, unit.chronoUnit).toSeconds().toDouble() / secondsInADay;
+            val fraction = Duration.of(amount, unit.chronoUnit).seconds.toDouble() / secondsInADay;
             return fraction.toString()
         }
         return "INTERVAL '$amount ${unit.name}'"
     }
 }
 
-val secondsInADay : Long = Duration.ofDays(1).toSeconds()
+val secondsInADay : Long = Duration.ofDays(1).seconds
 enum class PostgreSqlIntervalUnits(val chronoUnit: ChronoUnit) {
     SECONDS(ChronoUnit.SECONDS),
     MINUTES(ChronoUnit.MINUTES),
