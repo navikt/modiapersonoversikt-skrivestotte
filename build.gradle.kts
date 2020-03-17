@@ -4,7 +4,7 @@ val mainClass = "no.nav.modiapersonoversikt.ApplicationKt"
 
 plugins {
     application
-    kotlin("jvm") version "1.3.21"
+    kotlin("jvm") version "1.3.70"
     id("com.moowork.node") version "1.2.0"
 }
 
@@ -31,6 +31,8 @@ dependencies {
     implementation("io.ktor:ktor-jackson:$ktorVersion")
     implementation("io.ktor:ktor-metrics:$ktorVersion")
     implementation("io.ktor:ktor-client-apache:$ktorVersion")
+    implementation("io.ktor:ktor-client-json:$ktorVersion")
+    implementation("io.ktor:ktor-client-gson:$ktorVersion")
     implementation("io.prometheus:simpleclient_hotspot:$prometheusVersion")
     implementation("io.prometheus:simpleclient_common:$prometheusVersion")
     implementation("io.prometheus:simpleclient_dropwizard:$prometheusVersion")
