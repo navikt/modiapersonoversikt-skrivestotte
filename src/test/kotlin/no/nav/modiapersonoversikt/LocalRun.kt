@@ -22,7 +22,7 @@ fun runLocally(useAuthentication: Boolean) {
     Runtime.getRuntime().addShutdownHook(Thread {
         log.info("Shutdown hook called, shutting down gracefully")
         applicationState.initialized = false
-        applicationServer.stop(1, 1, TimeUnit.SECONDS)
+        applicationServer.stop(1000, 1000)
     })
 
     applicationServer.start(wait = true)
