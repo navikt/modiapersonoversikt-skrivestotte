@@ -22,7 +22,7 @@ fun main() {
     Runtime.getRuntime().addShutdownHook(Thread {
         log.info("Shutdown hook called, shutting down gracefully")
         applicationState.initialized = false
-        applicationServer.stop(5, 5, TimeUnit.SECONDS)
+        applicationServer.stop(5000, 5000)
     })
 
     applicationServer.start(wait = true)

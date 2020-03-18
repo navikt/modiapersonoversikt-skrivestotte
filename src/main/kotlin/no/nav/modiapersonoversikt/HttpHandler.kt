@@ -25,12 +25,17 @@ import io.prometheus.client.dropwizard.DropwizardExports
 import no.nav.modiapersonoversikt.ObjectMapperProvider.Companion.objectMapper
 import no.nav.modiapersonoversikt.routes.naisRoutes
 import no.nav.modiapersonoversikt.routes.skrivestotteRoutes
+import no.nav.modiapersonoversikt.service.LeaderElectorService
 import no.nav.modiapersonoversikt.storage.JdbcStatisticsProvider
 import no.nav.modiapersonoversikt.storage.JdbcStorageProvider
 import org.slf4j.event.Level
+import java.util.*
 import javax.sql.DataSource
+import kotlin.concurrent.schedule
+import kotlin.system.measureTimeMillis
 import no.nav.modiapersonoversikt.JwtUtil.Companion as JwtUtil
 
+private const val FEM_MINUTTER : Long = 5 * 60 * 1000
 fun createHttpServer(applicationState: ApplicationState,
                      port: Int = 7070,
                      configuration: Configuration,
@@ -77,8 +82,18 @@ fun createHttpServer(applicationState: ApplicationState,
         CollectorRegistry.defaultRegistry.register(DropwizardExports(registry))
     }
 
+    val leaderElectorService = LeaderElectorService(configuration)
     val storageProvider = JdbcStorageProvider(userDataSource)
-    val statisticsProvider = JdbcStatisticsProvider(userDataSource)
+    val statisticsProvider = JdbcStatisticsProvider(userDataSource, configuration)
+
+    Timer().schedule(FEM_MINUTTER, FEM_MINUTTER) {
+        if (leaderElectorService.isLeader()) {
+            measureTimeMillis("refreshStatistikk") {
+                statisticsProvider.refreshStatistikk()
+            }
+        }
+    }
+
     routing {
         route("modiapersonoversikt-skrivestotte") {
             static {

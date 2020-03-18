@@ -12,7 +12,7 @@ import javax.sql.DataSource
 
 private val log = LoggerFactory.getLogger("modiapersonoversikt-skrivestotte.StorageService")
 
-class JdbcStorageProvider(val dataSource: DataSource) : StorageProvider {
+class JdbcStorageProvider(private val dataSource: DataSource) : StorageProvider {
     init {
         transactional(dataSource) { tx ->
             val antallTekster = tx.run(
