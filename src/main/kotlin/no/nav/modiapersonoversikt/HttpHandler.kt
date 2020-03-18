@@ -83,7 +83,7 @@ fun createHttpServer(applicationState: ApplicationState,
     }
 
     val leaderElectorService = LeaderElectorService(configuration)
-    val storageProvider = JdbcStorageProvider(userDataSource)
+    val storageProvider = JdbcStorageProvider(userDataSource, configuration)
     val statisticsProvider = JdbcStatisticsProvider(userDataSource, configuration)
 
     Timer().schedule(FEM_MINUTTER, FEM_MINUTTER) {
