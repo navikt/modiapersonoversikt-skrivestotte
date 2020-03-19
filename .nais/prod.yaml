@@ -47,3 +47,5 @@ spec:
       value: "jdbc:postgresql://A01DBVL009.adeo.no:5432/modiapersonoversikt-skrivestotte"
     - name: VAULT_MOUNTPATH
       value: "postgresql/prod-fss/"
+    - name: USE_STATISTICS_SORT
+      value: false
