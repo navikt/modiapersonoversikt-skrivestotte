@@ -38,6 +38,7 @@ spec:
     cpuThresholdPercentage: 90
   vault:
     enabled: true
+  leaderElection: true
   env:
     - name: ISSO_JWKS_URL
       value: "https://isso.adeo.no/isso/oauth2/connect/jwk_uri"
@@ -47,3 +48,5 @@ spec:
       value: "jdbc:postgresql://A01DBVL009.adeo.no:5432/modiapersonoversikt-skrivestotte"
     - name: VAULT_MOUNTPATH
       value: "postgresql/prod-fss/"
+    - name: USE_STATISTICS_SORT
+      value: false

@@ -7,6 +7,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.request.receive
 import io.ktor.response.respond
 import io.ktor.routing.*
+import no.nav.modiapersonoversikt.storage.StatisticsProvider
 import no.nav.modiapersonoversikt.storage.StorageProvider
 import java.util.*
 
@@ -20,8 +21,7 @@ fun Route.conditionalAuthenticate(useAuthentication: Boolean, build: Route.() ->
 }
 
 
-fun Route.skrivestotteRoutes(provider: StorageProvider, useAuthentication: Boolean) {
-
+fun Route.skrivestotteRoutes(provider: StorageProvider, statistics: StatisticsProvider, useAuthentication: Boolean) {
     route("/skrivestotte") {
         get {
             val tagsFilter = call.request.queryParameters.getAll("tags")
@@ -44,6 +44,22 @@ fun Route.skrivestotteRoutes(provider: StorageProvider, useAuthentication: Boole
                             call.respond(HttpStatusCode.OK, "Deleted $it")
                         }
                         ?: call.respond(HttpStatusCode.BadRequest)
+            }
+
+            route("/statistikk") {
+                get {
+                    call.respond(statistics.hentStatistikk())
+                }
+
+                post("/{id}") {
+                    call.parameters["id"]
+                            ?.let { UUID.fromString(it) }
+                            ?.let {
+                                statistics.rapporterBruk(it)
+                                call.respond(HttpStatusCode.OK)
+                            }
+                            ?: call.respond(HttpStatusCode.BadRequest)
+                }
             }
         }
     }

@@ -2,6 +2,7 @@ package no.nav.modiapersonoversikt.storage
 
 import io.ktor.features.BadRequestException
 import kotliquery.*
+import no.nav.modiapersonoversikt.Configuration
 import no.nav.modiapersonoversikt.XmlLoader
 import no.nav.modiapersonoversikt.model.Locale
 import no.nav.modiapersonoversikt.model.Tekst
@@ -12,13 +13,7 @@ import javax.sql.DataSource
 
 private val log = LoggerFactory.getLogger("modiapersonoversikt-skrivestotte.StorageService")
 
-private fun <A> transactional(dataSource: DataSource, operation: (TransactionalSession) -> A): A {
-    return using(sessionOf(dataSource)) { session ->
-        session.transaction(operation)
-    }
-}
-
-class JdbcStorageProvider(val dataSource: DataSource) : StorageProvider {
+class JdbcStorageProvider(private val dataSource: DataSource, private val configuration: Configuration) : StorageProvider {
     init {
         transactional(dataSource) { tx ->
             val antallTekster = tx.run(
@@ -143,10 +138,19 @@ class JdbcStorageProvider(val dataSource: DataSource) : StorageProvider {
                     )
                 }
 
+        val hentAlleQuery = when(configuration.useStatisticsSort) {
+            true -> queryOf(
+                    """
+                        SELECT * FROM tekst t
+                        LEFT JOIN statistikk s ON (t.id = s.id)
+                        ORDER BY s.brukt DESC, t.overskrift
+                    """.trimIndent())
+            false -> queryOf("SELECT * FROM tekst order by id")
+
+        }
+
         return mapOf(
-                *tx.run(
-                        queryOf("SELECT * FROM tekst order by id")
-                                .map { row ->
+                *tx.run(hentAlleQuery.map { row ->
                                     val id = UUID.fromString(row.string("id"))
 
                                     id to Tekst(
