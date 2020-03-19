@@ -54,4 +54,4 @@ spec:
     - name: VAULT_MOUNTPATH
       value: "postgresql/preprod-fss"
     - name: USE_STATISTICS_SORT
-      value: false
+      value: "false"
