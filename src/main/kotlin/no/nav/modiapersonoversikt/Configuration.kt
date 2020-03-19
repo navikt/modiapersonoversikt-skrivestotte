@@ -23,9 +23,17 @@ data class Configuration(
         val jwtIssuer: String = config()[Key("ISSO_ISSUER", stringType)],
         val jdbcUrl: String = config()[Key("DATABASE_JDBC_URL", stringType)],
         val vaultMountpath: String = config()[Key("VAULT_MOUNTPATH", stringType)],
-        val electorPath: String = config()[Key("ELECTOR_PATH", stringType)],
+        val electorPath: String = createUrl(config()[Key("ELECTOR_PATH", stringType)]),
         val useStatisticsSort: Boolean = config()[Key("USE_STATISTICS_SORT", booleanType)]
 )
+
+private fun createUrl(path: String): String =
+        if (path.startsWith("http")) {
+            path
+        } else {
+            "http://$path"
+        }
+
 
 private fun config() = ConfigurationProperties.systemProperties() overriding
         EnvironmentVariables overriding
