@@ -35,7 +35,6 @@ import kotlin.concurrent.schedule
 import kotlin.system.measureTimeMillis
 import no.nav.modiapersonoversikt.JwtUtil.Companion as JwtUtil
 
-private const val TJUE_SEKUNDER : Long = 20 * 1000
 private const val FEM_MINUTTER : Long = 5 * 60 * 1000
 fun createHttpServer(applicationState: ApplicationState,
                      port: Int = 7070,
@@ -87,7 +86,7 @@ fun createHttpServer(applicationState: ApplicationState,
     val storageProvider = JdbcStorageProvider(userDataSource, configuration)
     val statisticsProvider = JdbcStatisticsProvider(userDataSource, configuration)
 
-    Timer().schedule(TJUE_SEKUNDER, FEM_MINUTTER) {
+    Timer().schedule(FEM_MINUTTER, FEM_MINUTTER) {
         if (leaderElectorService.isLeader()) {
             measureTimeMillis("refreshStatistikk") {
                 statisticsProvider.refreshStatistikk()
