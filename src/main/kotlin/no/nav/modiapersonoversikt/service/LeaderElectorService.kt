@@ -1,5 +1,6 @@
 package no.nav.modiapersonoversikt.service
 
+import com.google.gson.Gson
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.apache.Apache
 import io.ktor.client.features.json.GsonSerializer
@@ -13,11 +14,8 @@ import org.slf4j.LoggerFactory
 import java.lang.Exception
 import java.net.InetAddress
 
-private val client = HttpClient(Apache) {
-    install(JsonFeature) {
-        serializer = GsonSerializer()
-    }
-}
+private val client = HttpClient(Apache)
+private val gson = Gson()
 
 private val log: Logger = LoggerFactory.getLogger(LeaderElectorService::class.java)
 data class LeaderElectorResponse(val name: String)
@@ -37,10 +35,11 @@ class LeaderElectorService(val configuration: Configuration) {
         }
     }
 
-    private fun getLeader(): LeaderElectorResponse {
+    internal fun getLeader(): LeaderElectorResponse {
         return try {
             runBlocking {
-                client.get<LeaderElectorResponse>(configuration.electorPath)
+                val response = client.get<String>(configuration.electorPath)
+                gson.fromJson(response, LeaderElectorResponse::class.java)
             }
         } catch (e: Exception) {
             log.error("Could not get leader from ${configuration.electorPath}", e)
