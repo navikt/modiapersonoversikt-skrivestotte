@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory
 import java.lang.Exception
 import java.net.InetAddress
 
-private val clientHolder = HttpClient(Apache) {
+private val client = HttpClient(Apache) {
     install(JsonFeature) {
         serializer = GsonSerializer()
     }
@@ -40,7 +40,7 @@ class LeaderElectorService(val configuration: Configuration) {
     private fun getLeader(): LeaderElectorResponse {
         return try {
             runBlocking {
-                clientHolder.use{ client -> client.get<LeaderElectorResponse>(configuration.electorPath) }
+                client.get<LeaderElectorResponse>(configuration.electorPath)
             }
         } catch (e: Exception) {
             log.error("Could not get leader from ${configuration.electorPath}", e)
