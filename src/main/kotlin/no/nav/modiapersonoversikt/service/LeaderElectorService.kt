@@ -29,6 +29,7 @@ class LeaderElectorService(val configuration: Configuration) {
                 val leader = getLeader()
                 val hostname = InetAddress.getLocalHost().hostAddress
 
+                log.info("Comparison $leader $hostname")
                 hostname == leader.name
             }
 
