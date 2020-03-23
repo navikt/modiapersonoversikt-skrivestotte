@@ -1,10 +1,14 @@
 import com.moowork.gradle.node.npm.NpmTask
 
 val mainClass = "no.nav.modiapersonoversikt.ApplicationKt"
+val kotlinVersion = "1.3.70"
+val ktorVersion = "1.3.1"
+val prometheusVersion = "0.4.0"
+val spekVersion = "1.2.1"
 
 plugins {
     application
-    kotlin("jvm") version "1.3.21"
+    kotlin("jvm") version "1.3.70"
     id("com.moowork.node") version "1.2.0"
 }
 
@@ -22,14 +26,15 @@ application {
     mainClassName = mainClass
 }
 
-val ktorVersion = "1.2.0"
-val prometheusVersion = "0.4.0"
 dependencies {
     implementation(kotlin("stdlib"))
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
     implementation("io.ktor:ktor-auth-jwt:$ktorVersion")
     implementation("io.ktor:ktor-jackson:$ktorVersion")
     implementation("io.ktor:ktor-metrics:$ktorVersion")
+    implementation("io.ktor:ktor-client-apache:$ktorVersion")
+    implementation("io.ktor:ktor-client-gson:$ktorVersion")
+    implementation("com.squareup.okhttp3:mockwebserver:4.4.0")
     implementation("io.prometheus:simpleclient_hotspot:$prometheusVersion")
     implementation("io.prometheus:simpleclient_common:$prometheusVersion")
     implementation("io.prometheus:simpleclient_dropwizard:$prometheusVersion")
@@ -37,15 +42,25 @@ dependencies {
     implementation("net.logstash.logback:logstash-logback-encoder:5.1")
     implementation("com.natpryce:konfig:1.6.10.0")
     implementation("no.nav:vault-jdbc:1.3.1")
-    implementation("org.flywaydb:flyway-core:5.2.4")
+    implementation("org.flywaydb:flyway-core:6.3.1")
     implementation("com.github.seratch:kotliquery:1.3.0")
 
     testImplementation("io.mockk:mockk:1.9")
-    testImplementation("com.h2database:h2:1.4.195")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.3.0")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.3.0")
+    testImplementation("org.jetbrains.spek:spek-api:$spekVersion") {
+        exclude(group = "org.jetbrains.kotlin")
+    }
+    testRuntimeOnly("org.jetbrains.spek:spek-junit-platform-engine:$spekVersion") {
+        exclude(group = "org.junit.platform")
+        exclude(group = "org.jetbrains.kotlin")
+    }
+    testRuntimeOnly("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
+    testImplementation("com.h2database:h2:1.4.200")
 }
 
 repositories {
-    
+
     maven("https://plugins.gradle.org/m2/")
     maven("https://dl.bintray.com/kotlin/ktor/")
     jcenter()
@@ -60,6 +75,10 @@ node {
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
 }
 
 tasks.withType<Wrapper> {

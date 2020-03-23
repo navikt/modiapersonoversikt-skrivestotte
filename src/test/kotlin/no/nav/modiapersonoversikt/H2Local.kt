@@ -4,10 +4,10 @@ import org.h2.tools.Server
 import java.util.*
 
 fun main() {
-    val tcpServer: Server = Server.createTcpServer("-tcpAllowOthers", "-tcpPort", "8090")
+    val tcpServer: Server = Server.createTcpServer("-tcpAllowOthers", "-tcpPort", "8090", "-ifNotExists")
     tcpServer.start()
 
-    val webServer: Server = Server.createWebServer("-web", "-webAllowOthers", "-webPort", "8091")
+    val webServer: Server = Server.createWebServer("-web", "-webAllowOthers", "-webPort", "8091", "-ifNotExists")
     webServer.start()
 
     println("TcpPort: ${tcpServer.url}")
