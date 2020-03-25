@@ -24,7 +24,8 @@ function Application(props: Props) {
         .map(() => ({
             overskrift: '',
             tags: [],
-            innhold: {}
+            innhold: {},
+            vekttall: 0
         }));
 
     const visEditorFor = skalLeggeTilNy.or(checkedTekst);

@@ -16,6 +16,7 @@ import * as Fetcher from './fetch-utils';
 import LocaleEditor from "./localeeditor";
 import './tekstereditor.less';
 import {getTekst} from "./utils";
+import TekstidOgBruk from "./tekstid-og-bruk";
 
 interface Props {
     visEditor: ObjectState<boolean>;
@@ -124,7 +125,7 @@ function Tekstereditor(props: Props) {
             return (
                 <form className="application__editor tekstereditor" onSubmit={formState.onSubmit(submitHandler)}>
                     {props.visEditor.value && <h3>Ny tekst</h3>}
-                    {!props.visEditor.value && <Input label="Tekst-id" value={tekst.id} className="input--disabled" aria-disabled="true" />}
+                    <TekstidOgBruk vis={!props.visEditor.value} tekstId={tekst.id} vekttall={tekst.vekttall}/>
 
                     <Input label="Overskrift" value={overskrift.value} onChange={overskrift.onChange}/>
                     <Input label="Tags, skill med mellomrom:" value={tags.value} onChange={tags.onChange}/>
