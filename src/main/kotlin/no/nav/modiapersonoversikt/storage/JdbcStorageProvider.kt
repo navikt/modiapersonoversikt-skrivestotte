@@ -1,7 +1,8 @@
 package no.nav.modiapersonoversikt.storage
 
 import io.ktor.features.BadRequestException
-import kotliquery.*
+import kotliquery.Session
+import kotliquery.queryOf
 import no.nav.modiapersonoversikt.Configuration
 import no.nav.modiapersonoversikt.XmlLoader
 import no.nav.modiapersonoversikt.model.Locale
@@ -138,29 +139,34 @@ class JdbcStorageProvider(private val dataSource: DataSource, private val config
                     )
                 }
 
-        val hentAlleQuery = when(configuration.useStatisticsSort) {
+        val hentAlleQuery = when (configuration.useStatisticsSort) {
             true -> queryOf(
                     """
                         SELECT * FROM tekst t
                         LEFT JOIN statistikk s ON (t.id = s.id)
                         ORDER BY s.brukt DESC, t.overskrift
                     """.trimIndent())
-            false -> queryOf("SELECT * FROM tekst order by id")
+            false -> queryOf("""
+                SELECT * FROM tekst t
+                LEFT JOIN statistikk s ON (t.id = s.id) 
+                ORDER BY t.id
+            """.trimIndent())
 
         }
 
         return mapOf(
                 *tx.run(hentAlleQuery.map { row ->
-                                    val id = UUID.fromString(row.string("id"))
+                    val id = UUID.fromString(row.string("id"))
 
-                                    id to Tekst(
-                                            id,
-                                            row.string("overskrift"),
-                                            row.string("tags").split("|"),
-                                            innhold[row.string("id")] ?: emptyMap()
-                                    )
-                                }
-                                .asList
+                    id to Tekst(
+                            id,
+                            row.string("overskrift"),
+                            row.string("tags").split("|"),
+                            innhold[row.string("id")] ?: emptyMap(),
+                            row.intOrNull("brukt") ?: 0
+                    )
+                }
+                        .asList
                 ).toTypedArray()
         )
     }
