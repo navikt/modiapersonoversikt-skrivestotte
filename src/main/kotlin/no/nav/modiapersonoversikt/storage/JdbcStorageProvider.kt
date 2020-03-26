@@ -33,8 +33,8 @@ class JdbcStorageProvider(private val dataSource: DataSource, private val config
         }
     }
 
-    override fun hentTekster(tagFilter: List<String>?): Tekster {
-        val tekster = transactional(dataSource) { tx -> hentAlleTekster(tx) }
+    override fun hentTekster(tagFilter: List<String>?, sorterBasertPaBruk: Boolean): Tekster {
+        val tekster = transactional(dataSource) { tx -> hentAlleTekster(tx, sorterBasertPaBruk) }
         return tagFilter
                 ?.let { tags ->
                     tekster.filter { it.value.tags.containsAll(tags) }
@@ -119,7 +119,7 @@ class JdbcStorageProvider(private val dataSource: DataSource, private val config
         )
     }
 
-    private fun hentAlleTekster(tx: Session): Tekster {
+    private fun hentAlleTekster(tx: Session, sorterBasertPaBruk: Boolean): Tekster {
         val innhold = tx.run(
                 queryOf("SELECT * FROM innhold")
                         .map { row ->
@@ -139,7 +139,7 @@ class JdbcStorageProvider(private val dataSource: DataSource, private val config
                     )
                 }
 
-        val hentAlleQuery = when (configuration.useStatisticsSort) {
+        val hentAlleQuery = when (configuration.useStatisticsSort || sorterBasertPaBruk) {
             true -> queryOf(
                     """
                         SELECT * FROM tekst t

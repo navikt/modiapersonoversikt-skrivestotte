@@ -25,7 +25,8 @@ fun Route.skrivestotteRoutes(provider: StorageProvider, statistics: StatisticsPr
     route("/skrivestotte") {
         get {
             val tagsFilter = call.request.queryParameters.getAll("tags")
-            call.respond(provider.hentTekster(tagsFilter))
+            val enableUsageSort = call.request.queryParameters["usageSort"]?.toBoolean() ?: false
+            call.respond(provider.hentTekster(tagsFilter, enableUsageSort))
         }
 
         conditionalAuthenticate(useAuthentication) {

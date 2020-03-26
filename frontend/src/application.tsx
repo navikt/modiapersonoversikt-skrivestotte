@@ -13,7 +13,7 @@ interface Props {
 
 function Application(props: Props) {
     const visEditor = useObjectState<boolean>(false);
-    const fetchState = useFetch<Tekster>('/modiapersonoversikt-skrivestotte/skrivestotte');
+    const fetchState = useFetch<Tekster>('/modiapersonoversikt-skrivestotte/skrivestotte?usageSort=true');
     const tekster = fetchState.data.withDefault<Tekster>({});
 
     const sokFS = useFieldState('');
