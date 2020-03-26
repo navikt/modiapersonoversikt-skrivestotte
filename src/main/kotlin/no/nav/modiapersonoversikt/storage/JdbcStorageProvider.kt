@@ -144,7 +144,7 @@ class JdbcStorageProvider(private val dataSource: DataSource, private val config
                     """
                         SELECT * FROM tekst t
                         LEFT JOIN statistikk s ON (t.id = s.id)
-                        ORDER BY s.brukt DESC, t.overskrift
+                        ORDER BY s.brukt DESC NULLS LAST, t.overskrift
                     """.trimIndent())
             false -> queryOf("""
                 SELECT * FROM tekst t
