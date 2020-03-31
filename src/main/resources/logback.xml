@@ -12,6 +12,8 @@
             </throwableConverter>
         </encoder>
     </appender>
+
+    <logger name="io.ktor.auth.jwt" level="TRACE" />
     <root level="INFO">
         <appender-ref ref="stdout_json"/>
     </root>
