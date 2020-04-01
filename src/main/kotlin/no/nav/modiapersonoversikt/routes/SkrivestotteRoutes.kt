@@ -52,6 +52,11 @@ fun Route.skrivestotteRoutes(provider: StorageProvider, statistics: StatisticsPr
                     call.respond(statistics.hentStatistikk())
                 }
 
+                get("/refresh") {
+                    statistics.refreshStatistikk()
+                    call.respond(HttpStatusCode.OK)
+                }
+
                 post("/{id}") {
                     call.parameters["id"]
                             ?.let { UUID.fromString(it) }
