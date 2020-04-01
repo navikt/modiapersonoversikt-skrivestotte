@@ -47,14 +47,14 @@ class JdbcStatisticsProvider(private val dataSource: DataSource, private val con
 
     private fun slettGamleRawInnslag(tx: Session) {
         tx.run(
-                queryOf("DELETE FROM $rawTable WHERE tidspunkt < now() - ${createSqlInterval(7, PostgreSqlIntervalUnits.DAYS)}")
+                queryOf("DELETE FROM $rawTable WHERE tidspunkt < now() - ${createSqlInterval(60, PostgreSqlIntervalUnits.DAYS)}")
                         .asUpdate
         )
     }
 
     private fun hentAlleRawInnslag(tx: Session): List<Pair<String, Int>> {
         return tx.run(
-                queryOf("SELECT tekstid, count(*) as antall FROM $rawTable GROUP BY tekstid")
+                queryOf("SELECT tekstid, count(*) as antall FROM $rawTable WHERE tidspunkt > now() - ${createSqlInterval(7, PostgreSqlIntervalUnits.DAYS)} GROUP BY tekstid")
                         .map { row -> Pair(row.string("tekstid"), row.int("antall")) }
                         .asList
         )
@@ -78,7 +78,6 @@ class JdbcStatisticsProvider(private val dataSource: DataSource, private val con
                                     .asUpdate
                     )
                 }
-
     }
 
     private fun createSqlInterval(amount: Long, unit: PostgreSqlIntervalUnits): String {
