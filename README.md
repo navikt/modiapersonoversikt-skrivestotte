@@ -44,8 +44,7 @@ Koble seg til preprod databasen;
 ## Henvendelser
 Spørsmål knyttet til koden eller prosjektet kan rettes mot:
 
--   Daniel Winsvold, daniel.winsvold@nav.no
 -   Jan-Eirik B. Nævdal, jan.eirik.b.navdal@nav.no
 -   Andreas Bergman, andreas.bergman@nav.no
--   Richard Borge, richard.borge@nav.no
 -   Nicklas Utgaard, nicklas.utgaard@nav.no
+-   Ankur Tade, ankur.tade@nav.no
