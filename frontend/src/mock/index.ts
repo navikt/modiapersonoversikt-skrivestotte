@@ -1,5 +1,6 @@
 import FetchMock, {JSONValue, Middleware, MiddlewareUtils, ResponseUtils} from 'yet-another-fetch-mock';
 import {LocaleValues, Tekst, Tekster} from "../model";
+import overordnetStatistikk from "./overordnetstatistikk";
 
 const loggingMiddleware: Middleware = (request, response) => {
     // tslint:disable
@@ -48,11 +49,15 @@ function rndInnhold(id: number) {
 const tekster: Tekster & JSONValue = new Array(50)
     .fill(0)
     .map((_, id) => ({
-        id: `id${id}`, overskrift: `Overskrift ${id}`, tags: ['ks', 'arbeid'], innhold: {
+        id: `id${id}`,
+        overskrift: `Overskrift ${id}`,
+        tags: ['ks', 'arbeid'],
+        innhold: {
             ...rndInnhold(id),
             ...rndInnhold(Math.pow(id, 2)),
             ...rndInnhold(Math.pow(id, 3)),
-        }
+        },
+        vekttall: id
     }))
     .reduce((acc, tekst) => ({ ...acc, [tekst.id]: tekst}), {});
 
@@ -80,3 +85,6 @@ mock.delete('/modiapersonoversikt-skrivestotte/skrivestotte/:id', ({ pathParams 
         return Promise.resolve({ status: 400 });
     }
 });
+
+mock.get('/modiapersonoversikt-skrivestotte/skrivestotte/statistikk/overordnetbruk', overordnetStatistikk);
+mock.get('/modiapersonoversikt-skrivestotte/skrivestotte/statistikk/detaljertbruk', Object.values(tekster));

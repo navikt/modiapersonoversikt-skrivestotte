@@ -14,8 +14,8 @@ function TekstidOgBruk(props: Props) {
 
     return (
         <div className="tekstereditor__tekstid-og-bruk">
-            <Input label="Tekst-id" value={props.tekstId} className="input--disabled" aria-disabled="true" />
-            <Input label="Vekttall" value={props.vekttall} className="input--disabled" aria-disabled="true" />
+            <Input label="Tekst-id" defaultValue={props.tekstId} className="input--disabled" aria-disabled="true" readOnly />
+            <Input label="Vekttall" defaultValue={''+props.vekttall} className="input--disabled" aria-disabled="true" readOnly />
         </div>
     );
 }

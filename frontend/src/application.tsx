@@ -1,10 +1,8 @@
 import React from 'react';
-import {MaybeCls as Maybe} from "@nutgaard/maybe-ts";
 import Header from "./components/header/header";
-import Teksterliste from "./components/teksterliste/teksterliste";
-import TekstEditor from "./components/tekstereditor/tekstereditor"
-import {Tekst, Tekster} from "./model";
-import {useFetch, useFieldState, useObjectState} from "./hooks";
+import RedigerVisning from "./sider/redigering/visning";
+import StatistikkVisning from "./sider/statistikk/visning";
+import useRouting, {Page} from "./hooks/use-routing";
 import './application.less';
 
 interface Props {
@@ -12,43 +10,13 @@ interface Props {
 }
 
 function Application(props: Props) {
-    const visEditor = useObjectState<boolean>(false);
-    const fetchState = useFetch<Tekster>('/modiapersonoversikt-skrivestotte/skrivestotte?usageSort=true');
-    const tekster = fetchState.data.withDefault<Tekster>({});
-
-    const sokFS = useFieldState('');
-    const checked = useFieldState(Object.keys(tekster)[0] || '');
-    const checkedTekst = Maybe.of(tekster[checked.value]);
-    const skalLeggeTilNy: Maybe<Tekst> = Maybe.of(visEditor.value)
-        .filter((value) => value)
-        .map(() => ({
-            overskrift: '',
-            tags: [],
-            innhold: {},
-            vekttall: 0
-        }));
-
-    const visEditorFor = skalLeggeTilNy.or(checkedTekst);
-
+    const page = useRouting();
+    const visning = page === Page.REDIGER ? RedigerVisning : StatistikkVisning;
     return (
         <div className="application">
             {props.renderHead && <Header/>}
-            <div className="application__content">
-                <Teksterliste
-                    tekster={tekster}
-                    sok={sokFS}
-                    checked={checked}
-                    visEditor={visEditor}
-                />
-                <div className="application__editor-wrapper">
-                    <TekstEditor
-                        key={visEditorFor.map((t) => t.id).withDefault('')}
-                        visEditor={visEditor}
-                        checked={checked}
-                        tekst={visEditorFor}
-                        refetch={fetchState.refetch}
-                    />
-                </div>
+            <div className={'application__content ' + `${page.slice(1)}-page`}>
+                { React.createElement(visning) }
             </div>
         </div>
     );

@@ -1,6 +1,3 @@
-export * from './hooks/use-fetch';
-export { default as useFetch } from './hooks/use-fetch';
-
 export * from './hooks/use-always-in-viewport';
 export { default as useForceAllwaysInViewport } from './hooks/use-always-in-viewport';
 

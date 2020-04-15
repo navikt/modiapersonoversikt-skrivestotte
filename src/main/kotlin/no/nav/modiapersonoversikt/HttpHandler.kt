@@ -32,7 +32,6 @@ import org.slf4j.event.Level
 import java.util.*
 import javax.sql.DataSource
 import kotlin.concurrent.schedule
-import kotlin.system.measureTimeMillis
 import no.nav.modiapersonoversikt.JwtUtil.Companion as JwtUtil
 
 private const val FEM_MINUTTER : Long = 5 * 60 * 1000
