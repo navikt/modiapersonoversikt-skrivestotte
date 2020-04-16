@@ -51,29 +51,32 @@ fun Route.skrivestotteRoutes(provider: StorageProvider, statistics: StatisticsPr
                         ?: call.respond(HttpStatusCode.BadRequest)
             }
 
-            route("/statistikk") {
-                get {
-                    call.respond(statistics.hentStatistikk())
-                }
+        }
 
-                get("/overordnetbruk") {
-                    call.respond(statistics.hentOverordnetBruk())
-                }
+        route("/statistikk") {
+            get {
+                call.respond(statistics.hentStatistikk())
+            }
 
-                get("/detaljertbruk") {
-                    val now = LocalDateTime.now()
-                    val from = call.request.queryParameters["from"]
-                            ?.toLong()
-                            ?.toLocalDateTime()
-                            ?: now.minusDays(retentionDays)
-                    val to = call.request.queryParameters["to"]
-                            ?.toLong()
-                            ?.toLocalDateTime()
-                            ?: now
+            get("/overordnetbruk") {
+                call.respond(statistics.hentOverordnetBruk())
+            }
 
-                    call.respond(statistics.hentDetaljertBruk(from, to))
-                }
+            get("/detaljertbruk") {
+                val now = LocalDateTime.now()
+                val from = call.request.queryParameters["from"]
+                        ?.toLong()
+                        ?.toLocalDateTime()
+                        ?: now.minusDays(retentionDays)
+                val to = call.request.queryParameters["to"]
+                        ?.toLong()
+                        ?.toLocalDateTime()
+                        ?: now
 
+                call.respond(statistics.hentDetaljertBruk(from, to))
+            }
+
+            conditionalAuthenticate(useAuthentication) {
                 get("/refresh") {
                     statistics.refreshStatistikk()
                     call.respond(HttpStatusCode.OK)
