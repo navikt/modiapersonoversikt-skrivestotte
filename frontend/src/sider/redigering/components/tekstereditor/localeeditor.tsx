@@ -1,9 +1,9 @@
 import React, {useEffect, useRef} from "react";
-import {Locale, localeString} from "../../model";
+import {Locale, localeString} from "../../../../model";
 import AutosizingTextarea from './../autosizing-textarea/autosizing-textarea';
-import {FieldState} from "../../hooks/use-field-state";
-import {ListState} from "../../hooks/use-list-state";
-import {ObjectState} from "../../hooks/use-object-state";
+import {FieldState} from "../../../../hooks/use-field-state";
+import {ListState} from "../../../../hooks/use-list-state";
+import {ObjectState} from "../../../../hooks/use-object-state";
 
 interface Props {
     locale: Locale;

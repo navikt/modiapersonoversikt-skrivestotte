@@ -1,5 +1,5 @@
 import {MaybeCls as Maybe} from "@nutgaard/maybe-ts";
-import {Locale, Tekst} from "../../model";
+import {Locale, Tekst} from "../../../../model";
 
 export function getTekst(maybeTekst: Maybe<Tekst>, locale: Locale): string {
     return maybeTekst
