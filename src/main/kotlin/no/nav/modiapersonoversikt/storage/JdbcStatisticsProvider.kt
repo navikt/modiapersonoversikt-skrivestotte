@@ -60,7 +60,40 @@ class JdbcStatisticsProvider(private val dataSource: DataSource, private val con
     }
 
     override fun hentOverordnetBruk(): List<StatistikkEntry> {
-        return transactional(dataSource) { tx -> hentTidsgruppertData(tx, 2, PostgreSqlIntervalUnits.HOURS) }
+        return transactional(dataSource) { tx ->
+            val sql = """
+            SELECT
+                EXTRACT(YEARS from tidspunkt) as years,
+                EXTRACT(MONTHS from tidspunkt) as months,
+                EXTRACT(DAYS from tidspunkt) as days,
+                TRUNC(EXTRACT(HOURS from tidspunkt) / 2) as hours,
+                COUNT(*) as count
+            FROM $rawTable
+            GROUP BY years, months, days, hours
+        """.trimIndent()
+            println(sql)
+
+            tx.run(queryOf(sql)
+                    .map { row ->
+                        val year = row.int("years")
+                        val month = row.int("months")
+                        val day = row.int("days")
+                        val hour = row.intOr("hours", 0) * 2
+                        val minute = row.intOr("minutes", 0)
+                        val second = row.intOr("seconds", 0)
+
+                        val tidspunkt = LocalDateTime.of(year, month, day, hour, minute, second)
+                                .atZone(ZoneId.systemDefault())
+                                .toEpochMillis()
+
+                        StatistikkEntry(
+                                tidspunkt,
+                                row.int("count")
+                        )
+                    }.asList
+            )
+                    .sortedBy { it.tidspunkt }
+        }
     }
 
     override fun hentDetaljertBruk(from: LocalDateTime, to: LocalDateTime): List<DetaljertStatistikk> {
@@ -87,64 +120,6 @@ class JdbcStatisticsProvider(private val dataSource: DataSource, private val con
                     .asList
             )
         }
-    }
-
-    fun hentTidsgruppertData(tx: Session, amount: Int, unit: PostgreSqlIntervalUnits): List<StatistikkEntry> {
-        val sql = hentGrupperteDataSql(amount, unit)
-        println(sql)
-
-        val hourScale = if (unit == PostgreSqlIntervalUnits.HOURS) amount else 1
-        val minuteScale = if (unit == PostgreSqlIntervalUnits.MINUTES) amount else 1
-        val secondsScale = if (unit == PostgreSqlIntervalUnits.SECONDS) amount else 1
-
-        return tx.run(queryOf(sql)
-                .map { row ->
-                    val year = row.int("years")
-                    val month = row.int("months")
-                    val day = row.int("days")
-                    val hour = row.intOr("hours", 0) * hourScale
-                    val minute = row.intOr("minutes", 0) * minuteScale
-                    val second = row.intOr("seconds", 0) * secondsScale
-
-                    val tidspunkt = LocalDateTime.of(year, month, day, hour, minute, second)
-                            .atZone(ZoneId.systemDefault())
-                            .toEpochMillis()
-
-                    StatistikkEntry(
-                            tidspunkt,
-                            row.int("count")
-                    )
-                }.asList
-        )
-    }
-
-    private fun hentGrupperteDataSql(amount: Int, unit: PostgreSqlIntervalUnits): String {
-        val sqlList = mutableListOf<String>()
-        sqlList.add("select")
-
-        for (chronoUnit in PostgreSqlIntervalUnits.values()) {
-            if (chronoUnit == unit) {
-                break
-            }
-            val sqlChronoUnit = chronoUnit.name.toLowerCase()
-
-            sqlList.add("extract($sqlChronoUnit from tidspunkt) as $sqlChronoUnit,")
-        }
-        val sqlUnit = unit.name.toLowerCase()
-        sqlList.add("trunc(extract($sqlUnit from tidspunkt) / $amount) as $sqlUnit,")
-        sqlList.add("count(*) as count")
-        sqlList.add("from $rawTable")
-        sqlList.add("group by ")
-
-        for (chronoUnit in PostgreSqlIntervalUnits.values()) {
-            val sqlChronoUnit = chronoUnit.name.toLowerCase()
-            sqlList.add("$sqlChronoUnit, ")
-            if (chronoUnit == unit) {
-                break
-            }
-        }
-
-        return sqlList.joinToString("\n").removeSuffix(", ")
     }
 
     private fun slettGamleRawInnslag(tx: Session) {
