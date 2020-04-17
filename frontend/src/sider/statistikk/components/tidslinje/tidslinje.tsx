@@ -60,9 +60,13 @@ function createGraph(data: Array<StatistikkEntry>): { path: string; hoverSection
     const metadata = getGraphMetadata(data);
 
     return data
-        .reduce((acc, entry) => {
+        .reduce((acc, entry, index, list) => {
             const { x, y } = calculateCoordinate(entry, metadata);
             acc.path += `L${x.toFixed(2)} ${y.toFixed(2)} `;
+            if (index === list.length - 1) {
+                acc.path += `L${x.toFixed(2)} ${ySize - padding}`;
+            }
+
             acc.hoverSections.push({ x: +(x / graphScale).toFixed(2), y: entry.antall, entry });
             return acc;
         }, { path: `M${padding} ${ySize - padding}`, hoverSections: [] as Array<PointData>, metadata });
@@ -91,10 +95,10 @@ function useMouseOver(ref: MutableRefObject<SVGSVGElement | null>, data: Array<P
     useEffect(() => {
         if (ref.current) {
             const element = ref.current;
-            const { left } = ref.current.getBoundingClientRect();
             const index = new CoordinateIndex(data, (pointData) => pointData.x);
 
             const handler = throttle((e: MouseEvent) => {
+                const { left } = element.getBoundingClientRect();
                 const x = e.clientX - left;
                 const closest = index.closestTo(x);
                 setEntry({ x: e.clientX, y: e.clientY, entry: closest.entry });
