@@ -2,7 +2,7 @@ import React from 'react';
 import {Input} from 'nav-frontend-skjema';
 import {Fareknapp, Hovedknapp, Knapp} from 'nav-frontend-knapper';
 import {MaybeCls as Maybe} from "@nutgaard/maybe-ts";
-import {Locale, localeString, LocaleValues, Tekst} from "../../model";
+import {Locale, localeString, LocaleValues, Tekst} from "../../../../model";
 import {
     FieldState,
     FormState,
@@ -10,8 +10,8 @@ import {
     useFormState,
     useListState,
     useObjectState
-} from "../../hooks";
-import {fjernTomtInnhold} from "../../utils";
+} from "../../../../hooks";
+import {fjernTomtInnhold} from "../../../../utils";
 import * as Fetcher from './fetch-utils';
 import LocaleEditor from "./localeeditor";
 import './tekstereditor.less';

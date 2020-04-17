@@ -2,9 +2,9 @@ import React from 'react';
 import {Input} from 'nav-frontend-skjema';
 import {Element, Normaltekst} from 'nav-frontend-typografi';
 import classNames from 'classnames';
-import {Tekst, Tekster, UUID} from "../../model";
-import {cyclicgroup, joinWithPrefix} from "../../utils";
-import {FieldState, ObjectState, useForceAllwaysInViewport} from "../../hooks";
+import {Tekst, Tekster, UUID} from "../../../../model";
+import {cyclicgroup, joinWithPrefix} from "../../../../utils";
+import {FieldState, ObjectState, useForceAllwaysInViewport} from "../../../../hooks";
 import './teksterliste.less';
 import {Knapp} from "nav-frontend-knapper";
 

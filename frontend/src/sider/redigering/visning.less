@@ -1,0 +1,29 @@
+/* autoprefixer grid: autoplace */
+@import (less) '~nav-frontend-core';
+
+.rediger-page {
+  display: grid;
+  grid-template-areas: "search search ny" "list editor editor";
+  grid-template-columns: minmax(10rem, 16rem) minmax(10rem, 1fr) 8rem;
+  grid-template-rows: min-content 1fr;
+
+  &__editor-wrapper {
+    min-height: 0;
+    overflow-y: auto;
+    grid-area: editor;
+    padding: 0.5rem;
+    border-top: 1px solid @navGra40;
+    border-right: 1px solid @navGra40;
+    border-bottom: 1px solid @navGra40;
+  }
+
+  .teksterliste__sok {
+    grid-area: search;
+  }
+  .teksterliste__leggtilny {
+    grid-area: ny;
+  }
+  .teksterliste__liste {
+    grid-area: list;
+  }
+}

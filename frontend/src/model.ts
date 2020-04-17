@@ -42,3 +42,9 @@ export type Tekster = {
     [key: string]: Tekst
 }
 
+export type StatistikkEntry = {
+    tidspunkt: number;
+    antall: number;
+}
+
+export type DetaljertStatistikk = Array<Pick<Tekst, 'id' | 'overskrift' | 'tags' | 'vekttall'>>;
