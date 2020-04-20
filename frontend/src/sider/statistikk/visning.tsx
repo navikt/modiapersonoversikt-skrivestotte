@@ -10,7 +10,6 @@ export interface Tidsrom {
 
 function StatistikkVisning() {
     const [tidsrom, settTidsrom] = useState<Tidsrom | undefined>(undefined);
-    console.log('tidsrom', tidsrom);
 
     return (
         <div className="statistikk-visning">
