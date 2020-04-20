@@ -131,7 +131,7 @@ function useSelection(ref: MutableRefObject<SVGSVGElement | null>, data: Array<P
                 return false;
             };
             const upHandler = (e: MouseEvent) => {
-                if (dragging) {
+                if (dragging.current) {
                     dragging.current = false;
                     const startTime = index.closestTo(down.current).entry.tidspunkt;
                     const endTime = index.closestTo(e.clientX - left).entry.tidspunkt;
@@ -165,13 +165,13 @@ function useSelection(ref: MutableRefObject<SVGSVGElement | null>, data: Array<P
             }, 16);
 
             element.addEventListener('mousedown', downHandler);
-            element.addEventListener('mouseup', upHandler);
+            window.addEventListener('mouseup', upHandler);
             element.addEventListener('dblclick', clickHandler);
             element.addEventListener('mousemove', moveHandler);
 
             return () => {
                 element.removeEventListener('mousedown', downHandler);
-                element.removeEventListener('mouseup', upHandler);
+                window.removeEventListener('mouseup', upHandler);
                 element.removeEventListener('dblclick', clickHandler);
                 element.removeEventListener('mousemove', moveHandler);
             }
