@@ -47,4 +47,5 @@ export type StatistikkEntry = {
     antall: number;
 }
 
-export type DetaljertStatistikk = Array<Pick<Tekst, 'id' | 'overskrift' | 'tags' | 'vekttall'>>;
+export type DetaljertStatistikkTekst = Pick<Tekst, 'id' | 'overskrift' | 'tags' | 'vekttall'>;
+export type DetaljertStatistikk = Array<DetaljertStatistikkTekst>;
