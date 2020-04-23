@@ -1,12 +1,12 @@
 import React from 'react';
-import {Input} from 'nav-frontend-skjema';
 import {Element, Normaltekst} from 'nav-frontend-typografi';
+import {Knapp} from "nav-frontend-knapper";
+import TagInput from "@navikt/tag-input";
 import classNames from 'classnames';
 import {Tekst, Tekster, UUID} from "../../../../model";
-import {cyclicgroup, joinWithPrefix} from "../../../../utils";
+import {cyclicgroup, joinWithPrefix, tagsQuerySearch} from "../../../../utils";
 import {FieldState, ObjectState, useForceAllwaysInViewport} from "../../../../hooks";
 import './teksterliste.less';
-import {Knapp} from "nav-frontend-knapper";
 
 interface Props {
     tekster: Tekster;
@@ -36,18 +36,18 @@ function TekstListeElement(props: { tekst: Tekst; checked: UUID, onChange: React
     );
 }
 
-function matcher(sok: string, checked: UUID) {
-    const fragmenter = sok.toLocaleLowerCase().split(' ');
-    return (tekst: Tekst) => {
-        const corpus = `${tekst.id} ${tekst.overskrift} ${tekst.tags.join(' ')} ${Object.values(tekst.innhold).join(' ')}`.toLocaleLowerCase();
-        return tekst.id === checked || fragmenter.every((fragment) => corpus.includes(fragment));
-    }
+const matcher = tagsQuerySearch<Tekst>(
+    tekst => tekst.tags,
+    tekst => [tekst.overskrift, Object.values(tekst.innhold).join('\u0000'), tekst.tags.join('\u0000')],
+);
+function sokEtterTekster(tekster: Array<Tekst>, query: string, valgtTekst: UUID): Array<Tekst> {
+    return matcher(query, tekster, (tekst) => tekst.id === valgtTekst);
 }
 
 function Teksterliste(props: Props) {
     useForceAllwaysInViewport('.teksterliste__listeelement--checked', [props.checked.value]);
 
-    const tekster = Object.values(props.tekster).filter(matcher(props.sok.value, props.checked.value));
+    const tekster = sokEtterTekster(Object.values(props.tekster), props.sok.value, props.checked.value);
 
     const changeHandler = (event: React.ChangeEvent) => {
         props.checked.onChange(event);
@@ -74,8 +74,9 @@ function Teksterliste(props: Props) {
 
     return (
         <>
-            <Input
+            <TagInput
                 label="Søk"
+                name="tag-input-sok"
                 className="teksterliste__sok"
                 value={props.sok.value}
                 onChange={props.sok.onChange}
