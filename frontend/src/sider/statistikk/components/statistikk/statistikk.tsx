@@ -1,11 +1,11 @@
 import React from 'react';
-import {Tidsrom} from "../../visning";
 import useFetch, {hasError, isPending} from "@nutgaard/use-fetch";
+import TagInput from "@navikt/tag-input";
+import {Tidsrom} from "../../visning";
 import {DetaljertStatistikk, DetaljertStatistikkTekst} from "../../../../model";
-import {toMaybe} from "../../../../utils";
+import {tagsQuerySearch, toMaybe} from "../../../../utils";
 import StatistikkTabell from "./statistikk-tabell";
 import {useFieldState} from "../../../../hooks";
-import {Input} from "nav-frontend-skjema";
 
 interface Props {
     tidsrom: Tidsrom | undefined;
@@ -20,13 +20,12 @@ function queryParams(tidsrom: Tidsrom | undefined): string {
 
 const emptyData : DetaljertStatistikk = [];
 const fetchOptions = {};
-
-function matcher(sok: string) {
-    const fragmenter = sok.toLocaleLowerCase().split(' ');
-    return (tekst: DetaljertStatistikkTekst) => {
-        const corpus = `${tekst.id} ${tekst.overskrift} ${tekst.tags.join(' ')}`.toLocaleLowerCase();
-        return fragmenter.every((fragment) => corpus.includes(fragment));
-    }
+const matcher = tagsQuerySearch<DetaljertStatistikkTekst>(
+    tekst => tekst.tags,
+    tekst => [tekst.overskrift, tekst.tags.join('\u0000')],
+);
+function sokEtterTekster(tekster: Array<DetaljertStatistikkTekst>, query: string): Array<DetaljertStatistikkTekst> {
+    return matcher(query, tekster, () => false);
 }
 
 function Statistikk(props: Props) {
@@ -53,11 +52,12 @@ function Statistikk(props: Props) {
         );
     }
 
-    const tekster = data.filter(matcher(sok.value));
+    const tekster = sokEtterTekster(data, sok.value);
     return (
         <div className="center-block statistikk">
-            <Input
+            <TagInput
                 label="Søk"
+                name="tag-input-sok"
                 className="teksterliste__sok"
                 value={sok.value}
                 onChange={sok.onChange}
