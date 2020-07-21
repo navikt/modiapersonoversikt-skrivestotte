@@ -43,9 +43,9 @@
     "craco-less": "^1.17.0",
     "cross-env": "5.2.0",
     "nav-frontend-tabell-style": "^0.2.20",
-    "typescript": "3.4.5",
+    "typescript": "3.9.7",
     "yargs": "13.2.4",
-    "yet-another-fetch-mock": "3.1.1"
+    "yet-another-fetch-mock": "^4.0.0"
   },
   "eslintConfig": {
     "extends": "react-app"
