@@ -1,26 +1,6 @@
-import FetchMock, {JSONValue, Middleware, MiddlewareUtils, ResponseUtils} from 'yet-another-fetch-mock';
+import FetchMock, {MiddlewareUtils} from 'yet-another-fetch-mock';
 import {LocaleValues, Tekst, Tekster} from "../model";
 import overordnetStatistikk from "./overordnetstatistikk";
-
-const loggingMiddleware: Middleware = (request, response) => {
-    // tslint:disable
-    console.groupCollapsed(`${request.method} ${request.url}`);
-    console.groupCollapsed('config');
-    console.log('queryParams', request.queryParams);
-    console.log('pathParams', request.pathParams);
-    console.log('body', request.body);
-    console.groupEnd();
-
-    try {
-        console.log('response', JSON.parse(response.body));
-    } catch (e) {
-        console.log('response', response);
-    }
-
-    console.groupEnd();
-    // tslint:enable
-    return response;
-};
 
 console.log('============================');
 console.log('Using yet-another-fetch-mock');
@@ -29,7 +9,7 @@ const mock = FetchMock.configure({
     enableFallback: false,
     middleware: MiddlewareUtils.combine(
         MiddlewareUtils.delayMiddleware(500),
-        loggingMiddleware
+        MiddlewareUtils.loggingMiddleware()
     )
 });
 
@@ -46,7 +26,7 @@ function rndInnhold(id: number) {
     }
 }
 
-const tekster: Tekster & JSONValue = new Array(50)
+const tekster: Tekster = new Array(50)
     .fill(0)
     .map((_, id) => ({
         id: `id${id}`,
@@ -61,30 +41,30 @@ const tekster: Tekster & JSONValue = new Array(50)
     }))
     .reduce((acc, tekst) => ({ ...acc, [tekst.id]: tekst}), {});
 
-mock.get('/modiapersonoversikt-skrivestotte/skrivestotte', tekster);
-mock.put('/modiapersonoversikt-skrivestotte/skrivestotte', (args) => {
-    const tekst = args.body as Tekst & JSONValue;
+mock.get('/modiapersonoversikt-skrivestotte/skrivestotte', (req, resp, ctx) => resp(ctx.json(tekster)));
+mock.put('/modiapersonoversikt-skrivestotte/skrivestotte', (req, resp, ctx) => {
+    const tekst = req.body as Tekst;
     if (tekst.id) {
         tekster[tekst.id] = tekst;
-        return ResponseUtils.jsonPromise(tekst);
+        return resp(ctx.json(tekst));
     }
-    return Promise.resolve({ status: 400 });
+    return resp(ctx.status(400));
 });
-mock.post('/modiapersonoversikt-skrivestotte/skrivestotte', ({ body }) => {
+mock.post('/modiapersonoversikt-skrivestotte/skrivestotte', (req, resp, ctx) => {
     const id = guid();
-    const tekst = body as Tekst & JSONValue;
+    const tekst = req.body as Tekst;
     tekst.id = id;
     tekster[id] = tekst;
-    return tekst;
+    return resp(ctx.json(tekst));
 });
-mock.delete('/modiapersonoversikt-skrivestotte/skrivestotte/:id', ({ pathParams }) => {
-    if (tekster[pathParams.id]) {
-        delete tekster[pathParams.id];
-        return Promise.resolve({ status: 200 });
+mock.delete('/modiapersonoversikt-skrivestotte/skrivestotte/:id', (req, resp, ctx) => {
+    if (tekster[req.pathParams.id]) {
+        delete tekster[req.pathParams.id];
+        return resp(ctx.status(200));
     } else {
-        return Promise.resolve({ status: 400 });
+        return resp(ctx.status(400));
     }
 });
 
-mock.get('/modiapersonoversikt-skrivestotte/skrivestotte/statistikk/overordnetbruk', overordnetStatistikk);
-mock.get('/modiapersonoversikt-skrivestotte/skrivestotte/statistikk/detaljertbruk', Object.values(tekster));
+mock.get('/modiapersonoversikt-skrivestotte/skrivestotte/statistikk/overordnetbruk', (req, resp, ctx) => resp(ctx.json(overordnetStatistikk)));
+mock.get('/modiapersonoversikt-skrivestotte/skrivestotte/statistikk/detaljertbruk', (req, resp, ctx) => resp(ctx.json(Object.values(tekster))));
