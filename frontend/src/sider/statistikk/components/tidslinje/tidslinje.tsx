@@ -6,7 +6,7 @@ import './tidslinje.less';
 import CoordinateIndex from "./coordinate-index";
 import {Tidsrom} from "../../visning";
 import useWindowSize from "../../../../hooks/use-window-size";
-import {Systemtittel} from "nav-frontend-typografi";
+import {Systemtittel, Element} from "nav-frontend-typografi";
 
 const graphScale = 4;
 const xSize = 720 * graphScale;
@@ -55,7 +55,7 @@ function getGraphMetadata(data: Array<StatistikkEntry>): GraphMetadata {
 
 function createGraph(data: Array<StatistikkEntry>): { path: string; hoverSections: Array<PointData>, metadata: GraphMetadata } {
     if (data.length === 0) {
-        return { path: '', hoverSections: [], metadata: undefined as unknown as GraphMetadata };
+        return { path: '', hoverSections: [], metadata: { timeStart: 0, timeEnd: 1, timeDelta: 1, timeRange: 1, yMax: 1, yScale: 1} };
     }
     const metadata = getGraphMetadata(data);
 
@@ -216,6 +216,19 @@ function TidslinjeSvg(props: { data: Array<StatistikkEntry>, onChange: (tidsrom:
     useEffect(() => {
         onChange({ start: selectionStart, end: selectionEnd });
     }, [selectionStart, selectionEnd, onChange]);
+
+    if (data.length === 0) {
+        return (
+            <>
+                <div className="center-block blokk-xxs">
+                    <Systemtittel tag="h1">Statistikk</Systemtittel>
+                </div>
+                <div className="panel center-block blokk-xxs">
+                    <Element>Ikke nok data til å generere bruks-graf</Element>
+                </div>
+            </>
+        );
+    }
 
     return (
         <>
