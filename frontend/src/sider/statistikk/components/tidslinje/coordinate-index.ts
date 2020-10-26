@@ -1,9 +1,3 @@
-interface Slice<T> {
-    start: number;
-    end: number;
-    data: Array<T>;
-}
-
 class CoordinateIndex<T> {
     private data: Array<T>;
     private fn: (t: T) => number;
