@@ -9,9 +9,9 @@ enum class Locale {
 }
 
 data class Tekst(
-        val id: UUID?,
-        val overskrift: String,
-        val tags: List<String>,
-        val innhold: Map<Locale, String>,
-        val vekttall: Int = 0
+    val id: UUID?,
+    val overskrift: String,
+    val tags: List<String>,
+    val innhold: Map<Locale, String>,
+    val vekttall: Int = 0
 )

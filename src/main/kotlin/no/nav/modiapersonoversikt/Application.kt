@@ -1,7 +1,6 @@
 package no.nav.modiapersonoversikt
 
 import org.slf4j.LoggerFactory
-import java.util.concurrent.TimeUnit
 
 private val log = LoggerFactory.getLogger("modiapersonoversikt-skrivestotte.Application")
 
@@ -13,17 +12,19 @@ fun main() {
 
     val applicationState = ApplicationState()
     val applicationServer = createHttpServer(
-            applicationState = applicationState,
-            configuration = configuration,
-            adminDatasource = dbConfig.adminDataSource(),
-            userDataSource = dbConfig.userDataSource()
+        applicationState = applicationState,
+        configuration = configuration,
+        adminDatasource = dbConfig.adminDataSource(),
+        userDataSource = dbConfig.userDataSource()
     )
 
-    Runtime.getRuntime().addShutdownHook(Thread {
-        log.info("Shutdown hook called, shutting down gracefully")
-        applicationState.initialized = false
-        applicationServer.stop(5000, 5000)
-    })
+    Runtime.getRuntime().addShutdownHook(
+        Thread {
+            log.info("Shutdown hook called, shutting down gracefully")
+            applicationState.initialized = false
+            applicationServer.stop(5000, 5000)
+        }
+    )
 
     applicationServer.start(wait = true)
 }

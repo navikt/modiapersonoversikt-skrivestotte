@@ -9,7 +9,6 @@ import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
 import org.junit.jupiter.api.Assertions.*
 
-
 object LeaderElectorServiceSpec : Spek({
     val mockserver = MockWebServer()
     mockserver.enqueue(MockResponse().setBody("{\"name\":\"inethostname\"}"))

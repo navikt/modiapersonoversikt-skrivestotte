@@ -8,13 +8,15 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 class ObjectMapperProvider {
     companion object {
         val objectMapper = jacksonObjectMapper()
-                .apply {
-                    setDefaultPrettyPrinter(DefaultPrettyPrinter().apply {
+            .apply {
+                setDefaultPrettyPrinter(
+                    DefaultPrettyPrinter().apply {
                         indentArraysWith(DefaultPrettyPrinter.FixedSpaceIndenter.instance)
                         indentObjectsWith(DefaultIndenter("  ", "\n"))
-                    })
-                    disableDefaultTyping()
-                    enable(SerializationFeature.INDENT_OUTPUT)
-                }
+                    }
+                )
+                disableDefaultTyping()
+                enable(SerializationFeature.INDENT_OUTPUT)
+            }
     }
 }

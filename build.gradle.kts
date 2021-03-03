@@ -14,7 +14,7 @@ plugins {
 
 buildscript {
     repositories {
-      mavenCentral()
+        mavenCentral()
     }
 
     dependencies {

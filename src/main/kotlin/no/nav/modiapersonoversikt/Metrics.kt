@@ -2,8 +2,6 @@ package no.nav.modiapersonoversikt
 
 import io.prometheus.client.Histogram
 
-
-
 class Metrics {
     companion object {
         const val METRICS_NS = "modiapersonoversikt_skrivestotte"
@@ -16,10 +14,10 @@ class Metrics {
         private fun getHistogram(name: String): Histogram {
             return histograms.getOrPut(name) {
                 Histogram.Builder()
-                        .namespace(METRICS_NS)
-                        .name(name)
-                        .help("Histogram for $name")
-                        .register()
+                    .namespace(METRICS_NS)
+                    .name(name)
+                    .help("Histogram for $name")
+                    .register()
             }
         }
     }
