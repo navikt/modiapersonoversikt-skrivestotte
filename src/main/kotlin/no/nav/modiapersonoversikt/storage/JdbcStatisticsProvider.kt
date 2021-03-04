@@ -11,10 +11,6 @@ import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 import java.util.*
 import javax.sql.DataSource
-import kotlin.math.abs
-import kotlin.math.ceil
-import kotlin.math.floor
-import kotlin.math.log
 
 const val table = "statistikk"
 const val rawTable = "statistikk_raw"
@@ -23,12 +19,13 @@ const val retentionDays = 60L
 data class StatistikkEntry(val tidspunkt: Long, val antall: Int)
 data class DetaljertStatistikk(val id: UUID, val overskrift: String, val tags: List<String>, val vekttall: Int)
 
-fun Row.intOr(name: String, default: Int): Int = try { this.int(name) } catch (_: Throwable) { default };
+fun Row.intOr(name: String, default: Int): Int = try { this.int(name) } catch (_: Throwable) { default }
 
 class JdbcStatisticsProvider(private val dataSource: DataSource, private val configuration: Configuration) : StatisticsProvider {
     override fun hentStatistikk(): Map<UUID, Int> {
         return transactional(dataSource) { tx ->
-            val data = tx.run(queryOf("SELECT * FROM $table")
+            val data = tx.run(
+                queryOf("SELECT * FROM $table")
                     .map { row ->
                         UUID.fromString(row.string("id")) to row.int("brukt")
                     }
@@ -41,11 +38,11 @@ class JdbcStatisticsProvider(private val dataSource: DataSource, private val con
     override fun rapporterBruk(id: UUID): Int {
         return transactional(dataSource) { tx ->
             tx.run(
-                    queryOf(
-                            "INSERT INTO $rawTable (tekstid) VALUES(:id)",
-                            mapOf("id" to id.toString())
-                    )
-                            .asUpdate
+                queryOf(
+                    "INSERT INTO $rawTable (tekstid) VALUES(:id)",
+                    mapOf("id" to id.toString())
+                )
+                    .asUpdate
             )
         }
     }
@@ -53,7 +50,7 @@ class JdbcStatisticsProvider(private val dataSource: DataSource, private val con
     override fun refreshStatistikk() {
         transactional(dataSource) { tx ->
             slettGamleRawInnslag(tx)
-            val data : List<Pair<String, Int>> = hentAlleRawInnslag(tx)
+            val data: List<Pair<String, Int>> = hentAlleRawInnslag(tx)
             slettStatistikk(tx)
             oppdatererStatistikk(tx, data)
         }
@@ -70,10 +67,11 @@ class JdbcStatisticsProvider(private val dataSource: DataSource, private val con
                 COUNT(*) as count
             FROM $rawTable
             GROUP BY years, months, days, hours
-        """.trimIndent()
+            """.trimIndent()
             println(sql)
 
-            tx.run(queryOf(sql)
+            tx.run(
+                queryOf(sql)
                     .map { row ->
                         val year = row.int("years")
                         val month = row.int("months")
@@ -83,22 +81,24 @@ class JdbcStatisticsProvider(private val dataSource: DataSource, private val con
                         val second = row.intOr("seconds", 0)
 
                         val tidspunkt = LocalDateTime.of(year, month, day, hour, minute, second)
-                                .atZone(ZoneId.systemDefault())
-                                .toEpochMillis()
+                            .atZone(ZoneId.systemDefault())
+                            .toEpochMillis()
 
                         StatistikkEntry(
-                                tidspunkt,
-                                row.int("count")
+                            tidspunkt,
+                            row.int("count")
                         )
                     }.asList
             )
-                    .sortedBy { it.tidspunkt }
+                .sortedBy { it.tidspunkt }
         }
     }
 
     override fun hentDetaljertBruk(from: LocalDateTime, to: LocalDateTime): List<DetaljertStatistikk> {
         return transactional(dataSource) { tx ->
-            tx.run(queryOf("""
+            tx.run(
+                queryOf(
+                    """
                 SELECT id, overskrift, tags, antall 
                 FROM tekst t
                 JOIN (
@@ -108,13 +108,15 @@ class JdbcStatisticsProvider(private val dataSource: DataSource, private val con
                 	GROUP BY tekstid
                 ) s ON (s.tekstid = t.id)
                 ORDER BY antall DESC
-            """.trimIndent(), mapOf("from" to from, "to" to to))
+            """.trimIndent(),
+                    mapOf("from" to from, "to" to to)
+                )
                     .map { row ->
                         DetaljertStatistikk(
-                                UUID.fromString(row.string("id")),
-                                row.string("overskrift"),
-                                row.string("tags").split("|"),
-                                row.int("antall")
+                            UUID.fromString(row.string("id")),
+                            row.string("overskrift"),
+                            row.string("tags").split("|"),
+                            row.int("antall")
                         )
                     }
                     .asList
@@ -124,16 +126,16 @@ class JdbcStatisticsProvider(private val dataSource: DataSource, private val con
 
     private fun slettGamleRawInnslag(tx: Session) {
         tx.run(
-                queryOf("DELETE FROM $rawTable WHERE tidspunkt < now() - ${createSqlInterval(retentionDays, PostgreSqlIntervalUnits.DAYS)}")
-                        .asUpdate
+            queryOf("DELETE FROM $rawTable WHERE tidspunkt < now() - ${createSqlInterval(retentionDays, PostgreSqlIntervalUnits.DAYS)}")
+                .asUpdate
         )
     }
 
     private fun hentAlleRawInnslag(tx: Session): List<Pair<String, Int>> {
         return tx.run(
-                queryOf("SELECT tekstid, count(*) as antall FROM $rawTable WHERE tidspunkt > now() - ${createSqlInterval(7, PostgreSqlIntervalUnits.DAYS)} GROUP BY tekstid")
-                        .map { row -> Pair(row.string("tekstid"), row.int("antall")) }
-                        .asList
+            queryOf("SELECT tekstid, count(*) as antall FROM $rawTable WHERE tidspunkt > now() - ${createSqlInterval(7, PostgreSqlIntervalUnits.DAYS)} GROUP BY tekstid")
+                .map { row -> Pair(row.string("tekstid"), row.int("antall")) }
+                .asList
         )
     }
 
@@ -143,30 +145,30 @@ class JdbcStatisticsProvider(private val dataSource: DataSource, private val con
 
     private fun oppdatererStatistikk(tx: Session, data: List<Pair<String, Int>>) {
         data
-                .forEach { (tekstId, antall) ->
-                    tx.run(
-                            queryOf(
-                                    "INSERT INTO $table (id, brukt) VALUES (:id, :antall)",
-                                    mapOf(
-                                            "id" to tekstId,
-                                            "antall" to antall
-                                    )
-                            )
-                                    .asUpdate
+            .forEach { (tekstId, antall) ->
+                tx.run(
+                    queryOf(
+                        "INSERT INTO $table (id, brukt) VALUES (:id, :antall)",
+                        mapOf(
+                            "id" to tekstId,
+                            "antall" to antall
+                        )
                     )
-                }
+                        .asUpdate
+                )
+            }
     }
 
     private fun createSqlInterval(amount: Long, unit: PostgreSqlIntervalUnits): String {
         if (configuration.jdbcUrl.contains(":h2:")) {
-            val fraction = Duration.of(amount, unit.chronoUnit).seconds.toDouble() / secondsInADay;
+            val fraction = Duration.of(amount, unit.chronoUnit).seconds.toDouble() / secondsInADay
             return fraction.toString()
         }
         return "INTERVAL '$amount ${unit.name}'"
     }
 }
 
-val secondsInADay : Long = Duration.ofDays(1).seconds
+val secondsInADay: Long = Duration.ofDays(1).seconds
 enum class PostgreSqlIntervalUnits(val chronoUnit: ChronoUnit) {
     YEARS(ChronoUnit.YEARS),
     MONTHS(ChronoUnit.MONTHS),

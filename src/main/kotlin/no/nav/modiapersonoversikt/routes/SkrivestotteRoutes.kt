@@ -3,7 +3,6 @@ package no.nav.modiapersonoversikt.routes
 import io.ktor.application.call
 import io.ktor.auth.AuthenticationRouteSelector
 import io.ktor.auth.authenticate
-import io.ktor.auth.principal
 import io.ktor.http.HttpStatusCode
 import io.ktor.request.receive
 import io.ktor.response.respond
@@ -24,7 +23,6 @@ fun Route.conditionalAuthenticate(useAuthentication: Boolean, build: Route.() ->
     return route
 }
 
-
 fun Route.skrivestotteRoutes(provider: StorageProvider, statistics: StatisticsProvider, useAuthentication: Boolean) {
     route("/skrivestotte") {
         get {
@@ -44,13 +42,12 @@ fun Route.skrivestotteRoutes(provider: StorageProvider, statistics: StatisticsPr
 
             delete("/{id}") {
                 call.parameters["id"]
-                        ?.let {
-                            provider.slettTekst(UUID.fromString(it))
-                            call.respond(HttpStatusCode.OK, "Deleted $it")
-                        }
-                        ?: call.respond(HttpStatusCode.BadRequest)
+                    ?.let {
+                        provider.slettTekst(UUID.fromString(it))
+                        call.respond(HttpStatusCode.OK, "Deleted $it")
+                    }
+                    ?: call.respond(HttpStatusCode.BadRequest)
             }
-
         }
 
         route("/statistikk") {
@@ -65,13 +62,13 @@ fun Route.skrivestotteRoutes(provider: StorageProvider, statistics: StatisticsPr
             get("/detaljertbruk") {
                 val now = LocalDateTime.now()
                 val from = call.request.queryParameters["from"]
-                        ?.toLong()
-                        ?.toLocalDateTime()
-                        ?: now.minusDays(retentionDays)
+                    ?.toLong()
+                    ?.toLocalDateTime()
+                    ?: now.minusDays(retentionDays)
                 val to = call.request.queryParameters["to"]
-                        ?.toLong()
-                        ?.toLocalDateTime()
-                        ?: now
+                    ?.toLong()
+                    ?.toLocalDateTime()
+                    ?: now
 
                 call.respond(statistics.hentDetaljertBruk(from, to))
             }
@@ -84,12 +81,12 @@ fun Route.skrivestotteRoutes(provider: StorageProvider, statistics: StatisticsPr
 
                 post("/{id}") {
                     call.parameters["id"]
-                            ?.let { UUID.fromString(it) }
-                            ?.let {
-                                statistics.rapporterBruk(it)
-                                call.respond(HttpStatusCode.OK)
-                            }
-                            ?: call.respond(HttpStatusCode.BadRequest)
+                        ?.let { UUID.fromString(it) }
+                        ?.let {
+                            statistics.rapporterBruk(it)
+                            call.respond(HttpStatusCode.OK)
+                        }
+                        ?: call.respond(HttpStatusCode.BadRequest)
                 }
             }
         }
