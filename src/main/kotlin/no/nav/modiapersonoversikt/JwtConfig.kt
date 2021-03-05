@@ -33,19 +33,19 @@ class JwtUtil {
         fun getSubject(call: ApplicationCall): String {
             return try {
                 useJwtFromCookie(call)
-                        ?.getBlob()
-                        ?.let { blob -> JWT.decode(blob).parsePayload().subject }
-                        ?: "Unauthenticated"
+                    ?.getBlob()
+                    ?.let { blob -> JWT.decode(blob).parsePayload().subject }
+                    ?: "Unauthenticated"
             } catch (e: Throwable) {
                 "JWT not found"
             }
         }
 
         fun makeJwkProvider(jwksUrl: String): JwkProvider =
-                JwkProviderBuilder(URL(jwksUrl))
-                        .cached(10, 24, TimeUnit.HOURS)
-                        .rateLimited(10, 1, TimeUnit.MINUTES)
-                        .build()
+            JwkProviderBuilder(URL(jwksUrl))
+                .cached(10, 24, TimeUnit.HOURS)
+                .rateLimited(10, 1, TimeUnit.MINUTES)
+                .build()
 
         fun validateJWT(credentials: JWTCredential): Principal? {
             return try {

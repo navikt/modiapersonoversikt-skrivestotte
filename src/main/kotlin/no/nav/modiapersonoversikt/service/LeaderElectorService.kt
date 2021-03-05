@@ -3,8 +3,6 @@ package no.nav.modiapersonoversikt.service
 import com.google.gson.Gson
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.apache.Apache
-import io.ktor.client.features.json.GsonSerializer
-import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.request.get
 import kotlinx.coroutines.runBlocking
 import no.nav.modiapersonoversikt.Configuration
@@ -31,7 +29,6 @@ class LeaderElectorService(val configuration: Configuration) {
 
                 hostname == leader.name
             }
-
         }
     }
 

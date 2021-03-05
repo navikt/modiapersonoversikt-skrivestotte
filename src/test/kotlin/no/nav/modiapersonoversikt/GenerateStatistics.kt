@@ -33,14 +33,14 @@ fun generateStatistics(dataSource: DataSource, storage: JdbcStorageProvider, fre
     transactional(dataSource) { tx ->
         repeat(10) { dayOffset ->
             val startTime = LocalDateTime.now()
-                    .minusDays(dayOffset + 1L)
-                    .withMinute(0)
-                    .withSecond(0)
+                .minusDays(dayOffset + 1L)
+                .withMinute(0)
+                .withSecond(0)
 
             val sum = frequencies.sum()
             val normalizedFrequencies = frequencies
-                    .normalize()
-                    .cumulativeSum()
+                .normalize()
+                .cumulativeSum()
 
             println(sum)
 
@@ -51,19 +51,19 @@ fun generateStatistics(dataSource: DataSource, storage: JdbcStorageProvider, fre
                 val index = normalizedFrequencies.indexOfFirst { frequency -> rnd < frequency }
                 val hour = (rndGenerator.nextGaussian() * 3 + 12).toInt().between(0, 24)
                 val date = startTime
-                        .withMinute(Random.nextInt(60))
-                        .withSecond(Random.nextInt(60))
-                        .withHour(hour)
+                    .withMinute(Random.nextInt(60))
+                    .withSecond(Random.nextInt(60))
+                    .withHour(hour)
                 val key = keys[index]
 
                 tx.run(
-                        queryOf(
-                                "INSERT INTO $rawTable (tidspunkt, tekstid) VALUES(:tidspunkt, :id)",
-                                mapOf(
-                                        "tidspunkt" to date,
-                                        "id" to key.toString()
-                                )
-                        ).asUpdate
+                    queryOf(
+                        "INSERT INTO $rawTable (tidspunkt, tekstid) VALUES(:tidspunkt, :id)",
+                        mapOf(
+                            "tidspunkt" to date,
+                            "id" to key.toString()
+                        )
+                    ).asUpdate
                 )
 
                 if (it % 100 == 0) {
@@ -73,20 +73,20 @@ fun generateStatistics(dataSource: DataSource, storage: JdbcStorageProvider, fre
         }
 
         val result = tx.run(
-                queryOf("SELECT tidspunkt, tekstid FROM $rawTable")
-                        .map { row ->
-                            Pair(
-                                    Timestamp.valueOf(row.string("tidspunkt")).toLocalDateTime(),
-                                    row.string("tekstid")
-                            )
-                        }.asList
+            queryOf("SELECT tidspunkt, tekstid FROM $rawTable")
+                .map { row ->
+                    Pair(
+                        Timestamp.valueOf(row.string("tidspunkt")).toLocalDateTime(),
+                        row.string("tekstid")
+                    )
+                }.asList
         )
-                .groupBy {
-                    it.first.hour
-                }
-                .mapValues { entry -> entry.value.size }
-                .entries
-                .sortedBy { it.key }
+            .groupBy {
+                it.first.hour
+            }
+            .mapValues { entry -> entry.value.size }
+            .entries
+            .sortedBy { it.key }
 
         println(result)
     }
@@ -101,8 +101,8 @@ fun main() {
     DataSourceConfiguration.migrateDb(dbConfig.userDataSource())
     val storage = JdbcStorageProvider(dbConfig.userDataSource(), configuration)
     val frequencies = File("src/test/kotlin/no/nav/modiapersonoversikt/frequencies.txt")
-            .readLines()
-            .map { it.toInt() }
+        .readLines()
+        .map { it.toInt() }
 
     generateStatistics(dbConfig.userDataSource(), storage, frequencies)
 }

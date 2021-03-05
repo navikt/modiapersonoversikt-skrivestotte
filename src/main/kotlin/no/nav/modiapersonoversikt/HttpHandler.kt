@@ -34,13 +34,15 @@ import javax.sql.DataSource
 import kotlin.concurrent.schedule
 import no.nav.modiapersonoversikt.JwtUtil.Companion as JwtUtil
 
-private const val FEM_MINUTTER : Long = 5 * 60 * 1000
-fun createHttpServer(applicationState: ApplicationState,
-                     port: Int = 7070,
-                     configuration: Configuration,
-                     userDataSource: DataSource,
-                     adminDatasource: DataSource,
-                     useAuthentication: Boolean = true): ApplicationEngine = embeddedServer(Netty, port) {
+private const val FEM_MINUTTER: Long = 5 * 60 * 1000
+fun createHttpServer(
+    applicationState: ApplicationState,
+    port: Int = 7070,
+    configuration: Configuration,
+    userDataSource: DataSource,
+    adminDatasource: DataSource,
+    useAuthentication: Boolean = true
+): ApplicationEngine = embeddedServer(Netty, port) {
 
     DataSourceConfiguration.migrateDb(adminDatasource)
 
