@@ -32,8 +32,6 @@ spec:
   ingresses:
     - https://app-q0.adeo.no/modiapersonoversikt-skrivestotte
     - https://app-q1.adeo.no/modiapersonoversikt-skrivestotte
-    - https://modia-q0.dev.adeo.no/modiapersonoversikt-skrivestotte
-    - https://modia-q1.dev.adeo.no/modiapersonoversikt-skrivestotte
   replicas:
     min: 1
     max: 2
