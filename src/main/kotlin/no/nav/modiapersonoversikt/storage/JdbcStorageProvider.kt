@@ -68,6 +68,16 @@ class JdbcStorageProvider(private val dataSource: DataSource, private val config
 
     override fun slettTekst(id: UUID) = transactional(dataSource) { tx -> slettTekst(tx, id) }
 
+    override fun synkroniserTekster(tekster: Tekster): Tekster {
+        return transactional(dataSource) { tx ->
+            slettAlleTekster(tx)
+            tekster.values.forEach { tekst ->
+                lagreTekst(tx, tekst)
+            }
+            hentAlleTekster(tx, false)
+        }
+    }
+
     fun ping(): Boolean {
         val status: String = try {
             transactional(dataSource) { tx ->
@@ -85,7 +95,7 @@ class JdbcStorageProvider(private val dataSource: DataSource, private val config
         return status == "ok"
     }
 
-    fun lagreTekst(tx: Session, tekst: Tekst) {
+    private fun lagreTekst(tx: Session, tekst: Tekst) {
         tx.run(
             queryOf(
                 "INSERT INTO tekst (id, overskrift, tags) VALUES (:id, :overskrift, :tags)",
@@ -111,13 +121,18 @@ class JdbcStorageProvider(private val dataSource: DataSource, private val config
         }
     }
 
-    fun slettTekst(tx: Session, id: UUID) {
+    private fun slettTekst(tx: Session, id: UUID) {
         tx.run(
             queryOf(
                 "DELETE FROM tekst WHERE id = ?",
                 id.toString()
             ).asUpdate
         )
+    }
+
+    private fun slettAlleTekster(tx: Session) {
+        tx.run(queryOf("DELETE FROM innhold").asUpdate)
+        tx.run(queryOf("DELETE FROM tekst").asUpdate)
     }
 
     private fun hentAlleTekster(tx: Session, sorterBasertPaBruk: Boolean): Tekster {

@@ -2,11 +2,13 @@ import {Dispatch, SetStateAction, useEffect, useState} from "react";
 
 export enum Page {
     REDIGER = '#rediger',
-    STATISTIKK = '#statistikk'
+    STATISTIKK = '#statistikk',
+    ADMIN = '#admin'
 }
+const pages = [Page.REDIGER, Page.STATISTIKK, Page.ADMIN];
 
 function hashToPage(hash: string): Page {
-    return hash === Page.STATISTIKK ? Page.STATISTIKK : Page.REDIGER;
+    return pages.find((page) => page === hash) ?? Page.REDIGER;
 }
 
 function useUpdateUrl(page: Page) {

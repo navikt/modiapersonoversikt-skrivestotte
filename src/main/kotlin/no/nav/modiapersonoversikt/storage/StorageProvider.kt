@@ -9,4 +9,5 @@ interface StorageProvider {
     fun oppdaterTekst(tekst: Tekst): Tekst
     fun leggTilTekst(tekst: Tekst): Tekst
     fun slettTekst(id: UUID)
+    fun synkroniserTekster(tekster: Tekster): Tekster
 }

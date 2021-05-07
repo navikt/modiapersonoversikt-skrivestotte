@@ -124,6 +124,10 @@ class JdbcStatisticsProvider(private val dataSource: DataSource, private val con
         }
     }
 
+    override fun slettStatistikk() {
+        transactional(dataSource) { tx -> slettStatistikk(tx) }
+    }
+
     private fun slettGamleRawInnslag(tx: Session) {
         tx.run(
             queryOf("DELETE FROM $rawTable WHERE tidspunkt < now() - ${createSqlInterval(retentionDays, PostgreSqlIntervalUnits.DAYS)}")
@@ -140,7 +144,9 @@ class JdbcStatisticsProvider(private val dataSource: DataSource, private val con
     }
 
     private fun slettStatistikk(tx: Session) {
+        tx.run(queryOf("DELETE FROM $rawTable").asUpdate)
         tx.run(queryOf("DELETE FROM $table").asUpdate)
+        refreshStatistikk()
     }
 
     private fun oppdatererStatistikk(tx: Session, data: List<Pair<String, Int>>) {
