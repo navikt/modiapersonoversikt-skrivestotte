@@ -35,7 +35,7 @@ class JwtUtil {
                     jwkProvider = makeJwkProvider(jwksUrl),
                     issuer = issuer
                 )
-                realm = "modiapersonoversikt-draft"
+                realm = "modiapersonoversikt-skrivestotte"
                 validate { validateJWT(it) }
             }
         }
