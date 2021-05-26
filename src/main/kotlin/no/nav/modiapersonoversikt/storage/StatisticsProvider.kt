@@ -4,10 +4,10 @@ import java.time.LocalDateTime
 import java.util.*
 
 interface StatisticsProvider {
-    fun hentStatistikk(): Map<UUID, Int>
-    fun rapporterBruk(id: UUID): Int
-    fun refreshStatistikk()
-    fun hentOverordnetBruk(): List<StatistikkEntry>
-    fun hentDetaljertBruk(from: LocalDateTime, to: LocalDateTime): List<DetaljertStatistikk>
-    fun slettStatistikk()
+    suspend fun hentStatistikk(): Map<UUID, Int>
+    suspend fun rapporterBruk(id: UUID): Int
+    suspend fun refreshStatistikk()
+    suspend fun hentOverordnetBruk(): List<StatistikkEntry>
+    suspend fun hentDetaljertBruk(from: LocalDateTime, to: LocalDateTime): List<DetaljertStatistikk>
+    suspend fun slettStatistikk()
 }

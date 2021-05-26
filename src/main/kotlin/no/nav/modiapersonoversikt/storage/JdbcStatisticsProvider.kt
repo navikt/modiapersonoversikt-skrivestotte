@@ -22,7 +22,7 @@ data class DetaljertStatistikk(val id: UUID, val overskrift: String, val tags: L
 fun Row.intOr(name: String, default: Int): Int = try { this.int(name) } catch (_: Throwable) { default }
 
 class JdbcStatisticsProvider(private val dataSource: DataSource, private val configuration: Configuration) : StatisticsProvider {
-    override fun hentStatistikk(): Map<UUID, Int> {
+    override suspend fun hentStatistikk(): Map<UUID, Int> {
         return transactional(dataSource) { tx ->
             val data = tx.run(
                 queryOf("SELECT * FROM $table")
@@ -35,7 +35,7 @@ class JdbcStatisticsProvider(private val dataSource: DataSource, private val con
         }
     }
 
-    override fun rapporterBruk(id: UUID): Int {
+    override suspend fun rapporterBruk(id: UUID): Int {
         return transactional(dataSource) { tx ->
             tx.run(
                 queryOf(
@@ -47,16 +47,11 @@ class JdbcStatisticsProvider(private val dataSource: DataSource, private val con
         }
     }
 
-    override fun refreshStatistikk() {
-        transactional(dataSource) { tx ->
-            slettGamleRawInnslag(tx)
-            val data: List<Pair<String, Int>> = hentAlleRawInnslag(tx)
-            slettStatistikk(tx)
-            oppdatererStatistikk(tx, data)
-        }
+    override suspend fun refreshStatistikk() {
+        transactional(dataSource) { tx -> refreshStatistikk(tx) }
     }
 
-    override fun hentOverordnetBruk(): List<StatistikkEntry> {
+    override suspend fun hentOverordnetBruk(): List<StatistikkEntry> {
         return transactional(dataSource) { tx ->
             val sql = """
             SELECT
@@ -94,7 +89,7 @@ class JdbcStatisticsProvider(private val dataSource: DataSource, private val con
         }
     }
 
-    override fun hentDetaljertBruk(from: LocalDateTime, to: LocalDateTime): List<DetaljertStatistikk> {
+    override suspend fun hentDetaljertBruk(from: LocalDateTime, to: LocalDateTime): List<DetaljertStatistikk> {
         return transactional(dataSource) { tx ->
             tx.run(
                 queryOf(
@@ -124,7 +119,7 @@ class JdbcStatisticsProvider(private val dataSource: DataSource, private val con
         }
     }
 
-    override fun slettStatistikk() {
+    override suspend fun slettStatistikk() {
         transactional(dataSource) { tx -> slettStatistikk(tx) }
     }
 
@@ -146,7 +141,14 @@ class JdbcStatisticsProvider(private val dataSource: DataSource, private val con
     private fun slettStatistikk(tx: Session) {
         tx.run(queryOf("DELETE FROM $rawTable").asUpdate)
         tx.run(queryOf("DELETE FROM $table").asUpdate)
-        refreshStatistikk()
+        refreshStatistikk(tx)
+    }
+
+    private fun refreshStatistikk(tx: Session) {
+        slettGamleRawInnslag(tx)
+        val data: List<Pair<String, Int>> = hentAlleRawInnslag(tx)
+        slettStatistikk(tx)
+        oppdatererStatistikk(tx, data)
     }
 
     private fun oppdatererStatistikk(tx: Session, data: List<Pair<String, Int>>) {

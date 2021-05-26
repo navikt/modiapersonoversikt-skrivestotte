@@ -1,5 +1,6 @@
 package no.nav.modiapersonoversikt
 
+import kotlinx.coroutines.runBlocking
 import kotliquery.queryOf
 import no.nav.modiapersonoversikt.storage.JdbcStorageProvider
 import no.nav.modiapersonoversikt.storage.rawTable
@@ -27,7 +28,7 @@ fun List<Double>.cumulativeSum(): List<Double> {
 }
 
 @ExperimentalStdlibApi
-fun generateStatistics(dataSource: DataSource, storage: JdbcStorageProvider, frequencies: List<Int>) {
+fun generateStatistics(dataSource: DataSource, storage: JdbcStorageProvider, frequencies: List<Int>) = runBlocking {
     val alleTekster = storage.hentTekster(null, false)
     val keys = alleTekster.keys.toList().shuffled()
     transactional(dataSource) { tx ->
