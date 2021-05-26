@@ -1,6 +1,5 @@
 package no.nav.modiapersonoversikt
 
-import com.auth0.jwk.JwkProvider
 import com.natpryce.konfig.*
 
 private val defaultProperties = ConfigurationMap(
@@ -19,7 +18,7 @@ private val defaultProperties = ConfigurationMap(
 
 data class Configuration(
     val clusterName: String = config()[Key("NAIS_CLUSTER_NAME", stringType)],
-    val jwksUrl: JwkProvider = JwtUtil.makeJwkProvider(config()[Key("ISSO_JWKS_URL", stringType)]),
+    val jwksUrl: String = config()[Key("ISSO_JWKS_URL", stringType)],
     val jwtIssuer: String = config()[Key("ISSO_ISSUER", stringType)],
     val jdbcUrl: String = config()[Key("DATABASE_JDBC_URL", stringType)],
     val vaultMountpath: String = config()[Key("VAULT_MOUNTPATH", stringType)],

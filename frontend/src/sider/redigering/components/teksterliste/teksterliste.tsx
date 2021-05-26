@@ -38,7 +38,7 @@ function TekstListeElement(props: { tekst: Tekst; checked: UUID, onChange: React
 
 const matcher = tagsQuerySearch<Tekst>(
     tekst => tekst.tags,
-    tekst => [tekst.overskrift, Object.values(tekst.innhold).join('\u0000'), tekst.tags.join('\u0000')],
+    tekst => [tekst.id || '', tekst.overskrift, Object.values(tekst.innhold).join('\u0000'), tekst.tags.join('\u0000')],
 );
 function sokEtterTekster(tekster: Array<Tekst>, query: string, valgtTekst: UUID): Array<Tekst> {
     return matcher(query, tekster, (tekst) => tekst.id === valgtTekst);

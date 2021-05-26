@@ -14,16 +14,7 @@ import no.nav.modiapersonoversikt.toLocalDateTime
 import java.time.LocalDateTime
 import java.util.*
 
-fun Route.conditionalAuthenticate(useAuthentication: Boolean, build: Route.() -> Unit): Route {
-    if (useAuthentication) {
-        return authenticate(build = build)
-    }
-    val route = createChild(AuthenticationRouteSelector(listOf<String?>(null)))
-    route.build()
-    return route
-}
-
-fun Route.skrivestotteRoutes(provider: StorageProvider, statistics: StatisticsProvider, useAuthentication: Boolean) {
+fun Route.skrivestotteRoutes(provider: StorageProvider, statistics: StatisticsProvider) {
     route("/skrivestotte") {
         get {
             val tagsFilter = call.request.queryParameters.getAll("tags")
@@ -31,7 +22,7 @@ fun Route.skrivestotteRoutes(provider: StorageProvider, statistics: StatisticsPr
             call.respond(provider.hentTekster(tagsFilter, enableUsageSort))
         }
 
-        conditionalAuthenticate(useAuthentication) {
+        authenticate {
             get("/download") {
                 val filename = "skrivestotte-${LocalDateTime.now()}.json"
                 call.response.header("Content-Disposition", "attachment; filename=\"$filename\"")
@@ -41,7 +32,7 @@ fun Route.skrivestotteRoutes(provider: StorageProvider, statistics: StatisticsPr
                 statistics.slettStatistikk()
                 call.respond(provider.synkroniserTekster(call.receive()))
             }
-
+          
             put {
                 call.respond(provider.oppdaterTekst(call.receive()))
             }
@@ -83,7 +74,7 @@ fun Route.skrivestotteRoutes(provider: StorageProvider, statistics: StatisticsPr
                 call.respond(statistics.hentDetaljertBruk(from, to))
             }
 
-            conditionalAuthenticate(useAuthentication) {
+            authenticate {
                 get("/refresh") {
                     statistics.refreshStatistikk()
                     call.respond(HttpStatusCode.OK)
