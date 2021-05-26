@@ -1,8 +1,10 @@
 import React, {FormEvent, useEffect, useState} from 'react';
 import {Normaltekst, Systemtittel, Undertittel} from "nav-frontend-typografi";
-import { AlertStripeAdvarsel } from 'nav-frontend-alertstriper';
-import { Hovedknapp } from "nav-frontend-knapper";
+import {AlertStripeAdvarsel, AlertStripeInfo} from 'nav-frontend-alertstriper';
+import {Fareknapp} from "nav-frontend-knapper";
 import FileUpload from "./components/file-upload";
+import * as Fetcher from './../../fetch-utils';
+import {Tekster} from "../../model";
 
 async function readContent(file: File): Promise<string> {
     return new Promise<string>((resolve, reject) => {
@@ -22,8 +24,10 @@ async function readContent(file: File): Promise<string> {
 function AdminVisning() {
     const [file, setFile] = useState<File | undefined>(undefined);
     const [error, setError] = useState<string | undefined>(undefined);
+    const [success, setSuccess] = useState<string | undefined>(undefined);
     const [content, setContent] = useState<object | undefined>(undefined);
     useEffect(() => {
+        setSuccess(undefined);
         if (file === undefined) {
             setContent(undefined);
             setError(undefined);
@@ -40,8 +44,20 @@ function AdminVisning() {
         }
     }, [file, setContent, setError]);
 
-    const submitHandler = (event: FormEvent) => {
+    const submitHandler = async (event: FormEvent) => {
         event.preventDefault();
+        if (!window.confirm('Er du helt sikker? Dette vil slette alle eksisterende tekster i dette miljøet?')) {
+            return;
+        }
+        try {
+            const body = JSON.stringify(content);
+            const response = await Fetcher.post<Tekster>('/modiapersonoversikt-skrivestotte/skrivestotte/upload', { body });
+            setSuccess(`Fil lastet opp uten problem og ${Object.keys(response).length} tekster lagret.`)
+        } catch (e) {
+            setError('Opplasting feilet, se console-logg for feilmelding.');
+            console.error(e);
+            setSuccess(undefined);
+        }
     }
 
     return (
@@ -78,9 +94,12 @@ function AdminVisning() {
                         <div className="blokk-xs">
                             <FileUpload file={file} setFile={setFile} />
                             { error && <p className="skjemaelement__feilmelding">{error}</p>}
-                            { content && <p>Lastet opp json-fil med {Object.keys(content).length} tekster</p>}
+                            { content && <p>Filen inneholder {Object.keys(content).length} tekster</p>}
+                            { success && <AlertStripeInfo>{success}</AlertStripeInfo>}
                         </div>
-                        <Hovedknapp disabled={file === undefined || error !== undefined}>Last opp</Hovedknapp>
+                        <Fareknapp disabled={file === undefined || error !== undefined || success !== undefined}>
+                            Slett eksisterende og last opp fil
+                        </Fareknapp>
                     </form>
                 </div>
             </section>
