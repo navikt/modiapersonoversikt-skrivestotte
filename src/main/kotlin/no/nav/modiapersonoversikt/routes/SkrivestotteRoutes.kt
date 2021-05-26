@@ -4,8 +4,8 @@ import io.ktor.application.call
 import io.ktor.auth.AuthenticationRouteSelector
 import io.ktor.auth.authenticate
 import io.ktor.http.HttpStatusCode
-import io.ktor.request.receive
-import io.ktor.response.respond
+import io.ktor.request.*
+import io.ktor.response.*
 import io.ktor.routing.*
 import no.nav.modiapersonoversikt.storage.StatisticsProvider
 import no.nav.modiapersonoversikt.storage.StorageProvider
@@ -23,6 +23,16 @@ fun Route.skrivestotteRoutes(provider: StorageProvider, statistics: StatisticsPr
         }
 
         authenticate {
+            get("/download") {
+                val filename = "skrivestotte-${LocalDateTime.now()}.json"
+                call.response.header("Content-Disposition", "attachment; filename=\"$filename\"")
+                call.respond(provider.hentTekster(tagFilter = null, sorterBasertPaBruk = false))
+            }
+            post("/upload") {
+                statistics.slettStatistikk()
+                call.respond(provider.synkroniserTekster(call.receive()))
+            }
+          
             put {
                 call.respond(provider.oppdaterTekst(call.receive()))
             }

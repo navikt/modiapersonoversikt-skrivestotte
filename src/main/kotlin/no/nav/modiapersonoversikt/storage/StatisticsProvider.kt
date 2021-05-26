@@ -9,4 +9,5 @@ interface StatisticsProvider {
     fun refreshStatistikk()
     fun hentOverordnetBruk(): List<StatistikkEntry>
     fun hentDetaljertBruk(from: LocalDateTime, to: LocalDateTime): List<DetaljertStatistikk>
+    fun slettStatistikk()
 }
