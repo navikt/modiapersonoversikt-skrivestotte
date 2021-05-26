@@ -141,7 +141,6 @@ class JdbcStatisticsProvider(private val dataSource: DataSource, private val con
     private fun slettStatistikk(tx: Session) {
         tx.run(queryOf("DELETE FROM $rawTable").asUpdate)
         tx.run(queryOf("DELETE FROM $table").asUpdate)
-        refreshStatistikk(tx)
     }
 
     private fun refreshStatistikk(tx: Session) {

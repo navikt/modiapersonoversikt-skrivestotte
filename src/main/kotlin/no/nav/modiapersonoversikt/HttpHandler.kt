@@ -6,26 +6,27 @@ import io.ktor.features.CORS
 import io.ktor.features.CallLogging
 import io.ktor.features.ContentNegotiation
 import io.ktor.features.StatusPages
-import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
 import io.ktor.http.content.defaultResource
 import io.ktor.http.content.resources
 import io.ktor.http.content.static
-import io.ktor.jackson.JacksonConverter
 import io.ktor.metrics.dropwizard.DropwizardMetrics
 import io.ktor.request.path
 import io.ktor.routing.route
 import io.ktor.routing.routing
+import io.ktor.serialization.*
 import io.ktor.server.engine.ApplicationEngine
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.prometheus.client.CollectorRegistry
 import io.prometheus.client.dropwizard.DropwizardExports
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.modules.serializersModuleOf
 import no.nav.modiapersonoversikt.JwtUtil.Companion.setupJWT
 import no.nav.modiapersonoversikt.JwtUtil.Companion.setupMock
-import no.nav.modiapersonoversikt.ObjectMapperProvider.Companion.objectMapper
 import no.nav.modiapersonoversikt.routes.naisRoutes
 import no.nav.modiapersonoversikt.routes.skrivestotteRoutes
+import no.nav.modiapersonoversikt.serializers.UUIDSerializer
 import no.nav.modiapersonoversikt.service.LeaderElectorService
 import no.nav.modiapersonoversikt.storage.JdbcStatisticsProvider
 import no.nav.modiapersonoversikt.storage.JdbcStorageProvider
@@ -68,7 +69,11 @@ fun createHttpServer(
     }
 
     install(ContentNegotiation) {
-        register(ContentType.Application.Json, JacksonConverter(objectMapper))
+        json(
+            json = Json {
+                serializersModule = serializersModuleOf(UUIDSerializer)
+            }
+        )
     }
 
     install(CallLogging) {

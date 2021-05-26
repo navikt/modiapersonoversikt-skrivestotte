@@ -1,7 +1,6 @@
 package no.nav.modiapersonoversikt.routes
 
 import io.ktor.application.call
-import io.ktor.auth.AuthenticationRouteSelector
 import io.ktor.auth.authenticate
 import io.ktor.http.HttpStatusCode
 import io.ktor.request.*

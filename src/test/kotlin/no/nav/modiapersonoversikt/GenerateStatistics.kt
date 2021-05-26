@@ -24,7 +24,7 @@ fun Int.between(min: Int, max: Int): Int {
 
 @ExperimentalStdlibApi
 fun List<Double>.cumulativeSum(): List<Double> {
-    return this.scanReduce { acc, element -> acc + element }
+    return this.runningReduce { acc, element -> acc + element }
 }
 
 @ExperimentalStdlibApi
