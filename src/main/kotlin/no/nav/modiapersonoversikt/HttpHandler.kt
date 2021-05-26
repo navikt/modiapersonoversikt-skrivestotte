@@ -22,6 +22,8 @@ import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.prometheus.client.CollectorRegistry
 import io.prometheus.client.dropwizard.DropwizardExports
+import no.nav.modiapersonoversikt.JwtUtil.Companion.setupJWT
+import no.nav.modiapersonoversikt.JwtUtil.Companion.setupMock
 import no.nav.modiapersonoversikt.ObjectMapperProvider.Companion.objectMapper
 import no.nav.modiapersonoversikt.routes.naisRoutes
 import no.nav.modiapersonoversikt.routes.skrivestotteRoutes
@@ -58,14 +60,11 @@ fun createHttpServer(
         allowCredentials = true
     }
 
-    if (useAuthentication) {
-        install(Authentication) {
-            jwt {
-                authHeader(JwtUtil::useJwtFromCookie)
-                realm = "modiapersonoversikt-skrivestøtte"
-                verifier(configuration.jwksUrl, configuration.jwtIssuer)
-                validate { JwtUtil.validateJWT(it) }
-            }
+    install(Authentication) {
+        if (useAuthentication) {
+            setupJWT(configuration.jwksUrl, configuration.jwtIssuer)
+        } else {
+            setupMock(SubjectPrincipal("Z999999"))
         }
     }
 
@@ -103,7 +102,7 @@ fun createHttpServer(
             }
 
             naisRoutes(readinessChecks = listOf({ applicationState.initialized }), livenessChecks = listOf({ applicationState.running }, { storageProvider.ping() }))
-            skrivestotteRoutes(storageProvider, statisticsProvider, useAuthentication)
+            skrivestotteRoutes(storageProvider, statisticsProvider)
         }
     }
 

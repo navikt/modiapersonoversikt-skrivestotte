@@ -7,9 +7,8 @@ import com.auth0.jwt.impl.JWTParser
 import com.auth0.jwt.interfaces.DecodedJWT
 import com.auth0.jwt.interfaces.Payload
 import io.ktor.application.ApplicationCall
-import io.ktor.auth.Principal
-import io.ktor.auth.jwt.JWTCredential
-import io.ktor.auth.jwt.JWTPrincipal
+import io.ktor.auth.*
+import io.ktor.auth.jwt.*
 import io.ktor.http.auth.HttpAuthHeader
 import org.slf4j.LoggerFactory
 import java.net.URL
@@ -18,19 +17,26 @@ import java.util.concurrent.TimeUnit
 
 private val log = LoggerFactory.getLogger("modiapersonoversikt-skrivestotte.JwtConfig")
 
+class SubjectPrincipal(val subject: String) : Principal
 class JwtUtil {
     companion object {
         private val cookieNames = listOf("modia_ID_token", "ID_token")
 
-        fun useJwtFromCookie(call: ApplicationCall): HttpAuthHeader? {
-            return try {
-                val token = cookieNames
-                    .find { !call.request.cookies[it].isNullOrEmpty() }
-                    ?.let { cookieName ->  call.request.cookies[cookieName] }
-                io.ktor.http.auth.parseAuthorizationHeader("Bearer $token")
-            } catch (ex: Throwable) {
-                log.error("Could not get JWT from cookie $cookieNames", ex)
-                null
+        fun Authentication.Configuration.setupMock(mockPrincipal: SubjectPrincipal) {
+            mock {
+                principal = mockPrincipal
+            }
+        }
+
+        fun Authentication.Configuration.setupJWT(jwksUrl: String, issuer: String) {
+            jwt {
+                authHeader(::useJwtFromCookie)
+                verifier(
+                    jwkProvider = makeJwkProvider(jwksUrl),
+                    issuer = issuer
+                )
+                realm = "modiapersonoversikt-skrivestotte"
+                validate { validateJWT(it) }
             }
         }
 
@@ -45,13 +51,25 @@ class JwtUtil {
             }
         }
 
-        fun makeJwkProvider(jwksUrl: String): JwkProvider =
+        private fun makeJwkProvider(jwksUrl: String): JwkProvider =
             JwkProviderBuilder(URL(jwksUrl))
                 .cached(10, 24, TimeUnit.HOURS)
                 .rateLimited(10, 1, TimeUnit.MINUTES)
                 .build()
 
-        fun validateJWT(credentials: JWTCredential): Principal? {
+        private fun useJwtFromCookie(call: ApplicationCall): HttpAuthHeader? {
+            return try {
+                val token = cookieNames
+                    .find { !call.request.cookies[it].isNullOrEmpty() }
+                    ?.let { cookieName ->  call.request.cookies[cookieName] }
+                io.ktor.http.auth.parseAuthorizationHeader("Bearer $token")
+            } catch (ex: Throwable) {
+                log.error("Could not get JWT from cookie $cookieNames", ex)
+                null
+            }
+        }
+
+        private fun validateJWT(credentials: JWTCredential): Principal? {
             return try {
                 requireNotNull(credentials.payload.audience) { "Audience not present" }
                 JWTPrincipal(credentials.payload)
