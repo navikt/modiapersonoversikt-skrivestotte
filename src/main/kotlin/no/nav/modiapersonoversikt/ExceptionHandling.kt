@@ -7,6 +7,7 @@ import io.ktor.features.origin
 import io.ktor.http.HttpStatusCode
 import io.ktor.request.ApplicationRequest
 import io.ktor.response.respond
+import kotlinx.serialization.Serializable
 import org.slf4j.LoggerFactory
 
 private val log = LoggerFactory.getLogger("modiapersonoversikt-skrivestotte.ExceptionHandler")
@@ -29,7 +30,7 @@ fun StatusPages.Configuration.notFoundHandler() {
             HttpStatusCode.NotFound,
             HttpErrorResponse(
                 message = "The page or operation requested does not exist.",
-                code = HttpStatusCode.NotFound, url = call.request.url()
+                code = HttpStatusCode.NotFound.value, url = call.request.url()
             )
         )
     }
@@ -46,17 +47,18 @@ private suspend inline fun ApplicationCall.logErrorAndRespond(
         url = this.request.url(),
         cause = cause.toString(),
         message = message,
-        code = status
+        code = status.value
     )
     log.error("Status Page Response: $response")
     this.respond(status, response)
 }
 
+@Serializable
 internal data class HttpErrorResponse(
     val url: String,
     val message: String? = null,
     val cause: String? = null,
-    val code: HttpStatusCode = HttpStatusCode.InternalServerError
+    val code: Int = HttpStatusCode.InternalServerError.value
 )
 
 internal fun ApplicationRequest.url(): String {
