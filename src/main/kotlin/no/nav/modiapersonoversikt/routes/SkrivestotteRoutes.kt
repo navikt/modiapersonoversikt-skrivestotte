@@ -6,6 +6,8 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
+import no.nav.modiapersonoversikt.model.Tekster
+import no.nav.modiapersonoversikt.model.teksterFromJsonMap
 import no.nav.modiapersonoversikt.storage.StatisticsProvider
 import no.nav.modiapersonoversikt.storage.StorageProvider
 import no.nav.modiapersonoversikt.storage.retentionDays
@@ -29,7 +31,8 @@ fun Route.skrivestotteRoutes(provider: StorageProvider, statistics: StatisticsPr
             }
             post("/upload") {
                 statistics.slettStatistikk()
-                call.respond(provider.synkroniserTekster(call.receive()))
+                val tekster: Tekster = teksterFromJsonMap(call.receive())
+                call.respond(provider.synkroniserTekster(tekster))
             }
           
             put {
