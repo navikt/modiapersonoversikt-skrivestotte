@@ -2,7 +2,7 @@ import com.moowork.gradle.node.npm.NpmTask
 
 val mainClass = "no.nav.modiapersonoversikt.ApplicationKt"
 val kotlinVersion = "1.4.30"
-val ktorVersion = "1.5.2"
+val ktorVersion = "1.5.4"
 val prometheusVersion = "0.4.0"
 val spekVersion = "1.2.1"
 

@@ -55,8 +55,11 @@ fun createHttpServer(
 
     install(CORS) {
         anyHost()
+        method(HttpMethod.Get)
         method(HttpMethod.Put)
+        method(HttpMethod.Post)
         method(HttpMethod.Delete)
+        allowHeaders { true }
         allowCredentials = true
     }
 
