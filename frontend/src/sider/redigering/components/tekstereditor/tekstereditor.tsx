@@ -12,7 +12,7 @@ import {
     useObjectState
 } from "../../../../hooks";
 import {fjernTomtInnhold} from "../../../../utils";
-import * as Fetcher from './fetch-utils';
+import * as Fetcher from '../../../../fetch-utils';
 import LocaleEditor from "./localeeditor";
 import './tekstereditor.less';
 import {getTekst} from "./utils";

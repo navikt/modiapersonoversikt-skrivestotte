@@ -5,8 +5,9 @@ import no.nav.modiapersonoversikt.model.Tekster
 import java.util.*
 
 interface StorageProvider {
-    fun hentTekster(tagFilter: List<String>?, sorterBasertPaBruk: Boolean): Tekster
-    fun oppdaterTekst(tekst: Tekst): Tekst
-    fun leggTilTekst(tekst: Tekst): Tekst
-    fun slettTekst(id: UUID)
+    suspend fun hentTekster(tagFilter: List<String>?, sorterBasertPaBruk: Boolean): Tekster
+    suspend fun oppdaterTekst(tekst: Tekst): Tekst
+    suspend fun leggTilTekst(tekst: Tekst): Tekst
+    suspend fun slettTekst(id: UUID)
+    suspend fun synkroniserTekster(tekster: Tekster): Tekster
 }

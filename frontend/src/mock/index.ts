@@ -26,7 +26,7 @@ function rndInnhold(id: number) {
     }
 }
 
-const tekster: Tekster = new Array(50)
+let tekster: Tekster = new Array(50)
     .fill(0)
     .map((_, id) => ({
         id: `id${id}`,
@@ -65,6 +65,14 @@ mock.delete('/modiapersonoversikt-skrivestotte/skrivestotte/:id', (req, resp, ct
         return resp(ctx.status(400));
     }
 });
+
+mock.post('/modiapersonoversikt-skrivestotte/skrivestotte/upload', (req, resp, ctx) => {
+    tekster = req.body;
+    return resp(
+        ctx.status(200),
+        ctx.json(tekster)
+    );
+})
 
 mock.get('/modiapersonoversikt-skrivestotte/skrivestotte/statistikk/overordnetbruk', (req, resp, ctx) => resp(ctx.json(overordnetStatistikk)));
 mock.get('/modiapersonoversikt-skrivestotte/skrivestotte/statistikk/detaljertbruk', (req, resp, ctx) => resp(ctx.json(Object.values(tekster))));

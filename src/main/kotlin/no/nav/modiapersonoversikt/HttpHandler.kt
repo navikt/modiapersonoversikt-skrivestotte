@@ -2,17 +2,15 @@ package no.nav.modiapersonoversikt
 
 import io.ktor.application.install
 import io.ktor.auth.Authentication
-import io.ktor.auth.jwt.jwt
 import io.ktor.features.CORS
 import io.ktor.features.CallLogging
 import io.ktor.features.ContentNegotiation
 import io.ktor.features.StatusPages
-import io.ktor.http.ContentType
-import io.ktor.http.HttpMethod
+import io.ktor.http.*
 import io.ktor.http.content.defaultResource
 import io.ktor.http.content.resources
 import io.ktor.http.content.static
-import io.ktor.jackson.JacksonConverter
+import io.ktor.jackson.*
 import io.ktor.metrics.dropwizard.DropwizardMetrics
 import io.ktor.request.path
 import io.ktor.routing.route
