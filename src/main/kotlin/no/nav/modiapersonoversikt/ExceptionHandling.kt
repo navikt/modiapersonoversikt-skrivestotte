@@ -7,7 +7,6 @@ import io.ktor.features.origin
 import io.ktor.http.HttpStatusCode
 import io.ktor.request.ApplicationRequest
 import io.ktor.response.respond
-import kotlinx.serialization.Serializable
 import org.slf4j.LoggerFactory
 
 private val log = LoggerFactory.getLogger("modiapersonoversikt-skrivestotte.ExceptionHandler")
@@ -53,7 +52,6 @@ private suspend inline fun ApplicationCall.logErrorAndRespond(
     this.respond(status, response)
 }
 
-@Serializable
 internal data class HttpErrorResponse(
     val url: String,
     val message: String? = null,

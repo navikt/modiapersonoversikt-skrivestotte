@@ -1,15 +1,14 @@
 import com.moowork.gradle.node.npm.NpmTask
 
 val mainClass = "no.nav.modiapersonoversikt.ApplicationKt"
-val kotlinVersion = "1.4.30"
-val ktorVersion = "1.5.4"
+val kotlinVersion = "1.3.70"
+val ktorVersion = "1.3.1"
 val prometheusVersion = "0.4.0"
 val spekVersion = "1.2.1"
 
 plugins {
     application
-    kotlin("jvm") version "1.4.30"
-    kotlin("plugin.serialization") version "1.4.30"
+    kotlin("jvm") version "1.3.70"
     id("com.moowork.node") version "1.2.0"
 }
 
@@ -31,7 +30,7 @@ dependencies {
     implementation(kotlin("stdlib"))
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
     implementation("io.ktor:ktor-auth-jwt:$ktorVersion")
-    implementation("io.ktor:ktor-serialization:$ktorVersion")
+    implementation("io.ktor:ktor-jackson:$ktorVersion")
     implementation("io.ktor:ktor-metrics:$ktorVersion")
     implementation("io.ktor:ktor-client-apache:$ktorVersion")
     implementation("io.ktor:ktor-client-gson:$ktorVersion")
