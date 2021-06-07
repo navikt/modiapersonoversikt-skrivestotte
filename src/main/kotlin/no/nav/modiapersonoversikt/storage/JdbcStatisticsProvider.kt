@@ -119,8 +119,11 @@ class JdbcStatisticsProvider(private val dataSource: DataSource, private val con
         }
     }
 
-    override suspend fun slettStatistikk() {
-        transactional(dataSource) { tx -> slettStatistikk(tx) }
+    override suspend fun slettAllStatistikk() {
+        transactional(dataSource) { tx ->
+            tx.run(queryOf("DELETE FROM $rawTable").asUpdate)
+            tx.run(queryOf("DELETE FROM $table").asUpdate)
+        }
     }
 
     private fun slettGamleRawInnslag(tx: Session) {
@@ -139,7 +142,6 @@ class JdbcStatisticsProvider(private val dataSource: DataSource, private val con
     }
 
     private fun slettStatistikk(tx: Session) {
-        tx.run(queryOf("DELETE FROM $rawTable").asUpdate)
         tx.run(queryOf("DELETE FROM $table").asUpdate)
     }
 

@@ -9,5 +9,5 @@ interface StatisticsProvider {
     suspend fun refreshStatistikk()
     suspend fun hentOverordnetBruk(): List<StatistikkEntry>
     suspend fun hentDetaljertBruk(from: LocalDateTime, to: LocalDateTime): List<DetaljertStatistikk>
-    suspend fun slettStatistikk()
+    suspend fun slettAllStatistikk()
 }

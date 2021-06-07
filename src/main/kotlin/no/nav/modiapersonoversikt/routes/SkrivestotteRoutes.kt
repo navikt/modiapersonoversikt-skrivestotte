@@ -30,7 +30,7 @@ fun Route.skrivestotteRoutes(provider: StorageProvider, statistics: StatisticsPr
                 call.respond(provider.hentTekster(tagFilter = null, sorterBasertPaBruk = false))
             }
             post("/upload") {
-                statistics.slettStatistikk()
+                statistics.slettAllStatistikk()
                 val tekster: Tekster = teksterFromJsonMap(call.receive())
                 call.respond(provider.synkroniserTekster(tekster))
             }
