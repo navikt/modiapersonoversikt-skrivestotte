@@ -5,7 +5,7 @@ import kotlinx.coroutines.runBlocking
 import kotliquery.Session
 import kotliquery.queryOf
 import no.nav.modiapersonoversikt.Configuration
-import no.nav.modiapersonoversikt.XmlLoader
+import no.nav.modiapersonoversikt.JsonBackupLoader
 import no.nav.modiapersonoversikt.measureTimeMillisSuspended
 import no.nav.modiapersonoversikt.model.Locale
 import no.nav.modiapersonoversikt.model.Tekst
@@ -29,8 +29,9 @@ class JdbcStorageProvider(private val dataSource: DataSource, private val config
                 log.info("Starter JdbcStorageProvider, fant $antallTekster tekster")
 
                 if (antallTekster == 0) {
-                    log.info("Ingen tekster funnet, laster fra sammenstilt.xml")
-                    XmlLoader.get("/sammenstilt.xml")
+                    log.info("Ingen tekster funnet, laster fra json-backup")
+                    JsonBackupLoader.getTekster()
+                        .values
                         .forEach { lagreTekst(tx, it) }
                 }
             }
@@ -184,22 +185,24 @@ class JdbcStorageProvider(private val dataSource: DataSource, private val config
                 """.trimIndent()
             )
         }
-
         return mapOf(
             *tx.run(
                 hentAlleQuery.map { row ->
                     val id = UUID.fromString(row.string("id"))
+                    val lagretVekttall = JsonBackupLoader.getVekttall(row.string("id"))
 
                     id to Tekst(
                         id,
                         row.string("overskrift"),
                         row.string("tags").split("|"),
                         innhold[row.string("id")] ?: emptyMap(),
-                        row.intOrNull("brukt") ?: 0
+                        (row.intOrNull("brukt") ?: 0) + lagretVekttall
                     )
                 }
                     .asList
-            ).toTypedArray()
+            )
+                .sortedByDescending { it.second.vekttall }
+                .toTypedArray()
         )
     }
 }
