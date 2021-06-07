@@ -185,23 +185,22 @@ class JdbcStorageProvider(private val dataSource: DataSource, private val config
                 """.trimIndent()
             )
         }
+
         return mapOf(
             *tx.run(
                 hentAlleQuery.map { row ->
                     val id = UUID.fromString(row.string("id"))
-                    val lagretVekttall = JsonBackupLoader.getVekttall(row.string("id"))
 
                     id to Tekst(
                         id,
                         row.string("overskrift"),
                         row.string("tags").split("|"),
                         innhold[row.string("id")] ?: emptyMap(),
-                        (row.intOrNull("brukt") ?: 0) + lagretVekttall
+                        row.intOrNull("brukt") ?: 0
                     )
                 }
                     .asList
             )
-                .sortedByDescending { it.second.vekttall }
                 .toTypedArray()
         )
     }
