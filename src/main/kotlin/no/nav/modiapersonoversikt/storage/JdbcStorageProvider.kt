@@ -5,7 +5,7 @@ import kotlinx.coroutines.runBlocking
 import kotliquery.Session
 import kotliquery.queryOf
 import no.nav.modiapersonoversikt.Configuration
-import no.nav.modiapersonoversikt.XmlLoader
+import no.nav.modiapersonoversikt.JsonBackupLoader
 import no.nav.modiapersonoversikt.measureTimeMillisSuspended
 import no.nav.modiapersonoversikt.model.Locale
 import no.nav.modiapersonoversikt.model.Tekst
@@ -29,8 +29,9 @@ class JdbcStorageProvider(private val dataSource: DataSource, private val config
                 log.info("Starter JdbcStorageProvider, fant $antallTekster tekster")
 
                 if (antallTekster == 0) {
-                    log.info("Ingen tekster funnet, laster fra sammenstilt.xml")
-                    XmlLoader.get("/sammenstilt.xml")
+                    log.info("Ingen tekster funnet, laster fra json-backup")
+                    JsonBackupLoader.getTekster()
+                        .values
                         .forEach { lagreTekst(tx, it) }
                 }
             }
@@ -199,7 +200,8 @@ class JdbcStorageProvider(private val dataSource: DataSource, private val config
                     )
                 }
                     .asList
-            ).toTypedArray()
+            )
+                .toTypedArray()
         )
     }
 }
