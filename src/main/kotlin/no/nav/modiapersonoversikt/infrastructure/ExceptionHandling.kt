@@ -8,7 +8,6 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.request.ApplicationRequest
 import io.ktor.response.respond
 import no.nav.modiapersonoversikt.log
-import org.slf4j.LoggerFactory
 
 fun StatusPages.Configuration.exceptionHandler() {
     exception<Throwable> { cause ->

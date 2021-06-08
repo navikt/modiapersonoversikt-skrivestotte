@@ -28,8 +28,8 @@ class DataSourceConfiguration(val env: Configuration) {
         log.info("Creating DataSource to: ${env.jdbcUrl}")
 
         if (env.clusterName == "local") {
-            config.username = "sa"
-            config.password = "sa"
+            config.username = "test"
+            config.password = "test"
             return HikariDataSource(config)
         }
 
@@ -44,12 +44,12 @@ class DataSourceConfiguration(val env: Configuration) {
         private val log: Logger = LoggerFactory.getLogger(DataSourceConfiguration::class.java)
         private fun dbRole(user: String): String = "modiapersonoversikt-skrivestotte-$user"
 
-        fun migrateDb(dataSource: DataSource) {
+        fun migrateDb(configuration: Configuration, dataSource: DataSource) {
             Flyway
                 .configure()
                 .dataSource(dataSource)
                 .also {
-                    if (dataSource is HikariDataSource && !dataSource.jdbcUrl.contains(":h2:")) {
+                    if (dataSource is HikariDataSource && configuration.clusterName != "local") {
                         val dbUser = dbRole("admin")
                         it.initSql("SET ROLE '$dbUser'")
                     }

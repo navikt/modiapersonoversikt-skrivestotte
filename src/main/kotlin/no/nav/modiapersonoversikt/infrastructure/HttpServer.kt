@@ -27,7 +27,7 @@ object HttpServer {
     }
 }
 
-private fun Application.naisApplication(appname: String, applicationState: ApplicationState, module: Application.() -> Unit) {
+fun Application.naisApplication(appname: String, applicationState: ApplicationState, module: Application.() -> Unit) {
     routing {
         route(appname) {
             naisRoutes(

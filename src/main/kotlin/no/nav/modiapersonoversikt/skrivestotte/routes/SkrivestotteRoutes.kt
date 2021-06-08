@@ -34,7 +34,7 @@ fun Route.skrivestotteRoutes(provider: StorageProvider, statistics: StatisticsPr
                 val tekster: Tekster = teksterFromJsonMap(call.receive())
                 call.respond(provider.synkroniserTekster(tekster))
             }
-          
+
             put {
                 call.respond(provider.oppdaterTekst(call.receive()))
             }

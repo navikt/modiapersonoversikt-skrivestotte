@@ -10,7 +10,7 @@ val log = LoggerFactory.getLogger("modiapersonoversikt-skrivestotte.Application"
 fun main() {
     val configuration = Configuration()
     val dbConfig = DataSourceConfiguration(configuration)
-    DataSourceConfiguration.migrateDb(dbConfig.adminDataSource())
+    DataSourceConfiguration.migrateDb(configuration, dbConfig.adminDataSource())
 
     HttpServer.create("modiapersonoversikt-skrivestotte", 7070) {
         skrivestotteApp(

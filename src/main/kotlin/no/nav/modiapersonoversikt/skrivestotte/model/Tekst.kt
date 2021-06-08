@@ -34,9 +34,10 @@ data class Tekst(
                     else -> throw IllegalStateException("Tag liste for $id innehold ugyldig data: $tagsRaw")
                 },
                 innhold = when (innholdRaw) {
-                    is Map<*, *> -> innholdRaw
-                        .mapKeys { Locale.valueOf(it.key.toString()) }
-                        .mapValues { it.value.toString() }
+                    is Map<*, *> ->
+                        innholdRaw
+                            .mapKeys { Locale.valueOf(it.key.toString()) }
+                            .mapValues { it.value.toString() }
                     else -> throw IllegalStateException("Innhold map for $id innehold ugyldig data: $innholdRaw")
                 },
                 vekttall = map["vekttall"].toString().toInt()

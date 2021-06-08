@@ -2,7 +2,6 @@ package no.nav.modiapersonoversikt.infrastructure
 
 import io.ktor.auth.*
 
-
 class MockAuthenticationProvider internal constructor(config: Configuration) : AuthenticationProvider(config) {
     internal val principal: Principal? = config.principal
 

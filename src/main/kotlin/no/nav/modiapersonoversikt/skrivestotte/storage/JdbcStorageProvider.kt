@@ -5,11 +5,11 @@ import kotlinx.coroutines.runBlocking
 import kotliquery.Session
 import kotliquery.queryOf
 import no.nav.modiapersonoversikt.config.Configuration
-import no.nav.modiapersonoversikt.utils.JsonBackupLoader
 import no.nav.modiapersonoversikt.log
 import no.nav.modiapersonoversikt.skrivestotte.model.Locale
 import no.nav.modiapersonoversikt.skrivestotte.model.Tekst
 import no.nav.modiapersonoversikt.skrivestotte.model.Tekster
+import no.nav.modiapersonoversikt.utils.JsonBackupLoader
 import no.nav.modiapersonoversikt.utils.measureTimeMillisSuspended
 import java.util.*
 import javax.sql.DataSource
@@ -28,9 +28,11 @@ class JdbcStorageProvider(private val dataSource: DataSource, private val config
 
                 if (antallTekster == 0) {
                     log.info("Ingen tekster funnet, laster fra json-backup")
-                    JsonBackupLoader.getTekster()
+                    val tekster = JsonBackupLoader.getTekster()
+                    tekster
                         .values
                         .forEach { lagreTekst(tx, it) }
+                    log.info("Prepopulert databasen med ${tekster.size} tekster")
                 }
             }
         }
@@ -106,7 +108,7 @@ class JdbcStorageProvider(private val dataSource: DataSource, private val config
         return status == "ok"
     }
 
-    private fun lagreTekst(tx: Session, tekst: Tekst) {
+    internal fun lagreTekst(tx: Session, tekst: Tekst) {
         tx.run(
             queryOf(
                 "INSERT INTO tekst (id, overskrift, tags) VALUES (:id, :overskrift, :tags)",

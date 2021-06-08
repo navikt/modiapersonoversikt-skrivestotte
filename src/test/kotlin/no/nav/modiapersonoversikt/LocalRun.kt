@@ -5,10 +5,13 @@ import no.nav.modiapersonoversikt.config.DataSourceConfiguration
 import no.nav.modiapersonoversikt.infrastructure.HttpServer
 
 fun runLocally(useAuthentication: Boolean) {
-    val configuration = Configuration()
+    val db = SpecifiedPostgreSQLContainer()
+    db.start()
+
+    val configuration = Configuration(jdbcUrl = db.jdbcUrl)
     val dbConfig = DataSourceConfiguration(configuration)
 
-    DataSourceConfiguration.migrateDb(dbConfig.adminDataSource())
+    DataSourceConfiguration.migrateDb(configuration, dbConfig.adminDataSource())
 
     HttpServer.create("modiapersonoversikt-skrivestotte", 7070) {
         skrivestotteApp(

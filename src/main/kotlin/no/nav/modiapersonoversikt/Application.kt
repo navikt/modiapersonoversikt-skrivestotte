@@ -22,7 +22,7 @@ import no.nav.modiapersonoversikt.skrivestotte.routes.skrivestotteRoutes
 import no.nav.modiapersonoversikt.skrivestotte.service.LeaderElectorService
 import no.nav.modiapersonoversikt.skrivestotte.storage.JdbcStatisticsProvider
 import no.nav.modiapersonoversikt.skrivestotte.storage.JdbcStorageProvider
-import no.nav.modiapersonoversikt.utils.ObjectMapperProvider
+import no.nav.modiapersonoversikt.utils.JacksonUtils
 import no.nav.modiapersonoversikt.utils.measureTimeMillis
 import org.slf4j.event.Level
 import java.util.*
@@ -56,7 +56,7 @@ fun Application.skrivestotteApp(
     }
 
     install(ContentNegotiation) {
-        register(ContentType.Application.Json, JacksonConverter(ObjectMapperProvider.objectMapper))
+        register(ContentType.Application.Json, JacksonConverter(JacksonUtils.objectMapper))
     }
 
     install(CallLogging) {

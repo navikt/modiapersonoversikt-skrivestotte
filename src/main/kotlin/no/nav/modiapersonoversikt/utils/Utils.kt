@@ -2,7 +2,6 @@ package no.nav.modiapersonoversikt.utils
 
 import kotlinx.coroutines.runBlocking
 import no.nav.modiapersonoversikt.log
-import org.slf4j.LoggerFactory
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId

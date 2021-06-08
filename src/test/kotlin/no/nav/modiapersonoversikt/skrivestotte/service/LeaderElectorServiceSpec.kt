@@ -6,7 +6,7 @@ import okhttp3.mockwebserver.MockWebServer
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
-internal class LeaderElectorServiceSpec2 {
+internal class LeaderElectorServiceSpec {
     val mockserver = MockWebServer()
     val electorPath = mockserver.url("").toString()
     init {
@@ -24,5 +24,4 @@ internal class LeaderElectorServiceSpec2 {
         val service = LeaderElectorService(Configuration(electorPath = electorPath, clusterName = "something else"))
         assertEquals("inethostname", service.getLeader().name)
     }
-
 }

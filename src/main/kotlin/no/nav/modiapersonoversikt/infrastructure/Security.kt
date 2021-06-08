@@ -11,7 +11,6 @@ import io.ktor.auth.*
 import io.ktor.auth.jwt.*
 import io.ktor.http.auth.HttpAuthHeader
 import no.nav.modiapersonoversikt.log
-import org.slf4j.LoggerFactory
 import java.net.URL
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -60,7 +59,7 @@ class Security {
             return try {
                 val token = cookieNames
                     .find { !call.request.cookies[it].isNullOrEmpty() }
-                    ?.let { cookieName ->  call.request.cookies[cookieName] }
+                    ?.let { cookieName -> call.request.cookies[cookieName] }
                 io.ktor.http.auth.parseAuthorizationHeader("Bearer $token")
             } catch (ex: Throwable) {
                 log.error("Could not get JWT from cookie $cookieNames", ex)
