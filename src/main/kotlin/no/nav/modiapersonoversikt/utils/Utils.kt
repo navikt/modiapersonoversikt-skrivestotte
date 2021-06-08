@@ -1,13 +1,13 @@
-package no.nav.modiapersonoversikt
+package no.nav.modiapersonoversikt.utils
 
 import kotlinx.coroutines.runBlocking
+import no.nav.modiapersonoversikt.log
 import org.slf4j.LoggerFactory
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
-private val log = LoggerFactory.getLogger("modiapersonoversikt-skrivestotte.Application")
 suspend fun <T : Any> measureTimeMillisSuspended(name: String, fn: suspend () -> T): T {
     val start = System.currentTimeMillis()
     val response = fn()

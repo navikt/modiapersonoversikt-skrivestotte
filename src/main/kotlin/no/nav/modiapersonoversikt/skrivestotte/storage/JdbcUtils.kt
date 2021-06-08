@@ -1,4 +1,4 @@
-package no.nav.modiapersonoversikt.storage
+package no.nav.modiapersonoversikt.skrivestotte.storage
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

@@ -1,4 +1,4 @@
-package no.nav.modiapersonoversikt.routes
+package no.nav.modiapersonoversikt.infrastructure
 
 import io.ktor.application.call
 import io.ktor.http.ContentType

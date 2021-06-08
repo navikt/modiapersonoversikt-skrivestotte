@@ -1,12 +1,12 @@
-package no.nav.modiapersonoversikt.service
+package no.nav.modiapersonoversikt.skrivestotte.service
 
 import com.google.gson.Gson
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.apache.Apache
 import io.ktor.client.request.get
 import kotlinx.coroutines.runBlocking
-import no.nav.modiapersonoversikt.Configuration
-import no.nav.modiapersonoversikt.measureTimeMillis
+import no.nav.modiapersonoversikt.config.Configuration
+import no.nav.modiapersonoversikt.utils.measureTimeMillis
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.lang.Exception

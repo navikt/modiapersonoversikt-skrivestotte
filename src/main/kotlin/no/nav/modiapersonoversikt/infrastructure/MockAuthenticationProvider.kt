@@ -1,4 +1,4 @@
-package no.nav.modiapersonoversikt
+package no.nav.modiapersonoversikt.infrastructure
 
 import io.ktor.auth.*
 

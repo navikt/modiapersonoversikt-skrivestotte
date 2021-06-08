@@ -1,4 +1,4 @@
-package no.nav.modiapersonoversikt
+package no.nav.modiapersonoversikt.infrastructure
 
 import io.ktor.application.ApplicationCall
 import io.ktor.application.call
@@ -7,9 +7,8 @@ import io.ktor.features.origin
 import io.ktor.http.HttpStatusCode
 import io.ktor.request.ApplicationRequest
 import io.ktor.response.respond
+import no.nav.modiapersonoversikt.log
 import org.slf4j.LoggerFactory
-
-private val log = LoggerFactory.getLogger("modiapersonoversikt-skrivestotte.ExceptionHandler")
 
 fun StatusPages.Configuration.exceptionHandler() {
     exception<Throwable> { cause ->

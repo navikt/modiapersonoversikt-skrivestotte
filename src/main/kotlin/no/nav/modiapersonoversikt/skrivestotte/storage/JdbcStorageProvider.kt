@@ -1,20 +1,18 @@
-package no.nav.modiapersonoversikt.storage
+package no.nav.modiapersonoversikt.skrivestotte.storage
 
 import io.ktor.features.BadRequestException
 import kotlinx.coroutines.runBlocking
 import kotliquery.Session
 import kotliquery.queryOf
-import no.nav.modiapersonoversikt.Configuration
-import no.nav.modiapersonoversikt.JsonBackupLoader
-import no.nav.modiapersonoversikt.measureTimeMillisSuspended
-import no.nav.modiapersonoversikt.model.Locale
-import no.nav.modiapersonoversikt.model.Tekst
-import no.nav.modiapersonoversikt.model.Tekster
-import org.slf4j.LoggerFactory
+import no.nav.modiapersonoversikt.config.Configuration
+import no.nav.modiapersonoversikt.utils.JsonBackupLoader
+import no.nav.modiapersonoversikt.log
+import no.nav.modiapersonoversikt.skrivestotte.model.Locale
+import no.nav.modiapersonoversikt.skrivestotte.model.Tekst
+import no.nav.modiapersonoversikt.skrivestotte.model.Tekster
+import no.nav.modiapersonoversikt.utils.measureTimeMillisSuspended
 import java.util.*
 import javax.sql.DataSource
-
-private val log = LoggerFactory.getLogger("modiapersonoversikt-skrivestotte.StorageService")
 
 class JdbcStorageProvider(private val dataSource: DataSource, private val configuration: Configuration) : StorageProvider {
     init {

@@ -1,4 +1,4 @@
-package no.nav.modiapersonoversikt
+package no.nav.modiapersonoversikt.infrastructure
 
 import com.auth0.jwk.JwkProvider
 import com.auth0.jwk.JwkProviderBuilder
@@ -10,15 +10,14 @@ import io.ktor.application.ApplicationCall
 import io.ktor.auth.*
 import io.ktor.auth.jwt.*
 import io.ktor.http.auth.HttpAuthHeader
+import no.nav.modiapersonoversikt.log
 import org.slf4j.LoggerFactory
 import java.net.URL
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-private val log = LoggerFactory.getLogger("modiapersonoversikt-skrivestotte.JwtConfig")
-
 class SubjectPrincipal(val subject: String) : Principal
-class JwtUtil {
+class Security {
     companion object {
         private val cookieNames = listOf("modia_ID_token", "ID_token")
 

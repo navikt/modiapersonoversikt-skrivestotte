@@ -1,4 +1,4 @@
-package no.nav.modiapersonoversikt.storage
+package no.nav.modiapersonoversikt.skrivestotte.storage
 
 import java.time.LocalDateTime
 import java.util.*

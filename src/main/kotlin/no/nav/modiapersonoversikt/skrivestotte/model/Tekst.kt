@@ -1,4 +1,4 @@
-package no.nav.modiapersonoversikt.model
+package no.nav.modiapersonoversikt.skrivestotte.model
 
 import java.util.*
 

@@ -1,7 +1,7 @@
-package no.nav.modiapersonoversikt.storage
+package no.nav.modiapersonoversikt.skrivestotte.storage
 
-import no.nav.modiapersonoversikt.model.Tekst
-import no.nav.modiapersonoversikt.model.Tekster
+import no.nav.modiapersonoversikt.skrivestotte.model.Tekst
+import no.nav.modiapersonoversikt.skrivestotte.model.Tekster
 import java.util.*
 
 interface StorageProvider {

@@ -1,4 +1,4 @@
-package no.nav.modiapersonoversikt.routes
+package no.nav.modiapersonoversikt.skrivestotte.routes
 
 import io.ktor.application.call
 import io.ktor.auth.authenticate
@@ -6,12 +6,12 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
-import no.nav.modiapersonoversikt.model.Tekster
-import no.nav.modiapersonoversikt.model.teksterFromJsonMap
-import no.nav.modiapersonoversikt.storage.StatisticsProvider
-import no.nav.modiapersonoversikt.storage.StorageProvider
-import no.nav.modiapersonoversikt.storage.retentionDays
-import no.nav.modiapersonoversikt.toLocalDateTime
+import no.nav.modiapersonoversikt.skrivestotte.model.Tekster
+import no.nav.modiapersonoversikt.skrivestotte.model.teksterFromJsonMap
+import no.nav.modiapersonoversikt.skrivestotte.storage.StatisticsProvider
+import no.nav.modiapersonoversikt.skrivestotte.storage.StorageProvider
+import no.nav.modiapersonoversikt.skrivestotte.storage.retentionDays
+import no.nav.modiapersonoversikt.utils.toLocalDateTime
 import java.time.LocalDateTime
 import java.util.*
 

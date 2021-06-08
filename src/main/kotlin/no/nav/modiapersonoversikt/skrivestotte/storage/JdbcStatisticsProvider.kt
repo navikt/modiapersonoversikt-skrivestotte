@@ -1,10 +1,10 @@
-package no.nav.modiapersonoversikt.storage
+package no.nav.modiapersonoversikt.skrivestotte.storage
 
 import kotliquery.Row
 import kotliquery.Session
 import kotliquery.queryOf
-import no.nav.modiapersonoversikt.Configuration
-import no.nav.modiapersonoversikt.toEpochMillis
+import no.nav.modiapersonoversikt.config.Configuration
+import no.nav.modiapersonoversikt.utils.toEpochMillis
 import java.time.Duration
 import java.time.LocalDateTime
 import java.time.ZoneId

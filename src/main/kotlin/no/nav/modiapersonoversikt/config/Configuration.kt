@@ -1,4 +1,4 @@
-package no.nav.modiapersonoversikt
+package no.nav.modiapersonoversikt.config
 
 import com.natpryce.konfig.*
 

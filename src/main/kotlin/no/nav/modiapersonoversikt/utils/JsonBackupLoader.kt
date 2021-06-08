@@ -1,8 +1,8 @@
-package no.nav.modiapersonoversikt
+package no.nav.modiapersonoversikt.utils
 
 import com.fasterxml.jackson.module.kotlin.readValue
-import no.nav.modiapersonoversikt.model.Tekster
-import no.nav.modiapersonoversikt.model.teksterFromJsonMap
+import no.nav.modiapersonoversikt.skrivestotte.model.Tekster
+import no.nav.modiapersonoversikt.skrivestotte.model.teksterFromJsonMap
 import java.util.*
 
 object JsonBackupLoader {

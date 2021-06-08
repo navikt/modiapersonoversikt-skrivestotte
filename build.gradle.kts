@@ -4,7 +4,6 @@ val mainClass = "no.nav.modiapersonoversikt.ApplicationKt"
 val kotlinVersion = "1.3.70"
 val ktorVersion = "1.3.1"
 val prometheusVersion = "0.4.0"
-val spekVersion = "1.2.1"
 
 plugins {
     application
@@ -46,21 +45,12 @@ dependencies {
     implementation("com.github.seratch:kotliquery:1.3.0")
 
     testImplementation("io.mockk:mockk:1.9")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.3.0")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.3.0")
-    testImplementation("org.jetbrains.spek:spek-api:$spekVersion") {
-        exclude(group = "org.jetbrains.kotlin")
-    }
-    testRuntimeOnly("org.jetbrains.spek:spek-junit-platform-engine:$spekVersion") {
-        exclude(group = "org.junit.platform")
-        exclude(group = "org.jetbrains.kotlin")
-    }
+    testImplementation("org.junit.jupiter:junit-jupiter:5.6.2")
     testRuntimeOnly("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
     testImplementation("com.h2database:h2:1.4.200")
 }
 
 repositories {
-
     maven("https://plugins.gradle.org/m2/")
     maven("https://dl.bintray.com/kotlin/ktor/")
     jcenter()
@@ -79,6 +69,9 @@ java {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+    testLogging {
+        events("passed", "skipped", "failed")
+    }
 }
 
 tasks.withType<Wrapper> {
