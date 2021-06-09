@@ -1,7 +1,7 @@
 import com.moowork.gradle.node.npm.NpmTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val mainClass = "no.nav.modiapersonoversikt.ApplicationKt"
+val mainClass = "no.nav.modiapersonoversikt.MainKt"
 val kotlinVersion = "1.3.70"
 val ktorVersion = "1.3.1"
 val prometheusVersion = "0.4.0"
