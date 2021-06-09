@@ -1,30 +1,94 @@
 package no.nav.modiapersonoversikt
 
-import org.slf4j.LoggerFactory
+import io.ktor.application.*
+import io.ktor.auth.*
+import io.ktor.features.*
+import io.ktor.http.*
+import io.ktor.http.content.*
+import io.ktor.jackson.*
+import io.ktor.metrics.dropwizard.*
+import io.ktor.request.*
+import io.ktor.routing.*
+import io.prometheus.client.CollectorRegistry
+import io.prometheus.client.dropwizard.DropwizardExports
+import no.nav.modiapersonoversikt.config.Configuration
+import no.nav.modiapersonoversikt.infrastructure.Security
+import no.nav.modiapersonoversikt.infrastructure.Security.Companion.setupJWT
+import no.nav.modiapersonoversikt.infrastructure.Security.Companion.setupMock
+import no.nav.modiapersonoversikt.infrastructure.SubjectPrincipal
+import no.nav.modiapersonoversikt.infrastructure.exceptionHandler
+import no.nav.modiapersonoversikt.infrastructure.notFoundHandler
+import no.nav.modiapersonoversikt.skrivestotte.routes.skrivestotteRoutes
+import no.nav.modiapersonoversikt.skrivestotte.service.LeaderElectorService
+import no.nav.modiapersonoversikt.skrivestotte.storage.JdbcStatisticsProvider
+import no.nav.modiapersonoversikt.skrivestotte.storage.JdbcStorageProvider
+import no.nav.modiapersonoversikt.utils.JacksonUtils
+import no.nav.modiapersonoversikt.utils.measureTimeMillis
+import org.slf4j.event.Level
+import java.util.*
+import javax.sql.DataSource
+import kotlin.concurrent.schedule
 
-private val log = LoggerFactory.getLogger("modiapersonoversikt-skrivestotte.Application")
+private const val FEM_MINUTTER: Long = 5 * 60 * 1000
+fun Application.skrivestotteApp(
+    configuration: Configuration,
+    dataSource: DataSource,
+    useAuthentication: Boolean = true
+) {
+    install(StatusPages) {
+        notFoundHandler()
+        exceptionHandler()
+    }
 
-data class ApplicationState(var running: Boolean = true, var initialized: Boolean = false)
+    install(CORS) {
+        anyHost()
+        method(HttpMethod.Put)
+        method(HttpMethod.Delete)
+        allowCredentials = true
+    }
 
-fun main() {
-    val configuration = Configuration()
-    val dbConfig = DataSourceConfiguration(configuration)
-
-    val applicationState = ApplicationState()
-    val applicationServer = createHttpServer(
-        applicationState = applicationState,
-        configuration = configuration,
-        adminDatasource = dbConfig.adminDataSource(),
-        userDataSource = dbConfig.userDataSource()
-    )
-
-    Runtime.getRuntime().addShutdownHook(
-        Thread {
-            log.info("Shutdown hook called, shutting down gracefully")
-            applicationState.initialized = false
-            applicationServer.stop(5000, 5000)
+    install(Authentication) {
+        if (useAuthentication) {
+            setupJWT(configuration.jwksUrl, configuration.jwtIssuer)
+        } else {
+            setupMock(SubjectPrincipal("Z999999"))
         }
-    )
+    }
 
-    applicationServer.start(wait = true)
+    install(ContentNegotiation) {
+        register(ContentType.Application.Json, JacksonConverter(JacksonUtils.objectMapper))
+    }
+
+    install(CallLogging) {
+        level = Level.INFO
+        filter { call -> call.request.path().startsWith("/modiapersonoversikt-skrivestotte/skrivestotte") }
+        mdc("userId", Security.Companion::getSubject)
+    }
+
+    install(DropwizardMetrics) {
+        CollectorRegistry.defaultRegistry.register(DropwizardExports(registry))
+    }
+
+    val leaderElectorService = LeaderElectorService(configuration)
+    val storageProvider = JdbcStorageProvider(dataSource, configuration)
+    val statisticsProvider = JdbcStatisticsProvider(dataSource, configuration)
+
+    Timer().schedule(FEM_MINUTTER, FEM_MINUTTER) {
+        if (leaderElectorService.isLeader()) {
+            measureTimeMillis("refreshStatistikk") {
+                statisticsProvider.refreshStatistikk()
+            }
+        }
+    }
+
+    routing {
+        route("modiapersonoversikt-skrivestotte") {
+            static {
+                resources("webapp")
+                defaultResource("index.html", "webapp")
+            }
+
+            skrivestotteRoutes(storageProvider, statisticsProvider)
+        }
+    }
 }
