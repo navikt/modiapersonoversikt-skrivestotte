@@ -1,10 +1,10 @@
 import com.moowork.gradle.node.npm.NpmTask
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val mainClass = "no.nav.modiapersonoversikt.ApplicationKt"
+val mainClass = "no.nav.modiapersonoversikt.MainKt"
 val kotlinVersion = "1.3.70"
 val ktorVersion = "1.3.1"
 val prometheusVersion = "0.4.0"
-val spekVersion = "1.2.1"
 
 plugins {
     application
@@ -45,22 +45,13 @@ dependencies {
     implementation("org.flywaydb:flyway-core:6.3.1")
     implementation("com.github.seratch:kotliquery:1.3.0")
 
-    testImplementation("io.mockk:mockk:1.9")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.3.0")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.3.0")
-    testImplementation("org.jetbrains.spek:spek-api:$spekVersion") {
-        exclude(group = "org.jetbrains.kotlin")
-    }
-    testRuntimeOnly("org.jetbrains.spek:spek-junit-platform-engine:$spekVersion") {
-        exclude(group = "org.junit.platform")
-        exclude(group = "org.jetbrains.kotlin")
-    }
     testRuntimeOnly("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
-    testImplementation("com.h2database:h2:1.4.200")
+    testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
+    testImplementation("org.testcontainers:postgresql:1.15.1")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.6.2")
 }
 
 repositories {
-
     maven("https://plugins.gradle.org/m2/")
     maven("https://dl.bintray.com/kotlin/ktor/")
     jcenter()
@@ -72,13 +63,19 @@ node {
     download = true
 }
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+tasks.named<KotlinCompile>("compileKotlin") {
+    kotlinOptions.jvmTarget = "1.8"
+}
+
+tasks.named<KotlinCompile>("compileTestKotlin") {
+    kotlinOptions.jvmTarget = "1.8"
 }
 
 tasks.withType<Test> {
     useJUnitPlatform()
+    testLogging {
+        events("passed", "skipped", "failed")
+    }
 }
 
 tasks.withType<Wrapper> {
