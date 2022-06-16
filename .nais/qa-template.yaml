@@ -1,7 +1,7 @@
 apiVersion: "nais.io/v1alpha1"
 kind: "Application"
 metadata:
-  name: modiapersonoversikt-skrivestotte-{{ q_env }}
+  name: modiapersonoversikt-skrivestotte
   namespace: personoversikt
   labels:
     team: personoversikt
@@ -30,7 +30,8 @@ spec:
       cpu: 2000m
       memory: 512Mi
   ingresses:
-    - https://app-{{ q_env }}.adeo.no/modiapersonoversikt-skrivestotte
+    - https://app-q0.adeo.no/modiapersonoversikt-skrivestotte
+    - https://app-q1.adeo.no/modiapersonoversikt-skrivestotte
   replicas:
     min: 1
     max: 2
@@ -47,7 +48,7 @@ spec:
     - name: ISSO_ISSUER
       value: "https://isso-q.adeo.no:443/isso/oauth2"
     - name: DATABASE_JDBC_URL
-      value: "jdbc:postgresql://b27dbvl008.preprod.local:5432/modiapersonoversikt-skrivestotte-{{ q_env }}"
+      value: "jdbc:postgresql://b27dbvl008.preprod.local:5432/modiapersonoversikt-skrivestotte"
     - name: VAULT_MOUNTPATH
       value: "postgresql/preprod-fss"
     - name: USE_STATISTICS_SORT
