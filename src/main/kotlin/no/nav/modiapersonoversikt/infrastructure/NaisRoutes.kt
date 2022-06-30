@@ -1,19 +1,14 @@
 package no.nav.modiapersonoversikt.infrastructure
 
-import io.ktor.application.call
-import io.ktor.http.ContentType
+import io.ktor.server.application.call
 import io.ktor.http.HttpStatusCode
-import io.ktor.response.respondText
-import io.ktor.response.respondTextWriter
-import io.ktor.routing.Route
-import io.ktor.routing.get
-import io.prometheus.client.CollectorRegistry
-import io.prometheus.client.exporter.common.TextFormat
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
+import no.nav.modiapersonoversikt.metricsRegistry
 
 fun Route.naisRoutes(
     readinessChecks: List<() -> Boolean>,
-    livenessChecks: List<() -> Boolean>,
-    collectorRegistry: CollectorRegistry = CollectorRegistry.defaultRegistry
+    livenessChecks: List<() -> Boolean>
 ) {
 
     get("/isAlive") {
@@ -33,9 +28,6 @@ fun Route.naisRoutes(
     }
 
     get("/metrics") {
-        val names = call.request.queryParameters.getAll("name[]")?.toSet() ?: setOf()
-        call.respondTextWriter(ContentType.parse(TextFormat.CONTENT_TYPE_004)) {
-            TextFormat.write004(this, collectorRegistry.filteredMetricFamilySamples(names))
-        }
+        call.respondText(metricsRegistry.scrape())
     }
 }

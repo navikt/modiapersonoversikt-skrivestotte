@@ -1,6 +1,6 @@
 package no.nav.modiapersonoversikt.skrivestotte.storage
 
-import io.ktor.features.BadRequestException
+import io.ktor.server.plugins.*
 import kotlinx.coroutines.runBlocking
 import kotliquery.Session
 import kotliquery.queryOf
