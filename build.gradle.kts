@@ -4,6 +4,7 @@ import com.github.gradle.node.npm.task.NpmTask
 val mainClass = "no.nav.modiapersonoversikt.MainKt"
 val kotlinVersion = "1.7.0"
 val ktorVersion = "2.0.3"
+val javaVersion = "11"
 val prometheusVersion = "1.9.0"
 val logbackVersion = "1.2.11"
 val logstashVersion = "7.2"
@@ -61,8 +62,8 @@ dependencies {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 }
 
 node {
@@ -71,7 +72,7 @@ node {
 }
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.jvmTarget = javaVersion
 }
 
 tasks.test {
