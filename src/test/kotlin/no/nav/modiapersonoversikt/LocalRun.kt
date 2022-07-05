@@ -23,5 +23,5 @@ fun runLocally(useMock: Boolean) {
 }
 
 fun main() {
-    runLocally(true)
+    runLocally(false)
 }
