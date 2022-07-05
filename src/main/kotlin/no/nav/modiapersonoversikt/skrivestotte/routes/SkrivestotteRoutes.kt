@@ -15,7 +15,7 @@ import no.nav.modiapersonoversikt.utils.toLocalDateTime
 import java.time.LocalDateTime
 import java.util.*
 
-fun Route.skrivestotteRoutes(provider: StorageProvider, statistics: StatisticsProvider) {
+fun Route.skrivestotteRoutes(authProviders: Array<String>, provider: StorageProvider, statistics: StatisticsProvider) {
     route("/skrivestotte") {
         get {
             val tagsFilter = call.request.queryParameters.getAll("tags")
@@ -23,7 +23,7 @@ fun Route.skrivestotteRoutes(provider: StorageProvider, statistics: StatisticsPr
             call.respond(provider.hentTekster(tagsFilter, enableUsageSort))
         }
 
-        authenticate {
+        authenticate(*authProviders) {
             get("/download") {
                 val filename = "skrivestotte-${LocalDateTime.now()}.json"
                 call.response.header("Content-Disposition", "attachment; filename=\"$filename\"")

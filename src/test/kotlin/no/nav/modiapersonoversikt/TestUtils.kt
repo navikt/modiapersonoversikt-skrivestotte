@@ -6,6 +6,7 @@ import kotlinx.coroutines.runBlocking
 import kotliquery.queryOf
 import no.nav.modiapersonoversikt.config.Configuration
 import no.nav.modiapersonoversikt.config.DataSourceConfiguration
+import no.nav.modiapersonoversikt.config.DatabaseConfig
 import no.nav.modiapersonoversikt.infrastructure.ApplicationState
 import no.nav.modiapersonoversikt.infrastructure.naisApplication
 import no.nav.modiapersonoversikt.skrivestotte.storage.transactional
@@ -20,7 +21,7 @@ interface WithDatabase {
     companion object {
         private val postgreSQLContainer = SpecifiedPostgreSQLContainer().apply { start() }
         private val configuration = Configuration(
-            jdbcUrl = postgreSQLContainer.jdbcUrl
+            database = DatabaseConfig(jdbcUrl = postgreSQLContainer.jdbcUrl)
         )
         private val dbConfig = DataSourceConfiguration(configuration)
 
@@ -51,7 +52,7 @@ interface WithDatabase {
 fun <R> withTestApp(jdbcUrl: String? = null, test: suspend ApplicationTestBuilder.() -> R) {
     val dataAwareApp = fun Application.() {
         if (jdbcUrl != null) {
-            val config = Configuration(jdbcUrl = jdbcUrl)
+            val config = Configuration(database = DatabaseConfig(jdbcUrl = jdbcUrl))
             val dbConfig = DataSourceConfiguration(config)
             skrivestotteApp(config, dbConfig.userDataSource(), false)
         }

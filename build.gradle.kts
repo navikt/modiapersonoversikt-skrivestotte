@@ -73,6 +73,7 @@ node {
 
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = javaVersion
+    kotlinOptions.freeCompilerArgs = listOf("-Xcontext-receivers")
 }
 
 tasks.test {
