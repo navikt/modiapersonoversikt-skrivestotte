@@ -6,10 +6,11 @@ import com.auth0.jwt.JWT
 import com.auth0.jwt.interfaces.Payload
 import io.ktor.http.*
 import io.ktor.http.auth.*
-import io.ktor.server.application.ApplicationCall
+import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 import io.ktor.server.request.*
+import no.nav.modiapersonoversikt.config.AuthCookie
 import no.nav.modiapersonoversikt.config.AuthProviderConfig
 import no.nav.modiapersonoversikt.log
 import java.net.URL
@@ -18,7 +19,6 @@ import java.util.concurrent.TimeUnit
 class SubjectPrincipal(val subject: String) : Principal
 class Security(private val providers: List<AuthProviderConfig>) {
     companion object {
-        private val cookieNames = listOf("modia_ID_token", "ID_token")
         const val OpenAM = "openam"
         const val AzureAD = "azuread"
 
@@ -34,6 +34,11 @@ class Security(private val providers: List<AuthProviderConfig>) {
             return token
         }
     }
+
+    private val cryptermap = providers
+        .flatMap { it.cookies }
+        .mapNotNull { it.encryptedWithSecret }
+        .associateWith { Crypter(it) }
 
     context(AuthenticationConfig)
     fun setupMock(principal: SubjectPrincipal) {
@@ -53,9 +58,9 @@ class Security(private val providers: List<AuthProviderConfig>) {
     fun setupJWT() {
         for (provider in providers) {
             jwt(provider.name) {
-                if (provider.usesCookies) {
+                if (provider.cookies.isNotEmpty()) {
                     authHeader {
-                        parseAuthorizationHeader(getToken(it) ?: "")
+                        parseAuthorizationHeader(getToken(it, provider.cookies) ?: "")
                     }
                 }
                 verifier(makeJwkProvider(provider.jwksUrl))
@@ -63,9 +68,14 @@ class Security(private val providers: List<AuthProviderConfig>) {
             }
         }
     }
-    fun getSubject(call: ApplicationCall): String {
+
+    fun getSubject(call: ApplicationCall): List<String> {
+        return providers.map { getSubject(call, it.cookies) }
+    }
+
+    private fun getSubject(call: ApplicationCall, cookies: List<AuthCookie>): String {
         return try {
-            getToken(call)
+            getToken(call, cookies)
                 ?.let(Security::removeAuthScheme)
                 ?.let(JWT::decode)
                 ?.getIdent()
@@ -91,17 +101,31 @@ class Security(private val providers: List<AuthProviderConfig>) {
         }
     }
 
-    private fun getToken(call: ApplicationCall): String? {
-        return call.request.header(HttpHeaders.Authorization)
-            ?: cookieNames
-                .find { !call.request.cookies[it].isNullOrEmpty() }
-                ?.let { call.request.cookies[it] }
-                ?.let {
-                    if (it.startsWith("bearer", ignoreCase = true)) {
-                        it
-                    } else {
-                        "Bearer $it"
-                    }
+    private fun getToken(call: ApplicationCall, cookies: List<AuthCookie>): String? {
+        return call.request.header(HttpHeaders.Authorization) ?: getFromCookies(call, cookies)
+    }
+
+    private fun getFromCookies(call: ApplicationCall, cookies: List<AuthCookie>): String? {
+        return cookies
+            .findFirstMatching(call)
+            ?.getValue(call)
+            ?.let {
+                if (it.startsWith("bearer", ignoreCase = true)) {
+                    it
+                } else {
+                    "Bearer $it"
                 }
+            }
+    }
+
+    private fun List<AuthCookie>.findFirstMatching(call: ApplicationCall): AuthCookie? {
+        return this.find { call.request.cookies[it.name].isNullOrEmpty().not() }
+    }
+
+    private fun AuthCookie.getValue(call: ApplicationCall): String? {
+        val value = call.request.cookies[this.name] ?: return null
+        val crypter = cryptermap[this.encryptedWithSecret] ?: return value
+
+        return crypter.decryptSafe(value).getOrNull()
     }
 }

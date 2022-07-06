@@ -72,7 +72,7 @@ fun Application.skrivestotteApp(
         level = Level.INFO
         disableDefaultColors()
         filter { call -> call.request.path().startsWith("/modiapersonoversikt-skrivestotte/skrivestotte") }
-        mdc("userId", security::getSubject)
+        mdc("userId") { security.getSubject(it).joinToString(";") }
     }
 
     install(MicrometerMetrics) {

@@ -39,6 +39,6 @@ fun getRequiredConfig(name: String, defaultValues: Map<String, String?> = emptyM
         "Could not find property/env for '$name'"
     }
 
-fun allNotNull(first: String?, second: String?): Pair<String, String>? {
-    return first?.let { a -> second?.let { b -> a to b } }
+fun <T1 : Any, T2 : Any, T3 : Any, R : Any> ifNotNull(p1: T1?, p2: T2?, p3: T3?, block: (T1, T2, T3) -> R?): R? {
+    return if (p1 != null && p2 != null && p3 != null) block(p1, p2, p3) else null
 }
