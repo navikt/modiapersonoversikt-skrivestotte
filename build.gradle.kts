@@ -8,6 +8,7 @@ val javaVersion = "11"
 val prometheusVersion = "1.9.0"
 val logbackVersion = "1.2.11"
 val logstashVersion = "7.2"
+val cryptoVersion = "1.2022.06.27-08.45-060993b81532"
 
 plugins {
     kotlin("jvm") version "1.7.0"
@@ -45,6 +46,7 @@ dependencies {
     implementation("net.logstash.logback:logstash-logback-encoder:$logstashVersion")
 
     implementation("no.nav:vault-jdbc:1.3.9")
+    implementation("no.nav.personoversikt:crypto:$cryptoVersion")
     implementation("org.flywaydb:flyway-core:8.5.12")
     implementation("com.github.seratch:kotliquery:1.8.0")
     implementation("com.natpryce:konfig:1.6.10.0")
