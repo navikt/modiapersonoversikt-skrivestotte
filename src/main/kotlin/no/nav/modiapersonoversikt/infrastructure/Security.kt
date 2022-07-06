@@ -13,6 +13,7 @@ import io.ktor.server.request.*
 import no.nav.modiapersonoversikt.config.AuthCookie
 import no.nav.modiapersonoversikt.config.AuthProviderConfig
 import no.nav.modiapersonoversikt.log
+import no.nav.personoversikt.crypto.Crypter
 import java.net.URL
 import java.util.concurrent.TimeUnit
 
@@ -126,6 +127,6 @@ class Security(private val providers: List<AuthProviderConfig>) {
         val value = call.request.cookies[this.name] ?: return null
         val crypter = cryptermap[this.encryptedWithSecret] ?: return value
 
-        return crypter.decryptSafe(value).getOrNull()
+        return crypter.decrypt(value).getOrNull()
     }
 }

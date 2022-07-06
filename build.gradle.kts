@@ -18,6 +18,28 @@ plugins {
 
 repositories {
     mavenCentral()
+    
+    maven {
+        name = "Confluent maven repo"
+        url = uri("https://packages.confluent.io/maven/")
+    }
+    
+    val githubToken = System.getenv("GITHUB_TOKEN")
+    if (githubToken.isNullOrEmpty()) {
+        maven {
+            name = "internal-mirror-github-navikt"
+            url = uri("https://repo.adeo.no/repository/github-package-registry-navikt/")
+        }
+    } else {
+        maven {
+            name = "github-package-registry-navikt"
+            url = uri("https://maven.pkg.github.com/navikt/maven-release")
+            credentials {
+                username = "token"
+                password = githubToken
+            }
+        }
+    }
 }
 
 idea {
