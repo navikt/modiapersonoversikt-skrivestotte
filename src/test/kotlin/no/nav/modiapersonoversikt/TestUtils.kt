@@ -1,6 +1,6 @@
 package no.nav.modiapersonoversikt
 
-import io.ktor.application.*
+import io.ktor.server.application.*
 import io.ktor.server.testing.*
 import kotlinx.coroutines.runBlocking
 import kotliquery.queryOf
@@ -14,7 +14,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.testcontainers.containers.PostgreSQLContainer
 import javax.sql.DataSource
 
-class SpecifiedPostgreSQLContainer : PostgreSQLContainer<SpecifiedPostgreSQLContainer>("postgres:9.6.12")
+class SpecifiedPostgreSQLContainer : PostgreSQLContainer<SpecifiedPostgreSQLContainer>("postgres:14.3-alpine")
 
 interface WithDatabase {
     companion object {
@@ -48,7 +48,7 @@ interface WithDatabase {
     fun connectionUrl(): String = postgreSQLContainer.jdbcUrl
 }
 
-fun <R> withTestApp(jdbcUrl: String? = null, test: TestApplicationEngine.() -> R): R {
+fun <R> withTestApp(jdbcUrl: String? = null, test: suspend ApplicationTestBuilder.() -> R) {
     val dataAwareApp = fun Application.() {
         if (jdbcUrl != null) {
             val config = Configuration(jdbcUrl = jdbcUrl)
@@ -62,5 +62,8 @@ fun <R> withTestApp(jdbcUrl: String? = null, test: TestApplicationEngine.() -> R
         dataAwareApp()
     }
 
-    return withTestApplication(moduleFunction, test)
+    return testApplication {
+        application(moduleFunction)
+        test()
+    }
 }

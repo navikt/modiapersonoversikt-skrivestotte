@@ -2,6 +2,7 @@ package no.nav.modiapersonoversikt.skrivestotte.service
 
 import com.google.gson.Gson
 import io.ktor.client.HttpClient
+import io.ktor.client.call.body
 import io.ktor.client.engine.apache.Apache
 import io.ktor.client.request.get
 import kotlinx.coroutines.runBlocking
@@ -35,7 +36,7 @@ class LeaderElectorService(val configuration: Configuration) {
     internal fun getLeader(): LeaderElectorResponse {
         return try {
             runBlocking {
-                val response = client.get<String>(configuration.electorPath)
+                val response = client.get(configuration.electorPath).body<String>()
                 gson.fromJson(response, LeaderElectorResponse::class.java)
             }
         } catch (e: Exception) {

@@ -1,90 +1,90 @@
-import com.moowork.gradle.node.npm.NpmTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import com.github.gradle.node.npm.task.NpmTask
 
 val mainClass = "no.nav.modiapersonoversikt.MainKt"
-val kotlinVersion = "1.3.70"
-val ktorVersion = "1.3.1"
-val prometheusVersion = "0.4.0"
+val kotlinVersion = "1.7.0"
+val ktorVersion = "2.0.3"
+val javaVersion = "11"
+val prometheusVersion = "1.9.0"
+val logbackVersion = "1.2.11"
+val logstashVersion = "7.2"
 
 plugins {
-    application
-    kotlin("jvm") version "1.3.70"
-    id("com.moowork.node") version "1.2.0"
+    kotlin("jvm") version "1.7.0"
+    id("com.github.node-gradle.node") version "3.1.1"
+    idea
 }
 
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-
-    dependencies {
-        classpath("org.junit.platform:junit-platform-gradle-plugin:1.2.0")
-    }
+repositories {
+    mavenCentral()
 }
 
-application {
-    mainClassName = mainClass
+idea {
+    module {
+        isDownloadSources = true
+        isDownloadJavadoc = true
+    }
 }
 
 dependencies {
     implementation(kotlin("stdlib"))
-    implementation("io.ktor:ktor-server-netty:$ktorVersion")
-    implementation("io.ktor:ktor-auth-jwt:$ktorVersion")
-    implementation("io.ktor:ktor-jackson:$ktorVersion")
-    implementation("io.ktor:ktor-metrics:$ktorVersion")
-    implementation("io.ktor:ktor-client-apache:$ktorVersion")
-    implementation("io.ktor:ktor-client-gson:$ktorVersion")
-    implementation("com.squareup.okhttp3:mockwebserver:4.4.0")
-    implementation("io.prometheus:simpleclient_hotspot:$prometheusVersion")
-    implementation("io.prometheus:simpleclient_common:$prometheusVersion")
-    implementation("io.prometheus:simpleclient_dropwizard:$prometheusVersion")
-    implementation("ch.qos.logback:logback-classic:1.2.3")
-    implementation("net.logstash.logback:logstash-logback-encoder:5.1")
-    implementation("com.natpryce:konfig:1.6.10.0")
-    implementation("no.nav:vault-jdbc:1.3.1")
-    implementation("org.flywaydb:flyway-core:6.3.1")
-    implementation("com.github.seratch:kotliquery:1.3.0")
+    implementation("io.ktor:ktor-server-auth:$ktorVersion")
+    implementation("io.ktor:ktor-server-auth-jwt:$ktorVersion")
+    implementation("io.ktor:ktor-server-status-pages:$ktorVersion")
+    implementation("io.ktor:ktor-server-cors:$ktorVersion")
+    implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
+    implementation("io.ktor:ktor-server-forwarded-header:$ktorVersion")
 
+    implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
+    implementation("io.ktor:ktor-serialization-jackson:$ktorVersion")
+
+    implementation("io.ktor:ktor-server-metrics-micrometer:$ktorVersion")
+    implementation("io.micrometer:micrometer-registry-prometheus:$prometheusVersion")
+
+    implementation("ch.qos.logback:logback-classic:$logbackVersion")
+    implementation("net.logstash.logback:logstash-logback-encoder:$logstashVersion")
+
+    implementation("no.nav:vault-jdbc:1.3.9")
+    implementation("org.flywaydb:flyway-core:8.5.12")
+    implementation("com.github.seratch:kotliquery:1.8.0")
+    implementation("com.natpryce:konfig:1.6.10.0")
+    
+    implementation("io.ktor:ktor-serialization-gson:$ktorVersion")
+    implementation("com.squareup.okhttp3:mockwebserver:4.4.0")
+    implementation("io.ktor:ktor-server-netty-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-client-apache-jvm:$ktorVersion")
+    
     testRuntimeOnly("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
-    testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
-    testImplementation("org.testcontainers:postgresql:1.15.1")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.6.2")
+    testImplementation("io.ktor:ktor-server-test-host-jvm:$ktorVersion")
+    testImplementation("org.testcontainers:postgresql:1.17.2")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlinVersion")
 }
 
-repositories {
-    maven("https://plugins.gradle.org/m2/")
-    maven("https://dl.bintray.com/kotlin/ktor/")
-    jcenter()
-    mavenCentral()
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 }
 
 node {
-    version = "14.15.5"
-    download = true
+    version.set("16.14.0")
+    download.set(true)
 }
 
-tasks.named<KotlinCompile>("compileKotlin") {
-    kotlinOptions.jvmTarget = "1.8"
+tasks.withType<KotlinCompile> {
+    kotlinOptions.jvmTarget = javaVersion
 }
 
-tasks.named<KotlinCompile>("compileTestKotlin") {
-    kotlinOptions.jvmTarget = "1.8"
-}
-
-tasks.withType<Test> {
+tasks.test {
     useJUnitPlatform()
     testLogging {
         events("passed", "skipped", "failed")
     }
 }
 
-tasks.withType<Wrapper> {
-    gradleVersion = "5.3.1"
-}
-
 task<NpmTask>("npmCI") {
-    setWorkingDir(file("${project.projectDir}/frontend"))
-    setArgs(listOf("ci"))
+    workingDir.set(file("${project.projectDir}/frontend"))
+    args.set(listOf("ci"))
 }
 
 val syncFrontend = copy {
@@ -92,8 +92,8 @@ val syncFrontend = copy {
     into("src/main/resources/webapp")
 }
 task<NpmTask>("npmBuild") {
-    setWorkingDir(file("${project.projectDir}/frontend"))
-    setArgs(listOf("run", "build"))
+    workingDir.set(file("${project.projectDir}/frontend"))
+    args.set(listOf("run", "build"))
 
     doLast {
         copy {
@@ -111,13 +111,11 @@ task("syncFrontend") {
 }
 
 task<Jar>("fatJar") {
-    baseName = "app"
+    archiveBaseName.set("app")
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
 
     manifest {
         attributes["Main-Class"] = mainClass
-        configurations.runtimeClasspath.get().joinToString(separator = " ") {
-            it.name
-        }
     }
     from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
     with(tasks.jar.get() as CopySpec)
@@ -130,7 +128,7 @@ tasks {
     "fatJar" {
         dependsOn("npmBuild")
     }
-    "jar" {
+    "build" {
         dependsOn("fatJar")
     }
 }

@@ -1,11 +1,11 @@
 package no.nav.modiapersonoversikt.skrivestotte.routes
 
-import io.ktor.application.call
-import io.ktor.auth.authenticate
+import io.ktor.server.application.call
+import io.ktor.server.auth.authenticate
 import io.ktor.http.HttpStatusCode
-import io.ktor.request.*
-import io.ktor.response.*
-import io.ktor.routing.*
+import io.ktor.server.request.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
 import no.nav.modiapersonoversikt.skrivestotte.model.Tekster
 import no.nav.modiapersonoversikt.skrivestotte.model.teksterFromJsonMap
 import no.nav.modiapersonoversikt.skrivestotte.storage.StatisticsProvider

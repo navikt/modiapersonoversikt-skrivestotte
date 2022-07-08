@@ -1,16 +1,21 @@
 package no.nav.modiapersonoversikt
 
-import io.ktor.application.*
-import io.ktor.auth.*
-import io.ktor.features.*
+
 import io.ktor.http.*
-import io.ktor.http.content.*
-import io.ktor.jackson.*
-import io.ktor.metrics.dropwizard.*
-import io.ktor.request.*
-import io.ktor.routing.*
-import io.prometheus.client.CollectorRegistry
-import io.prometheus.client.dropwizard.DropwizardExports
+import io.ktor.serialization.jackson.*
+import io.ktor.server.application.*
+import io.ktor.server.auth.*
+import io.ktor.server.http.content.*
+import io.ktor.server.metrics.micrometer.*
+import io.ktor.server.plugins.callloging.*
+import io.ktor.server.plugins.contentnegotiation.*
+import io.ktor.server.plugins.cors.routing.*
+import io.ktor.server.plugins.forwardedheaders.*
+import io.ktor.server.plugins.statuspages.*
+import io.ktor.server.request.*
+import io.ktor.server.routing.*
+import io.micrometer.prometheus.PrometheusConfig
+import io.micrometer.prometheus.PrometheusMeterRegistry
 import no.nav.modiapersonoversikt.config.Configuration
 import no.nav.modiapersonoversikt.infrastructure.Security
 import no.nav.modiapersonoversikt.infrastructure.Security.Companion.setupJWT
@@ -29,50 +34,54 @@ import java.util.*
 import javax.sql.DataSource
 import kotlin.concurrent.schedule
 
+val metricsRegistry = PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
+
 private const val FEM_MINUTTER: Long = 5 * 60 * 1000
 fun Application.skrivestotteApp(
     configuration: Configuration,
     dataSource: DataSource,
-    useAuthentication: Boolean = true
+    useMock: Boolean = false
 ) {
+    install(XForwardedHeaders)
     install(StatusPages) {
         notFoundHandler()
         exceptionHandler()
     }
-
+    
     install(CORS) {
         anyHost()
-        method(HttpMethod.Put)
-        method(HttpMethod.Delete)
+        allowMethod(HttpMethod.Put)
+        allowMethod(HttpMethod.Delete)
         allowCredentials = true
     }
-
+    
     install(Authentication) {
-        if (useAuthentication) {
-            setupJWT(configuration.jwksUrl, configuration.jwtIssuer)
+        if (useMock) {
+            setupMock(principal = SubjectPrincipal("Z999999"))
         } else {
-            setupMock(SubjectPrincipal("Z999999"))
+            setupJWT(configuration.jwksUrl, configuration.jwtIssuer)
         }
     }
-
+    
     install(ContentNegotiation) {
         register(ContentType.Application.Json, JacksonConverter(JacksonUtils.objectMapper))
     }
-
+    
     install(CallLogging) {
         level = Level.INFO
+        disableDefaultColors()
         filter { call -> call.request.path().startsWith("/modiapersonoversikt-skrivestotte/skrivestotte") }
         mdc("userId", Security.Companion::getSubject)
     }
-
-    install(DropwizardMetrics) {
-        CollectorRegistry.defaultRegistry.register(DropwizardExports(registry))
+    
+    install(MicrometerMetrics) {
+        registry = metricsRegistry
     }
-
+    
     val leaderElectorService = LeaderElectorService(configuration)
     val storageProvider = JdbcStorageProvider(dataSource, configuration)
     val statisticsProvider = JdbcStatisticsProvider(dataSource, configuration)
-
+    
     Timer().schedule(FEM_MINUTTER, FEM_MINUTTER) {
         if (leaderElectorService.isLeader()) {
             measureTimeMillis("refreshStatistikk") {
@@ -80,14 +89,14 @@ fun Application.skrivestotteApp(
             }
         }
     }
-
+    
     routing {
         route("modiapersonoversikt-skrivestotte") {
             static {
                 resources("webapp")
                 defaultResource("index.html", "webapp")
             }
-
+            
             skrivestotteRoutes(storageProvider, statisticsProvider)
         }
     }
