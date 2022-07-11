@@ -39,7 +39,7 @@ class Configuration(
         jwksUrl = getRequiredConfig("ISSO_JWKS_URL", defaultValues),
         issuer = getRequiredConfig("ISSO_ISSUER", defaultValues),
         cookies = listOf(
-            AuthCookie("modia_ID_token", encryptedWithSecret = "my secret"),
+            AuthCookie("modia_ID_token"),
             AuthCookie("ID_token")
         )
     ),
