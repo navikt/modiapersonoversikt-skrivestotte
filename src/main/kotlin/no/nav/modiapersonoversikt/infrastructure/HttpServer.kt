@@ -1,9 +1,9 @@
 package no.nav.modiapersonoversikt.infrastructure
 
-import io.ktor.application.*
-import io.ktor.routing.*
+import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
+import io.ktor.server.routing.*
 import no.nav.modiapersonoversikt.log
 
 data class ApplicationState(var running: Boolean = true, var initialized: Boolean = false)

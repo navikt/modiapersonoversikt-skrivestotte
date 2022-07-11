@@ -6,9 +6,9 @@ import com.auth0.jwt.JWT
 import com.auth0.jwt.impl.JWTParser
 import com.auth0.jwt.interfaces.DecodedJWT
 import com.auth0.jwt.interfaces.Payload
-import io.ktor.application.ApplicationCall
-import io.ktor.auth.*
-import io.ktor.auth.jwt.*
+import io.ktor.server.application.ApplicationCall
+import io.ktor.server.auth.*
+import io.ktor.server.auth.jwt.*
 import io.ktor.http.auth.HttpAuthHeader
 import no.nav.modiapersonoversikt.log
 import java.net.URL
@@ -20,13 +20,18 @@ class Security {
     companion object {
         private val cookieNames = listOf("modia_ID_token", "ID_token")
 
-        fun Authentication.Configuration.setupMock(mockPrincipal: SubjectPrincipal) {
-            mock {
-                principal = mockPrincipal
-            }
+        fun AuthenticationConfig.setupMock(name: String? = null, principal: SubjectPrincipal) {
+            val config = object : AuthenticationProvider.Config(name) {}
+            register(
+                object : AuthenticationProvider(config) {
+                    override suspend fun onAuthenticate(context: AuthenticationContext) {
+                        context.principal = principal
+                    }
+                }
+            )
         }
 
-        fun Authentication.Configuration.setupJWT(jwksUrl: String, issuer: String) {
+        fun AuthenticationConfig.setupJWT(jwksUrl: String, issuer: String) {
             jwt {
                 authHeader(::useJwtFromCookie)
                 verifier(

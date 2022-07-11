@@ -4,7 +4,7 @@ import no.nav.modiapersonoversikt.config.Configuration
 import no.nav.modiapersonoversikt.config.DataSourceConfiguration
 import no.nav.modiapersonoversikt.infrastructure.HttpServer
 
-fun runLocally(useAuthentication: Boolean) {
+fun runLocally(useMock: Boolean) {
     val db = SpecifiedPostgreSQLContainer()
     db.start()
 
@@ -17,11 +17,11 @@ fun runLocally(useAuthentication: Boolean) {
         skrivestotteApp(
             configuration = configuration,
             dataSource = dbConfig.userDataSource(),
-            useAuthentication = useAuthentication
+            useMock = useMock
         )
     }.start(wait = true)
 }
 
 fun main() {
-    runLocally(true)
+    runLocally(false)
 }
