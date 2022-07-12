@@ -1,6 +1,7 @@
 package no.nav.modiapersonoversikt.skrivestotte.service
 
 import io.ktor.client.HttpClient
+import io.ktor.client.call.*
 import io.ktor.client.engine.apache.Apache
 import io.ktor.client.request.get
 import io.ktor.client.statement.*
@@ -35,8 +36,8 @@ class LeaderElectorService(val configuration: Configuration) {
     internal fun getLeader(): LeaderElectorResponse {
         return try {
             runBlocking {
-                val response = client.get(configuration.electorPath)
-                response.bodyAsText().fromJson()
+                val response = client.get(configuration.electorPath).body<String>()
+                response.fromJson()
             }
         } catch (e: Exception) {
             log.error("Could not get leader from ${configuration.electorPath}", e)
