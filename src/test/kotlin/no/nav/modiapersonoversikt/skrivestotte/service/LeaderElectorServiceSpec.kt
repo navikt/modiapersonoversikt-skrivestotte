@@ -1,6 +1,7 @@
 package no.nav.modiapersonoversikt.skrivestotte.service
 
 import no.nav.modiapersonoversikt.config.Configuration
+import no.nav.modiapersonoversikt.utils.fromJson
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.jupiter.api.Assertions.*
@@ -23,5 +24,12 @@ internal class LeaderElectorServiceSpec {
     fun `Running on nais`() {
         val service = LeaderElectorService(Configuration(electorPath = electorPath, clusterName = "something else"))
         assertEquals("inethostname", service.getLeader().name)
+    }
+
+    @Test
+    fun `Unknown field is ignored`() {
+        assertDoesNotThrow {
+            "{\"name\":\"inethostname\", \"unknownfield\":\"othervalue\"}".fromJson<LeaderElectorResponse>()
+        }
     }
 }
