@@ -1,6 +1,7 @@
 package no.nav.modiapersonoversikt.skrivestotte.service
 
 import no.nav.modiapersonoversikt.config.Configuration
+import no.nav.modiapersonoversikt.utils.fromJson
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.jupiter.api.Assertions.*
@@ -10,7 +11,7 @@ internal class LeaderElectorServiceSpec {
     val mockserver = MockWebServer()
     val electorPath = mockserver.url("").toString()
     init {
-        mockserver.enqueue(MockResponse().setBody("{\"name\":\"inethostname\", \"last_update\":\"2022-07-12T09:59:26Z\"}"))
+        mockserver.enqueue(MockResponse().setBody("{\"name\":\"inethostname\"}"))
     }
 
     @Test
@@ -26,8 +27,9 @@ internal class LeaderElectorServiceSpec {
     }
 
     @Test
-    fun `Sjekke om ignorerer ukjent variabel`() {
-        val service = LeaderElectorService(Configuration(electorPath = electorPath))
-        assertEquals(LeaderElectorResponse(name="inethostname"), service.getLeader())
+    fun `Unknown field is ignored`() {
+        assertDoesNotThrow {
+            "{\"name\":\"inethostname\", \"unknownfield\":\"othervalue\"}".fromJson<LeaderElectorResponse>()
+        }
     }
 }
