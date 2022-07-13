@@ -10,7 +10,7 @@ internal class LeaderElectorServiceSpec {
     val mockserver = MockWebServer()
     val electorPath = mockserver.url("").toString()
     init {
-        mockserver.enqueue(MockResponse().setBody("{\"name\":\"inethostname\"}"))
+        mockserver.enqueue(MockResponse().setBody("{\"name\":\"inethostname\", \"last_update\":\"2022-07-12T09:59:26Z\"}"))
     }
 
     @Test
@@ -23,5 +23,11 @@ internal class LeaderElectorServiceSpec {
     fun `Running on nais`() {
         val service = LeaderElectorService(Configuration(electorPath = electorPath, clusterName = "something else"))
         assertEquals("inethostname", service.getLeader().name)
+    }
+
+    @Test
+    fun `Sjekke om ignorerer ukjent variabel`() {
+        val service = LeaderElectorService(Configuration(electorPath = electorPath))
+        assertEquals(LeaderElectorResponse(name="inethostname"), service.getLeader())
     }
 }

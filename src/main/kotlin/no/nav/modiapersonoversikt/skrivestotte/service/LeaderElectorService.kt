@@ -1,10 +1,10 @@
 package no.nav.modiapersonoversikt.skrivestotte.service
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import io.ktor.client.HttpClient
 import io.ktor.client.call.*
 import io.ktor.client.engine.apache.Apache
 import io.ktor.client.request.get
-import io.ktor.client.statement.*
 import kotlinx.coroutines.runBlocking
 import no.nav.modiapersonoversikt.config.Configuration
 import no.nav.modiapersonoversikt.utils.fromJson
@@ -17,6 +17,7 @@ import java.net.InetAddress
 private val client = HttpClient(Apache)
 
 private val log: Logger = LoggerFactory.getLogger(LeaderElectorService::class.java)
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class LeaderElectorResponse(val name: String)
 
 class LeaderElectorService(val configuration: Configuration) {
