@@ -1,12 +1,13 @@
 package no.nav.modiapersonoversikt.skrivestotte.service
 
-import com.google.gson.Gson
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import io.ktor.client.HttpClient
-import io.ktor.client.call.body
 import io.ktor.client.engine.apache.Apache
 import io.ktor.client.request.get
+import io.ktor.client.statement.*
 import kotlinx.coroutines.runBlocking
 import no.nav.modiapersonoversikt.config.Configuration
+import no.nav.modiapersonoversikt.utils.fromJson
 import no.nav.modiapersonoversikt.utils.measureTimeMillis
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -14,9 +15,9 @@ import java.lang.Exception
 import java.net.InetAddress
 
 private val client = HttpClient(Apache)
-private val gson = Gson()
 
 private val log: Logger = LoggerFactory.getLogger(LeaderElectorService::class.java)
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class LeaderElectorResponse(val name: String)
 
 class LeaderElectorService(val configuration: Configuration) {
@@ -36,8 +37,8 @@ class LeaderElectorService(val configuration: Configuration) {
     internal fun getLeader(): LeaderElectorResponse {
         return try {
             runBlocking {
-                val response = client.get(configuration.electorPath).body<String>()
-                gson.fromJson(response, LeaderElectorResponse::class.java)
+                val response = client.get(configuration.electorPath)
+                response.bodyAsText().fromJson()
             }
         } catch (e: Exception) {
             log.error("Could not get leader from ${configuration.electorPath}", e)

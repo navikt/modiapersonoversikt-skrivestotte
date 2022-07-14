@@ -49,7 +49,6 @@ dependencies {
     implementation("com.github.seratch:kotliquery:1.8.0")
     implementation("com.natpryce:konfig:1.6.10.0")
     
-    implementation("io.ktor:ktor-serialization-gson:$ktorVersion")
     implementation("com.squareup.okhttp3:mockwebserver:4.4.0")
     implementation("io.ktor:ktor-server-netty-jvm:$ktorVersion")
     implementation("io.ktor:ktor-client-apache-jvm:$ktorVersion")
