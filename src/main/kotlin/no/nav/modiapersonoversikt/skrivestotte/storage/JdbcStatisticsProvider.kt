@@ -63,7 +63,6 @@ class JdbcStatisticsProvider(private val dataSource: DataSource, private val con
             FROM $rawTable
             GROUP BY years, months, days, hours
             """.trimIndent()
-            println(sql)
 
             tx.run(
                 queryOf(sql)

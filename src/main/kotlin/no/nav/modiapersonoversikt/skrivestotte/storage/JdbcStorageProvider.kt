@@ -11,11 +11,22 @@ import no.nav.modiapersonoversikt.skrivestotte.model.Tekst
 import no.nav.modiapersonoversikt.skrivestotte.model.Tekster
 import no.nav.modiapersonoversikt.utils.JsonBackupLoader
 import no.nav.modiapersonoversikt.utils.measureTimeMillisSuspended
+import no.nav.personoversikt.ktor.utils.Selftest
 import java.util.*
 import javax.sql.DataSource
+import kotlin.concurrent.fixedRateTimer
+import kotlin.time.Duration.Companion.seconds
 
 class JdbcStorageProvider(private val dataSource: DataSource, private val configuration: Configuration) : StorageProvider {
+    private val selftest = Selftest.Reporter("Database", true)
+
     init {
+        fixedRateTimer("Database check", daemon = true, initialDelay = 0, period = 10.seconds.inWholeMilliseconds) {
+            runBlocking {
+                selftest.ping { kanKobleTilDatabasen() }
+            }
+        }
+
         runBlocking {
             transactional(dataSource) { tx ->
                 val antallTekster = tx.run(
@@ -89,23 +100,14 @@ class JdbcStorageProvider(private val dataSource: DataSource, private val config
         }
     }
 
-    fun ping(): Boolean {
-        val status: String = try {
-            runBlocking {
-                transactional(dataSource) { tx ->
-                    tx.run(
-                        queryOf("select 'ok' as status").map { row ->
-                            row.string("status")
-                        }.asSingle
-                    )
-                } ?: "nok ok"
-            }
-        } catch (e: Exception) {
-            log.error("Ping Database failed", e)
-            "not ok"
+    private suspend fun kanKobleTilDatabasen() {
+        transactional(dataSource) { tx ->
+            tx.run(
+                queryOf("select 'ok' as status")
+                    .map { row -> row.string("status") }
+                    .asSingle
+            )
         }
-
-        return status == "ok"
     }
 
     internal fun lagreTekst(tx: Session, tekst: Tekst) {
