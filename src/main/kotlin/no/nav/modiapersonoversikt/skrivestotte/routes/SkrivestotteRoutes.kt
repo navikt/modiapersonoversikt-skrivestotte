@@ -76,7 +76,7 @@ fun Route.skrivestotteRoutes(authProviders: Array<String>, provider: StorageProv
                 call.respond(statistics.hentDetaljertBruk(from, to))
             }
 
-            authenticate {
+            authenticate(*authProviders) {
                 get("/refresh") {
                     statistics.refreshStatistikk()
                     call.respond(HttpStatusCode.OK)
