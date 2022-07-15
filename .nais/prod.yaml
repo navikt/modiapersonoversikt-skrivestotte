@@ -34,6 +34,19 @@ spec:
     min: 2
     max: 4
     cpuThresholdPercentage: 90
+  azure:
+    application:
+      enabled: true
+      tenant: nav.no
+      claims:
+        extra:
+          - "NAVident"
+    accessPolicy:
+      inbound:
+        rules:
+          - application: modiapersonoversikt
+            namespace: personoversikt
+            cluster: prod-fss
   vault:
     enabled: true
     paths:
