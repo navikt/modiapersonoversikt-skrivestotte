@@ -7,8 +7,6 @@ import kotliquery.queryOf
 import no.nav.modiapersonoversikt.config.Configuration
 import no.nav.modiapersonoversikt.config.DataSourceConfiguration
 import no.nav.modiapersonoversikt.config.DatabaseConfig
-import no.nav.modiapersonoversikt.infrastructure.ApplicationState
-import no.nav.modiapersonoversikt.infrastructure.naisApplication
 import no.nav.modiapersonoversikt.skrivestotte.storage.transactional
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
@@ -59,7 +57,6 @@ fun <R> withTestApp(jdbcUrl: String? = null, test: suspend ApplicationTestBuilde
     }
 
     val moduleFunction: Application.() -> Unit = {
-        naisApplication("modiapersonoversikt-draft", ApplicationState()) {}
         dataAwareApp()
     }
 

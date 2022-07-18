@@ -1,8 +1,8 @@
 package no.nav.modiapersonoversikt.skrivestotte.routes
 
+import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.call
 import io.ktor.server.auth.authenticate
-import io.ktor.http.HttpStatusCode
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -15,7 +15,7 @@ import no.nav.modiapersonoversikt.utils.toLocalDateTime
 import java.time.LocalDateTime
 import java.util.*
 
-fun Route.skrivestotteRoutes(authProviders: Array<String>, provider: StorageProvider, statistics: StatisticsProvider) {
+fun Route.skrivestotteRoutes(authProviders: Array<String?>, provider: StorageProvider, statistics: StatisticsProvider) {
     route("/skrivestotte") {
         get {
             val tagsFilter = call.request.queryParameters.getAll("tags")
