@@ -19,7 +19,7 @@ class ApplicationTest : WithDatabase {
             assertEquals(response.data.size, 811)
         }
     }
-    
+
     @Test
     fun `should filter resultset based on tags`() {
         withTestApp(connectionUrl()) {
@@ -42,7 +42,7 @@ suspend fun ApplicationTestBuilder.getTexts(
         .map { "${it.first}=${it.second}" }
         .joinToString("&")
         .let { if (it.isNotEmpty()) "?$it" else "" }
-    
+
     val response = client.get("/modiapersonoversikt-skrivestotte/skrivestotte$queryParams")
     val data = response.bodyAsText().fromJson<Map<UUID, Tekst>>()
     return JsonResponse(response.status.value, data)

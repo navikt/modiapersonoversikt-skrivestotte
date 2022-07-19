@@ -1,9 +1,12 @@
 package no.nav.modiapersonoversikt.config
 
-import no.nav.modiapersonoversikt.infrastructure.Security
-import no.nav.modiapersonoversikt.utils.getConfig
-import no.nav.modiapersonoversikt.utils.getRequiredConfig
-import no.nav.modiapersonoversikt.utils.ifNotNull
+import no.nav.modiapersonoversikt.AzureAd
+import no.nav.modiapersonoversikt.OpenAM
+import no.nav.personoversikt.ktor.utils.Security.AuthCookie
+import no.nav.personoversikt.ktor.utils.Security.AuthProviderConfig
+import no.nav.personoversikt.utils.ConditionalUtils.ifNotNull
+import no.nav.personoversikt.utils.EnvUtils.getConfig
+import no.nav.personoversikt.utils.EnvUtils.getRequiredConfig
 
 private val defaultValues = mapOf(
     "NAIS_CLUSTER_NAME" to "local",
@@ -15,18 +18,6 @@ private val defaultValues = mapOf(
     "USE_STATISTICS_SORT" to "false"
 )
 
-data class AuthProviderConfig(
-    val name: String,
-    val jwksUrl: String,
-    val issuer: String,
-    val cookies: List<AuthCookie> = emptyList(),
-)
-
-class AuthCookie(
-    val name: String,
-    val encryptedWithSecret: String? = null
-)
-
 data class DatabaseConfig(
     val jdbcUrl: String = getRequiredConfig("DATABASE_JDBC_URL", defaultValues),
     val vaultMountpath: String = getRequiredConfig("VAULT_MOUNTPATH", defaultValues),
@@ -35,9 +26,8 @@ data class DatabaseConfig(
 class Configuration(
     val clusterName: String = getRequiredConfig("NAIS_CLUSTER_NAME", defaultValues),
     val openam: AuthProviderConfig = AuthProviderConfig(
-        name = Security.OpenAM,
+        name = OpenAM,
         jwksUrl = getRequiredConfig("ISSO_JWKS_URL", defaultValues),
-        issuer = getRequiredConfig("ISSO_ISSUER", defaultValues),
         cookies = listOf(
             AuthCookie("modia_ID_token"),
             AuthCookie("ID_token")
@@ -45,22 +35,19 @@ class Configuration(
     ),
     val azuread: AuthProviderConfig? = ifNotNull(
         getConfig("AZURE_OPENID_CONFIG_JWKS_URI", defaultValues),
-        getConfig("AZURE_OPENID_CONFIG_ISSUER", defaultValues),
         getConfig("SECRET", defaultValues)
-    ) { jwksurl, issuer, secret ->
+    ) { jwksurl, secret ->
         AuthProviderConfig(
-            name = Security.AzureAD,
+            name = AzureAd,
             jwksUrl = jwksurl,
-            issuer = issuer,
             cookies = listOf(
                 AuthCookie(
                     name = "modiapersonoversikt_tokens",
-                    encryptedWithSecret = secret
+                    encryptionKey = secret
                 )
             )
         )
     },
-    val authproviders: Array<String> = listOfNotNull(openam.name, azuread?.name).toTypedArray(),
     val database: DatabaseConfig = DatabaseConfig(),
     val electorPath: String = createUrl(getRequiredConfig("ELECTOR_PATH", defaultValues)),
     val useStatisticsSort: Boolean = getRequiredConfig("USE_STATISTICS_SORT", defaultValues).toBoolean()

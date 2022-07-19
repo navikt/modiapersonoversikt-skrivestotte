@@ -26,7 +26,8 @@ fun StatusPagesConfig.notFoundHandler() {
             HttpStatusCode.NotFound,
             HttpErrorResponse(
                 message = "The page or operation requested does not exist.",
-                code = HttpStatusCode.NotFound.value, url = call.request.url()
+                code = HttpStatusCode.NotFound.value,
+                url = call.request.url()
             )
         )
     }

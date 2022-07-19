@@ -2,16 +2,16 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import com.github.gradle.node.npm.task.NpmTask
 
 val mainClass = "no.nav.modiapersonoversikt.MainKt"
-val kotlinVersion = "1.7.0"
+val kotlinVersion = "1.7.10"
 val ktorVersion = "2.0.3"
 val javaVersion = "11"
 val prometheusVersion = "1.9.0"
 val logbackVersion = "1.2.11"
 val logstashVersion = "7.2"
-val cryptoVersion = "1.2022.06.27-08.45-060993b81532"
+val modiaCommonVersion = "1.2022.07.15-11.00-f6c69461e331"
 
 plugins {
-    kotlin("jvm") version "1.7.0"
+    kotlin("jvm") version "1.7.10"
     id("com.github.node-gradle.node") version "3.1.1"
     idea
 }
@@ -63,7 +63,9 @@ dependencies {
     implementation("net.logstash.logback:logstash-logback-encoder:$logstashVersion")
 
     implementation("no.nav:vault-jdbc:1.3.9")
-    implementation("no.nav.personoversikt:crypto:$cryptoVersion")
+    implementation("no.nav.personoversikt:kotlin-utils:$modiaCommonVersion")
+    implementation("no.nav.personoversikt:ktor-utils:$modiaCommonVersion")
+    implementation("no.nav.personoversikt:crypto:$modiaCommonVersion")
     implementation("org.flywaydb:flyway-core:8.5.12")
     implementation("com.github.seratch:kotliquery:1.8.0")
     implementation("com.natpryce:konfig:1.6.10.0")
