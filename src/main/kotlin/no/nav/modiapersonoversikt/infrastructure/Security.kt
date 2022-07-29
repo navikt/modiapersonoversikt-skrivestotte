@@ -31,21 +31,23 @@ class OidcJwk(oidc: OidcClient.OidcDiscoveryConfig) {
         .build()
 }
 
-private const val cookieName = "skrivestotte_ID_token"
 private const val sessionAuthProvider = "session"
 private const val oauthAuthProvider = "oauth"
-private const val sessionname = "authsession"
+private const val sessionCookie = "skrivestotte_ID_token"
 
-//data class UserSession(val userId: String, val idToken: String) : Principal
 typealias UserSession = String
 
 fun Application.setupSecurity(configuration: Configuration, useMock: Boolean, runLocally: Boolean): Array<out String?> {
     val security = Security(configuration.openam)
     install(Sessions) {
-        cookie<UserSession>(cookieName) {
+        cookie<UserSession>(sessionCookie) {
             cookie.encoding = CookieEncoding.RAW
             cookie.path = "/$appContextpath"
             cookie.httpOnly = true
+            serializer = object : SessionSerializer<UserSession> {
+                override fun deserialize(text: String): UserSession = text
+                override fun serialize(session: UserSession): String = session
+            }
         }
     }
     install(Authentication) {
@@ -64,7 +66,7 @@ fun Application.setupSecurity(configuration: Configuration, useMock: Boolean, ru
             oauth(oauthAuthProvider) {
                 urlProvider = { redirectUrl("/$appContextpath/oauth2/callback", runLocally) }
                 skipWhen { call ->
-                    call.sessions.get(sessionname) != null ||
+                    call.sessions.get(sessionCookie) != null ||
                             call.request.path().endsWith("/manifest.json")
                 }
 
@@ -103,7 +105,7 @@ fun Application.setupSecurity(configuration: Configuration, useMock: Boolean, ru
                     }
                 }
                 challenge {
-                    call.sessions.clear(sessionname)
+                    call.sessions.clear(sessionCookie)
                     call.respondRedirect("/$appContextpath")
                 }
             }
@@ -120,7 +122,7 @@ fun Application.setupSecurity(configuration: Configuration, useMock: Boolean, ru
                     val principal = call.principal<OAuthAccessTokenResponse.OAuth2>()
                     val idToken = principal?.extraParameters?.get("id_token")
                     if (idToken != null) {
-                        call.sessions.set(sessionname, idToken)
+                        call.sessions.set(sessionCookie, idToken)
                         call.respondRedirect(url = "/$appContextpath", permanent = false)
                     } else {
                         call.respond(HttpStatusCode.BadRequest, "Could not get accesstoken/idtoken from AAD")
