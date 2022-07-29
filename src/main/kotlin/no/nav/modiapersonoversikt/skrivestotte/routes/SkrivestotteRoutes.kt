@@ -16,7 +16,7 @@ import java.time.LocalDateTime
 import java.util.*
 
 fun Route.skrivestotteRoutes(
-    authproviders: Array<String>,
+    authproviders: Array<out String?>,
     provider: StorageProvider,
     statistics: StatisticsProvider
 ) {

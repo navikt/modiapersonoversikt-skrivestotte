@@ -39,7 +39,8 @@ private const val sessionname = "authsession"
 //data class UserSession(val userId: String, val idToken: String) : Principal
 typealias UserSession = String
 
-fun Application.setupSecurity(configuration: Configuration, useMock: Boolean, runLocally: Boolean): Array<String> {
+fun Application.setupSecurity(configuration: Configuration, useMock: Boolean, runLocally: Boolean): Array<out String?> {
+    val security = Security(configuration.openam)
     install(Sessions) {
         cookie<UserSession>(cookieName) {
             cookie.encoding = CookieEncoding.RAW
@@ -57,6 +58,9 @@ fun Application.setupSecurity(configuration: Configuration, useMock: Boolean, ru
             }
         } else {
             val oidc = OidcJwk(configuration.azuread.oidc)
+
+            security.setupJWT(this)
+
             oauth(oauthAuthProvider) {
                 urlProvider = { redirectUrl("/$appContextpath/oauth2/callback", runLocally) }
                 skipWhen { call ->
@@ -106,7 +110,7 @@ fun Application.setupSecurity(configuration: Configuration, useMock: Boolean, ru
         }
     }
 
-    val authproviders = if (useMock) arrayOf("session") else arrayOf("oauth", "session")
+    val authproviders = if (useMock) arrayOf("session") else arrayOf(*security.authproviders, "oauth", "session")
     routing {
         route(appContextpath) {
             authenticate(*authproviders) {
