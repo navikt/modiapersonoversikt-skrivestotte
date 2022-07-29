@@ -34,8 +34,10 @@ class OidcJwk(oidc: OidcClient.OidcDiscoveryConfig) {
 private const val cookieName = "skrivestotte_ID_token"
 private const val sessionAuthProvider = "session"
 private const val oauthAuthProvider = "oauth"
+private const val sessionname = "authsession"
 
-data class UserSession(val userId: String, val idToken: String) : Principal
+//data class UserSession(val userId: String, val idToken: String) : Principal
+typealias UserSession = String
 
 fun Application.setupSecurity(configuration: Configuration, useMock: Boolean, runLocally: Boolean): Array<String> {
     install(Sessions) {
@@ -58,7 +60,7 @@ fun Application.setupSecurity(configuration: Configuration, useMock: Boolean, ru
             oauth(oauthAuthProvider) {
                 urlProvider = { redirectUrl("/$appContextpath/oauth2/callback", runLocally) }
                 skipWhen { call ->
-                    call.sessions.get<UserSession>() != null ||
+                    call.sessions.get(sessionname) != null ||
                             call.request.path().endsWith("/manifest.json")
                 }
 
@@ -79,16 +81,15 @@ fun Application.setupSecurity(configuration: Configuration, useMock: Boolean, ru
                     }
                 }
             }
-            session<UserSession>(sessionAuthProvider) {
+            session(sessionAuthProvider) {
                 skipWhen { it.request.path().endsWith("/manifest.json") }
-                validate {session ->
+                validate {token: String ->
                     try {
-                        val token = session.idToken
                         val idToken = JWT.decode(token)
                         checkNotNull(idToken.audience[0])
                         val jwk = oidc.jwkProvider.get(idToken.keyId)
                         val algorithm = Algorithm.RSA256(jwk.publicKey as RSAPublicKey, null)
-                        val principal = Security.SubjectPrincipal(session.idToken, idToken)
+                        val principal = Security.SubjectPrincipal(token, idToken)
                         val verifier = JWT.require(algorithm).withIssuer(oidc.issuer).build()
                         verifier.verify(idToken)
                         checkNotNull(principal.subject)
@@ -98,7 +99,7 @@ fun Application.setupSecurity(configuration: Configuration, useMock: Boolean, ru
                     }
                 }
                 challenge {
-                    call.sessions.clear<UserSession>()
+                    call.sessions.clear(sessionname)
                     call.respondRedirect("/$appContextpath")
                 }
             }
@@ -115,10 +116,7 @@ fun Application.setupSecurity(configuration: Configuration, useMock: Boolean, ru
                     val principal = call.principal<OAuthAccessTokenResponse.OAuth2>()
                     val idToken = principal?.extraParameters?.get("id_token")
                     if (idToken != null) {
-                        val jwt = JWT.decode(idToken)
-                        val userId = jwt.getClaim("NAVident").asString()
-
-                        call.sessions.set(UserSession(userId = userId, idToken = idToken))
+                        call.sessions.set(sessionname, idToken)
                         call.respondRedirect(url = "/$appContextpath", permanent = false)
                     } else {
                         call.respond(HttpStatusCode.BadRequest, "Could not get accesstoken/idtoken from AAD")
