@@ -8,6 +8,7 @@ import no.nav.modiapersonoversikt.config.Configuration
 import no.nav.modiapersonoversikt.config.DataSourceConfiguration
 import no.nav.modiapersonoversikt.config.DatabaseConfig
 import no.nav.modiapersonoversikt.skrivestotte.storage.transactional
+import okhttp3.mockwebserver.MockWebServer
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.testcontainers.containers.PostgreSQLContainer
@@ -52,7 +53,7 @@ fun <R> withTestApp(jdbcUrl: String? = null, test: suspend ApplicationTestBuilde
         if (jdbcUrl != null) {
             val config = Configuration(database = DatabaseConfig(jdbcUrl = jdbcUrl))
             val dbConfig = DataSourceConfiguration(config)
-            skrivestotteApp(config, dbConfig.userDataSource(), false)
+            skrivestotteApp(config, dbConfig.userDataSource(), useMock = true, runLocally = true)
         }
     }
 

@@ -1,8 +1,8 @@
 package no.nav.modiapersonoversikt.skrivestotte.routes
 
-import io.ktor.http.HttpStatusCode
-import io.ktor.server.application.call
-import io.ktor.server.auth.authenticate
+import io.ktor.http.*
+import io.ktor.server.application.*
+import io.ktor.server.auth.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -15,7 +15,11 @@ import no.nav.modiapersonoversikt.utils.toLocalDateTime
 import java.time.LocalDateTime
 import java.util.*
 
-fun Route.skrivestotteRoutes(authProviders: Array<String?>, provider: StorageProvider, statistics: StatisticsProvider) {
+fun Route.skrivestotteRoutes(
+    authproviders: Array<String>,
+    provider: StorageProvider,
+    statistics: StatisticsProvider
+) {
     route("/skrivestotte") {
         get {
             val tagsFilter = call.request.queryParameters.getAll("tags")
@@ -23,7 +27,7 @@ fun Route.skrivestotteRoutes(authProviders: Array<String?>, provider: StoragePro
             call.respond(provider.hentTekster(tagsFilter, enableUsageSort))
         }
 
-        authenticate(*authProviders) {
+        authenticate(*authproviders) {
             get("/download") {
                 val filename = "skrivestotte-${LocalDateTime.now()}.json"
                 call.response.header("Content-Disposition", "attachment; filename=\"$filename\"")
@@ -76,7 +80,7 @@ fun Route.skrivestotteRoutes(authProviders: Array<String?>, provider: StoragePro
                 call.respond(statistics.hentDetaljertBruk(from, to))
             }
 
-            authenticate(*authProviders) {
+            authenticate(*authproviders) {
                 get("/refresh") {
                     statistics.refreshStatistikk()
                     call.respond(HttpStatusCode.OK)
