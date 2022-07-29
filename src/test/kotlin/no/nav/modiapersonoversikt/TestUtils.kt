@@ -65,3 +65,12 @@ fun <R> withTestApp(jdbcUrl: String? = null, test: suspend ApplicationTestBuilde
         test()
     }
 }
+
+fun configureMockserver(block: MockWebServer.() -> Unit): MockWebServer {
+    return MockWebServer().apply(block)
+}
+fun MockWebServer.run(block: MockWebServer.() -> Unit) {
+    this.start()
+    this.apply(block)
+    this.shutdown()
+}
