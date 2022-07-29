@@ -12,7 +12,7 @@ internal class LeaderElectorServiceSpec {
     @Test
     fun `Running locally`() {
         configureMockserver {
-            enqueue(MockResponse().setBody("{\"name\":\"inethostname\"}"))
+            MockResponse().setBody("{\"name\":\"inethostname\"}")
         }.run {
             val service = LeaderElectorService(Configuration(electorPath = url("").toString()))
             assertTrue(service.isLeader())
@@ -22,7 +22,7 @@ internal class LeaderElectorServiceSpec {
     @Test
     fun `Running on nais`() {
         configureMockserver {
-            enqueue(MockResponse().setBody("{\"name\":\"inethostname\"}"))
+            MockResponse().setBody("{\"name\":\"inethostname\"}")
         }.run {
             val service = LeaderElectorService(Configuration(electorPath = url("").toString(), clusterName = "something else"))
             assertEquals("inethostname", service.getLeader().name)
