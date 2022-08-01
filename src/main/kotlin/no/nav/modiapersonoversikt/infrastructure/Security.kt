@@ -5,6 +5,8 @@ import com.auth0.jwk.JwkProviderBuilder
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import io.ktor.client.*
+import io.ktor.client.engine.*
+import io.ktor.client.engine.ProxyBuilder.http
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.http.*
@@ -20,6 +22,7 @@ import no.nav.modiapersonoversikt.appContextpath
 import no.nav.modiapersonoversikt.config.Configuration
 import no.nav.personoversikt.ktor.utils.OidcClient
 import no.nav.personoversikt.ktor.utils.Security
+import no.nav.personoversikt.utils.EnvUtils
 import org.slf4j.LoggerFactory
 import java.net.URL
 import java.security.interfaces.RSAPublicKey
@@ -85,7 +88,10 @@ fun Application.setupSecurity(configuration: Configuration, useMock: Boolean, ru
                     )
                 }
                 client = HttpClient(CIO) {
-                    this.install(ContentNegotiation) {
+                    engine {
+                        proxy = ProxyBuilder.http(EnvUtils.getRequiredConfig("HTTP_PROXY"))
+                    }
+                    install(ContentNegotiation) {
                         jackson()
                     }
                 }
