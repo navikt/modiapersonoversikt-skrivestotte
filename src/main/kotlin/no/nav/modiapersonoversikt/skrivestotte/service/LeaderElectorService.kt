@@ -9,7 +9,7 @@ import kotlinx.coroutines.runBlocking
 import no.nav.modiapersonoversikt.config.Configuration
 import no.nav.modiapersonoversikt.utils.fromJson
 import no.nav.modiapersonoversikt.utils.measureTimeMillis
-import no.nav.personoversikt.ktor.utils.Selftest
+import no.nav.personoversikt.utils.SelftestGenerator
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.net.InetAddress
@@ -23,7 +23,7 @@ private val log: Logger = LoggerFactory.getLogger(LeaderElectorService::class.ja
 data class LeaderElectorResponse(val name: String)
 
 class LeaderElectorService(val configuration: Configuration) {
-    private val selftest = Selftest.Reporter("LeaderElectorService", false)
+    private val selftest = SelftestGenerator.Reporter("LeaderElectorService", false)
 
     init {
         fixedRateTimer("LeaderElectorService check", daemon = true, initialDelay = 0, period = 10.seconds.inWholeMilliseconds) {

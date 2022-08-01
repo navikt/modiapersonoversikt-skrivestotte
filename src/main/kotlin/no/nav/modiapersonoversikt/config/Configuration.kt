@@ -47,7 +47,11 @@ class Configuration(
         tokenLocations = listOf(
             Security.TokenLocation.Cookie("modia_ID_token"),
             Security.TokenLocation.Cookie("ID_token"),
-        )
+        ),
+        overrides = {
+            // Disable jwt challenge to allow oauth-flow to happen
+            challenge { _, _ ->  }
+        }
     ),
     val azuread: AzureAdConfig = AzureAdConfig(),
     val database: DatabaseConfig = DatabaseConfig(),
