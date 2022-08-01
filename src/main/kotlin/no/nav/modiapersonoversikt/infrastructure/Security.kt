@@ -20,6 +20,7 @@ import no.nav.modiapersonoversikt.appContextpath
 import no.nav.modiapersonoversikt.config.Configuration
 import no.nav.personoversikt.ktor.utils.OidcClient
 import no.nav.personoversikt.ktor.utils.Security
+import org.slf4j.LoggerFactory
 import java.net.URL
 import java.security.interfaces.RSAPublicKey
 
@@ -37,8 +38,10 @@ private const val sessionCookie = "skrivestotte_ID_token"
 
 typealias UserSession = String
 
+
 fun Application.setupSecurity(configuration: Configuration, useMock: Boolean, runLocally: Boolean): Array<out String?> {
     val security = Security(configuration.openam)
+    val log = LoggerFactory.getLogger("Security")
     install(Sessions) {
         cookie<UserSession>(sessionCookie) {
             cookie.encoding = CookieEncoding.RAW
@@ -100,7 +103,8 @@ fun Application.setupSecurity(configuration: Configuration, useMock: Boolean, ru
                         verifier.verify(idToken)
                         checkNotNull(principal.subject)
                         principal
-                    } catch (_: Throwable) {
+                    } catch (e: Throwable) {
+                        log.error("UserSession token validation failed", e)
                         null
                     }
                 }
