@@ -7,6 +7,10 @@ import no.nav.modiapersonoversikt.config.DatabaseConfig
 import no.nav.personoversikt.ktor.utils.KtorServer
 
 fun runLocally(useMock: Boolean) {
+    System.setProperty("AZURE_APP_WELL_KNOWN_URL", "http://localhost:8080/azuread/.well-known/openid-configuration")
+    System.setProperty("AZURE_APP_CLIENT_ID", "foo")
+    System.setProperty("AZURE_APP_CLIENT_SECRET", "bar")
+
     val db = SpecifiedPostgreSQLContainer()
     db.start()
 
@@ -19,7 +23,8 @@ fun runLocally(useMock: Boolean) {
         skrivestotteApp(
             configuration = configuration,
             dataSource = dbConfig.userDataSource(),
-            useMock = useMock
+            useMock = useMock,
+            runLocally = true
         )
     }.start(wait = true)
 }

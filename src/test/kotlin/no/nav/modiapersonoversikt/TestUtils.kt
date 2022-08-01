@@ -8,6 +8,10 @@ import no.nav.modiapersonoversikt.config.Configuration
 import no.nav.modiapersonoversikt.config.DataSourceConfiguration
 import no.nav.modiapersonoversikt.config.DatabaseConfig
 import no.nav.modiapersonoversikt.skrivestotte.storage.transactional
+import okhttp3.mockwebserver.Dispatcher
+import okhttp3.mockwebserver.MockResponse
+import okhttp3.mockwebserver.MockWebServer
+import okhttp3.mockwebserver.RecordedRequest
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.testcontainers.containers.PostgreSQLContainer
@@ -52,7 +56,7 @@ fun <R> withTestApp(jdbcUrl: String? = null, test: suspend ApplicationTestBuilde
         if (jdbcUrl != null) {
             val config = Configuration(database = DatabaseConfig(jdbcUrl = jdbcUrl))
             val dbConfig = DataSourceConfiguration(config)
-            skrivestotteApp(config, dbConfig.userDataSource(), false)
+            skrivestotteApp(config, dbConfig.userDataSource(), useMock = true, runLocally = true)
         }
     }
 
@@ -64,4 +68,19 @@ fun <R> withTestApp(jdbcUrl: String? = null, test: suspend ApplicationTestBuilde
         application(moduleFunction)
         test()
     }
+}
+
+fun configureMockserver(block: RecordedRequest.() -> MockResponse): MockWebServer {
+    val server = MockWebServer()
+    server.dispatcher = object : Dispatcher() {
+        override fun dispatch(request: RecordedRequest): MockResponse {
+            return block(request)
+        }
+    }
+    return server
+}
+fun MockWebServer.run(block: MockWebServer.() -> Unit) {
+    this.start()
+    this.apply(block)
+    this.shutdown()
 }
