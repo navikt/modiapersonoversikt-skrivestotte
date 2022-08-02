@@ -8,7 +8,7 @@ val javaVersion = "11"
 val prometheusVersion = "1.9.0"
 val logbackVersion = "1.2.11"
 val logstashVersion = "7.2"
-val modiaCommonVersion = "1.2022.07.15-11.00-f6c69461e331"
+val modiaCommonVersion = "1.2022.08.01-11.26-97308e41bb8d"
 
 plugins {
     kotlin("jvm") version "1.7.10"
@@ -56,8 +56,11 @@ dependencies {
     implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-serialization-jackson:$ktorVersion")
 
+
     implementation("io.ktor:ktor-server-metrics-micrometer:$ktorVersion")
     implementation("io.micrometer:micrometer-registry-prometheus:$prometheusVersion")
+
+    implementation("io.ktor:ktor-client-cio:$ktorVersion")
 
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
     implementation("net.logstash.logback:logstash-logback-encoder:$logstashVersion")
@@ -68,7 +71,6 @@ dependencies {
     implementation("no.nav.personoversikt:crypto:$modiaCommonVersion")
     implementation("org.flywaydb:flyway-core:8.5.12")
     implementation("com.github.seratch:kotliquery:1.8.0")
-    implementation("com.natpryce:konfig:1.6.10.0")
     
     implementation("com.squareup.okhttp3:mockwebserver:4.4.0")
     implementation("io.ktor:ktor-server-netty-jvm:$ktorVersion")

@@ -13,8 +13,7 @@ import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.request.*
 import io.ktor.server.routing.*
 import no.nav.modiapersonoversikt.config.Configuration
-import no.nav.modiapersonoversikt.infrastructure.exceptionHandler
-import no.nav.modiapersonoversikt.infrastructure.notFoundHandler
+import no.nav.modiapersonoversikt.infrastructure.*
 import no.nav.modiapersonoversikt.skrivestotte.routes.skrivestotteRoutes
 import no.nav.modiapersonoversikt.skrivestotte.service.LeaderElectorService
 import no.nav.modiapersonoversikt.skrivestotte.storage.JdbcStatisticsProvider
@@ -32,12 +31,9 @@ import kotlin.time.Duration.Companion.minutes
 fun Application.skrivestotteApp(
     configuration: Configuration,
     dataSource: DataSource,
-    useMock: Boolean = false
+    useMock: Boolean = false,
+    runLocally: Boolean = false
 ) {
-    val security = Security(
-        listOfNotNull(configuration.openam, configuration.azuread)
-    )
-
     install(XForwardedHeaders)
     install(StatusPages) {
         notFoundHandler()
@@ -61,13 +57,7 @@ fun Application.skrivestotteApp(
         version = appImage
     }
 
-    install(Authentication) {
-        if (useMock) {
-            security.setupMock(this, "Z999999")
-        } else {
-            security.setupJWT(this)
-        }
-    }
+    val authproviders = setupSecurity(configuration, useMock, runLocally)
 
     install(ContentNegotiation) {
         register(ContentType.Application.Json, JacksonConverter(JacksonUtils.objectMapper))
@@ -77,7 +67,9 @@ fun Application.skrivestotteApp(
         level = Level.INFO
         disableDefaultColors()
         filter { call -> call.request.path().startsWith("/modiapersonoversikt-skrivestotte/skrivestotte") }
-        mdc("userId") { security.getSubject(it).joinToString(";") }
+        mdc("userId") {
+            it.principal<Security.SubjectPrincipal>()?.subject ?: "Unauthenticated"
+        }
     }
 
     val leaderElectorService = LeaderElectorService(configuration)
@@ -98,12 +90,14 @@ fun Application.skrivestotteApp(
 
     routing {
         route(appContextpath) {
-            static {
-                resources("webapp")
-                defaultResource("index.html", "webapp")
+            authenticate(*authproviders) {
+                static {
+                    resources("webapp")
+                    defaultResource("index.html", "webapp")
+                }
             }
 
-            skrivestotteRoutes(security.authproviders, storageProvider, statisticsProvider)
+            skrivestotteRoutes(authproviders, storageProvider, statisticsProvider)
         }
     }
 }
