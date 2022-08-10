@@ -59,7 +59,7 @@ repositories {
 }
 
 node {
-    version = "10.15.3"
+    version = "16.14.0"
     download = true
 }
 
