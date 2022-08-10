@@ -14,7 +14,7 @@ import {
 import {fjernTomtInnhold} from "../../../../utils";
 import * as Fetcher from '../../../../fetch-utils';
 import LocaleEditor from "./localeeditor";
-import './tekstereditor.less';
+import './tekstereditor.scss';
 import {getTekst} from "./utils";
 import TekstidOgBruk from "./tekstid-og-bruk";
 
@@ -110,7 +110,6 @@ function Tekstereditor(props: Props) {
                 .filter((locale) => !localesMedEditor.includes(locale))
                 .map((locale) => (
                     <Knapp
-                        mini
                         key={locale}
                         htmlType="button"
                         onClick={() => {

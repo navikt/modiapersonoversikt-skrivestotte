@@ -2,7 +2,7 @@ import React, {MutableRefObject, useEffect, useMemo, useRef, useState} from 'rea
 import useFetch, { isPending, hasError } from "@nutgaard/use-fetch";
 import {StatistikkEntry} from "../../../../model";
 import {toMaybe, throttle} from "../../../../utils";
-import './tidslinje.less';
+import './tidslinje.scss';
 import CoordinateIndex from "./coordinate-index";
 import {Tidsrom} from "../../visning";
 import useWindowSize from "../../../../hooks/use-window-size";

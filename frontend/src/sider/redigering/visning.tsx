@@ -6,7 +6,7 @@ import TekstEditor from "./components/tekstereditor/tekstereditor";
 import {useFieldState, useObjectState} from "../../hooks";
 import {Tekst, Tekster} from "../../model";
 import {toMaybe} from "../../utils";
-import './visning.less';
+import './visning.scss';
 
 function RedigerVisning() {
     const visEditor = useObjectState<boolean>(false);

@@ -2,7 +2,7 @@ import React from 'react';
 import {Element} from 'nav-frontend-typografi'
 import {ReactComponent as Logo} from './nav-logo.svg';
 import {Page} from "../../hooks/use-routing";
-import './header.less';
+import './header.scss';
 
 function Header() {
     return (

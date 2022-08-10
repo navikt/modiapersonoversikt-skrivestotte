@@ -1,7 +1,7 @@
 import React from 'react';
 import {DetaljertStatistikk} from "../../../../model";
 import {Tidsrom} from "../../visning";
-import './statistikk.less';
+import './statistikk.scss';
 
 interface Props {
     tidsrom: Tidsrom;
@@ -17,7 +17,7 @@ function StatistikkTabell(props: Props) {
             </tr>
         ));
     return (
-        <table className="statistikk__tabell">
+        <table className="statistikk__tabell tabell">
             <thead>
             <tr>
                 <th>Overskrift</th>

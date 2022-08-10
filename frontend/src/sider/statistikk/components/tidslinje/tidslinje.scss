@@ -1,7 +1,7 @@
-@import "~nav-frontend-paneler-style";
+@use "src/extra" as *;
 
 .tidslinje {
-  .panel();
+  @include panel;
   padding: 0;
 
   line {

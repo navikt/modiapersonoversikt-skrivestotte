@@ -6,7 +6,7 @@ import classNames from 'classnames';
 import {Tekst, Tekster, UUID} from "../../../../model";
 import {cyclicgroup, joinWithPrefix, tagsQuerySearch} from "../../../../utils";
 import {FieldState, ObjectState, useForceAllwaysInViewport} from "../../../../hooks";
-import './teksterliste.less';
+import './teksterliste.scss';
 
 interface Props {
     tekster: Tekster;
@@ -77,13 +77,13 @@ function Teksterliste(props: Props) {
             <TagInput
                 label="Søk"
                 name="tag-input-sok"
-                className="teksterliste__sok"
+                className="teksterliste__sok blokk-xs"
                 value={props.sok.value}
                 onChange={props.sok.onChange}
                 onKeyDown={keyHandler}
             />
             <div className="teksterliste__leggtilny">
-                <Knapp mini onClick={leggTilNyHandler}>
+                <Knapp onClick={leggTilNyHandler}>
                     Legg til ny
                 </Knapp>
             </div>

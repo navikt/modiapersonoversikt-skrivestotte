@@ -5,7 +5,8 @@ import RedigerVisning from "./sider/redigering/visning";
 import StatistikkVisning from "./sider/statistikk/visning";
 import AdminVisning from "./sider/admin/visning";
 import useRouting, {Page} from "./hooks/use-routing";
-import './application.less';
+import './nav-frontend/nav-frontend.css';
+import './application.scss';
 
 interface Props {
     renderHead: boolean;

@@ -1,0 +1,7 @@
+@use "src/extra" as *;
+
+.adminvisning {
+  .panel {
+    @include panel;
+  }
+}

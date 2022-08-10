@@ -1,5 +1,5 @@
 /* autoprefixer grid: autoplace */
-@import (less) '~nav-frontend-core';
+@use "src/extra" as *;
 
 .application {
   box-sizing: border-box;
@@ -9,11 +9,11 @@
   grid-template-areas: "header" "content";
   grid-template-columns: 1fr;
   grid-template-rows: auto 1fr;
-  background-color: @navLysGra;
+  background-color: $navLysGra;
 
   &__header {
     grid-area: header;
-    background-color: @navMorkGra;
+    background-color: $navMorkGra;
     color: white;
   }
   &__content {
