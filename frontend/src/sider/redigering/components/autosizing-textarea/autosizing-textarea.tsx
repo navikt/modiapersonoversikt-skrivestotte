@@ -1,6 +1,6 @@
 import React, {Ref} from 'react';
 import classNames from 'classnames';
-import './autosizing-textarea.less';
+import './autosizing-textarea.scss';
 
 type Props = React.DetailedHTMLProps<React.TextareaHTMLAttributes<HTMLTextAreaElement>, HTMLTextAreaElement>;
 

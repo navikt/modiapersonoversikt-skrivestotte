@@ -1,4 +1,4 @@
-@import (less) '~nav-frontend-core';
+@use "src/extra" as *;
 
 .teksterliste {
   &__leggtilny {
@@ -6,27 +6,40 @@
     justify-content: flex-end;
     align-items: center;
     padding-top: 0.75rem;
+    .knapp {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
   }
+
   &__liste {
     position: relative;
     overflow-y: scroll;
     display: flex;
     flex-direction: column;
-    border: 1px solid @navGra40;
+    border: 1px solid $navGra40;
   }
 
   &__listeelement {
     cursor: pointer;
-    border-bottom: 1px solid @navGra20;
+    border-bottom: 1px solid $navGra20;
     background: white;
 
     input[type="radio"] {
-      .sr-only();
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      margin: -1px;
+      padding: 0;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      border: 0;
+      white-space: nowrap;
     }
 
     &:focus-within {
       outline: 0;
-      box-shadow: inset 0 0 0 3px @navOransje;
+      box-shadow: inset 0 0 0 3px $navOransje;
     }
   }
 
@@ -41,7 +54,7 @@
   }
 
   &__listeelement--checked {
-    background: @fokusFarge;
+    background: $fokusFarge;
     color: white;
 
     .teksterliste__listeelement-content {

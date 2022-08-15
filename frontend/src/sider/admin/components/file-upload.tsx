@@ -1,7 +1,7 @@
 import React, {ChangeEvent, RefObject, useCallback, useState, MouseEvent, DragEvent} from "react";
 import cls from 'classnames';
 import {Flatknapp} from "nav-frontend-knapper";
-import './file-upload.less';
+import './file-upload.scss';
 
 interface Props {
     className?: string;

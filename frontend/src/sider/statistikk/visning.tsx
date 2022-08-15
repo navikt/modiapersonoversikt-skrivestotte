@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import Tidslinje from "./components/tidslinje/tidslinje";
 import Statistikk from "./components/statistikk/statistikk";
-import './visning.less';
+import './visning.scss';
 
 export interface Tidsrom {
     start: number;

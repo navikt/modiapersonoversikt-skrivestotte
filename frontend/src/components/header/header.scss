@@ -4,19 +4,19 @@
   align-items: center;
   padding: 0.5rem 2.5rem;
 
-  &__logo {
+  & &__logo {
     height: 2rem;
     width: 7rem;
     border-right: 1px solid #b7b1a9;
   }
 
-  &__appnavn {
+  & &__appnavn {
     font-family: Arial,sans-serif;
     font-size: 1.125em;
     margin: .67em auto .67em .7em;
   }
 
-  &__lenke {
+  & &__lenke {
     color: white;
 
     &:not(:last-child) {
