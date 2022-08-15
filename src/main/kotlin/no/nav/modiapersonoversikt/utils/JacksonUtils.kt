@@ -16,7 +16,7 @@ class JacksonUtils {
                         indentObjectsWith(DefaultIndenter("  ", "\n"))
                     }
                 )
-                disableDefaultTyping()
+                deactivateDefaultTyping()
                 enable(SerializationFeature.INDENT_OUTPUT)
             }
     }

@@ -1,26 +1,29 @@
 package no.nav.modiapersonoversikt
 
-import io.ktor.application.*
+import io.ktor.server.application.*
 import io.ktor.server.testing.*
 import kotlinx.coroutines.runBlocking
 import kotliquery.queryOf
 import no.nav.modiapersonoversikt.config.Configuration
 import no.nav.modiapersonoversikt.config.DataSourceConfiguration
-import no.nav.modiapersonoversikt.infrastructure.ApplicationState
-import no.nav.modiapersonoversikt.infrastructure.naisApplication
+import no.nav.modiapersonoversikt.config.DatabaseConfig
 import no.nav.modiapersonoversikt.skrivestotte.storage.transactional
+import okhttp3.mockwebserver.Dispatcher
+import okhttp3.mockwebserver.MockResponse
+import okhttp3.mockwebserver.MockWebServer
+import okhttp3.mockwebserver.RecordedRequest
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.testcontainers.containers.PostgreSQLContainer
 import javax.sql.DataSource
 
-class SpecifiedPostgreSQLContainer : PostgreSQLContainer<SpecifiedPostgreSQLContainer>("postgres:9.6.12")
+class SpecifiedPostgreSQLContainer : PostgreSQLContainer<SpecifiedPostgreSQLContainer>("postgres:14.3-alpine")
 
 interface WithDatabase {
     companion object {
         private val postgreSQLContainer = SpecifiedPostgreSQLContainer().apply { start() }
         private val configuration = Configuration(
-            jdbcUrl = postgreSQLContainer.jdbcUrl
+            database = DatabaseConfig(jdbcUrl = postgreSQLContainer.jdbcUrl)
         )
         private val dbConfig = DataSourceConfiguration(configuration)
 
@@ -48,19 +51,36 @@ interface WithDatabase {
     fun connectionUrl(): String = postgreSQLContainer.jdbcUrl
 }
 
-fun <R> withTestApp(jdbcUrl: String? = null, test: TestApplicationEngine.() -> R): R {
+fun <R> withTestApp(jdbcUrl: String? = null, test: suspend ApplicationTestBuilder.() -> R) {
     val dataAwareApp = fun Application.() {
         if (jdbcUrl != null) {
-            val config = Configuration(jdbcUrl = jdbcUrl)
+            val config = Configuration(database = DatabaseConfig(jdbcUrl = jdbcUrl))
             val dbConfig = DataSourceConfiguration(config)
-            skrivestotteApp(config, dbConfig.userDataSource(), false)
+            skrivestotteApp(config, dbConfig.userDataSource(), useMock = true, runLocally = true)
         }
     }
 
     val moduleFunction: Application.() -> Unit = {
-        naisApplication("modiapersonoversikt-draft", ApplicationState()) {}
         dataAwareApp()
     }
 
-    return withTestApplication(moduleFunction, test)
+    return testApplication {
+        application(moduleFunction)
+        test()
+    }
+}
+
+fun configureMockserver(block: RecordedRequest.() -> MockResponse): MockWebServer {
+    val server = MockWebServer()
+    server.dispatcher = object : Dispatcher() {
+        override fun dispatch(request: RecordedRequest): MockResponse {
+            return block(request)
+        }
+    }
+    return server
+}
+fun MockWebServer.run(block: MockWebServer.() -> Unit) {
+    this.start()
+    this.apply(block)
+    this.shutdown()
 }

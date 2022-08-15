@@ -1,6 +1,7 @@
 package no.nav.modiapersonoversikt
 
-import io.ktor.http.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import io.ktor.server.testing.*
 import no.nav.modiapersonoversikt.skrivestotte.model.Tekst
 import no.nav.modiapersonoversikt.skrivestotte.model.Tekster
@@ -29,11 +30,12 @@ class ApplicationTest : WithDatabase {
     }
 }
 
-class JsonResponse<T>(call: TestApplicationCall, val data: T) {
-    val status = call.response.status()?.value ?: -1
-}
+class JsonResponse<T>(val status: Int, val data: T)
 
-fun TestApplicationEngine.getTexts(tags: List<String> = emptyList(), usageSort: Boolean = false): JsonResponse<Tekster> {
+suspend fun ApplicationTestBuilder.getTexts(
+    tags: List<String> = emptyList(),
+    usageSort: Boolean = false
+): JsonResponse<Tekster> {
     val queryParams = tags
         .map { "tags" to it }
         .plus("usageSort" to usageSort)
@@ -41,7 +43,7 @@ fun TestApplicationEngine.getTexts(tags: List<String> = emptyList(), usageSort: 
         .joinToString("&")
         .let { if (it.isNotEmpty()) "?$it" else "" }
 
-    val call = handleRequest(HttpMethod.Get, "/modiapersonoversikt-skrivestotte/skrivestotte$queryParams")
-    val data = call.response.content!!.fromJson<Map<UUID, Tekst>>()
-    return JsonResponse(call, data)
+    val response = client.get("/modiapersonoversikt-skrivestotte/skrivestotte$queryParams")
+    val data = response.bodyAsText().fromJson<Map<UUID, Tekst>>()
+    return JsonResponse(response.status.value, data)
 }

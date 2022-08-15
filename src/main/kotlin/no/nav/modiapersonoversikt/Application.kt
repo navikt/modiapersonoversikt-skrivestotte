@@ -1,40 +1,40 @@
 package no.nav.modiapersonoversikt
 
-import io.ktor.application.*
-import io.ktor.auth.*
-import io.ktor.features.*
 import io.ktor.http.*
-import io.ktor.http.content.*
-import io.ktor.jackson.*
-import io.ktor.metrics.dropwizard.*
-import io.ktor.request.*
-import io.ktor.routing.*
-import io.prometheus.client.CollectorRegistry
-import io.prometheus.client.dropwizard.DropwizardExports
+import io.ktor.serialization.jackson.*
+import io.ktor.server.application.*
+import io.ktor.server.auth.*
+import io.ktor.server.http.content.*
+import io.ktor.server.plugins.callloging.*
+import io.ktor.server.plugins.contentnegotiation.*
+import io.ktor.server.plugins.cors.routing.*
+import io.ktor.server.plugins.forwardedheaders.*
+import io.ktor.server.plugins.statuspages.*
+import io.ktor.server.request.*
+import io.ktor.server.routing.*
 import no.nav.modiapersonoversikt.config.Configuration
-import no.nav.modiapersonoversikt.infrastructure.Security
-import no.nav.modiapersonoversikt.infrastructure.Security.Companion.setupJWT
-import no.nav.modiapersonoversikt.infrastructure.Security.Companion.setupMock
-import no.nav.modiapersonoversikt.infrastructure.SubjectPrincipal
-import no.nav.modiapersonoversikt.infrastructure.exceptionHandler
-import no.nav.modiapersonoversikt.infrastructure.notFoundHandler
+import no.nav.modiapersonoversikt.infrastructure.*
 import no.nav.modiapersonoversikt.skrivestotte.routes.skrivestotteRoutes
 import no.nav.modiapersonoversikt.skrivestotte.service.LeaderElectorService
 import no.nav.modiapersonoversikt.skrivestotte.storage.JdbcStatisticsProvider
 import no.nav.modiapersonoversikt.skrivestotte.storage.JdbcStorageProvider
 import no.nav.modiapersonoversikt.utils.JacksonUtils
 import no.nav.modiapersonoversikt.utils.measureTimeMillis
+import no.nav.personoversikt.ktor.utils.Metrics
+import no.nav.personoversikt.ktor.utils.Security
+import no.nav.personoversikt.ktor.utils.Selftest
 import org.slf4j.event.Level
-import java.util.*
 import javax.sql.DataSource
-import kotlin.concurrent.schedule
+import kotlin.concurrent.fixedRateTimer
+import kotlin.time.Duration.Companion.minutes
 
-private const val FEM_MINUTTER: Long = 5 * 60 * 1000
 fun Application.skrivestotteApp(
     configuration: Configuration,
     dataSource: DataSource,
-    useAuthentication: Boolean = true
+    useMock: Boolean = false,
+    runLocally: Boolean = false
 ) {
+    install(XForwardedHeaders)
     install(StatusPages) {
         notFoundHandler()
         exceptionHandler()
@@ -42,18 +42,22 @@ fun Application.skrivestotteApp(
 
     install(CORS) {
         anyHost()
-        method(HttpMethod.Put)
-        method(HttpMethod.Delete)
+        allowMethod(HttpMethod.Put)
+        allowMethod(HttpMethod.Delete)
         allowCredentials = true
     }
 
-    install(Authentication) {
-        if (useAuthentication) {
-            setupJWT(configuration.jwksUrl, configuration.jwtIssuer)
-        } else {
-            setupMock(SubjectPrincipal("Z999999"))
-        }
+    install(Metrics.Plugin) {
+        contextpath = appContextpath
     }
+
+    install(Selftest.Plugin) {
+        appname = appName
+        contextpath = appContextpath
+        version = appImage
+    }
+
+    val authproviders = setupSecurity(configuration, useMock, runLocally)
 
     install(ContentNegotiation) {
         register(ContentType.Application.Json, JacksonConverter(JacksonUtils.objectMapper))
@@ -61,19 +65,22 @@ fun Application.skrivestotteApp(
 
     install(CallLogging) {
         level = Level.INFO
+        disableDefaultColors()
         filter { call -> call.request.path().startsWith("/modiapersonoversikt-skrivestotte/skrivestotte") }
-        mdc("userId", Security.Companion::getSubject)
-    }
-
-    install(DropwizardMetrics) {
-        CollectorRegistry.defaultRegistry.register(DropwizardExports(registry))
+        mdc("userId") {
+            it.principal<Security.SubjectPrincipal>()?.subject ?: "Unauthenticated"
+        }
     }
 
     val leaderElectorService = LeaderElectorService(configuration)
     val storageProvider = JdbcStorageProvider(dataSource, configuration)
     val statisticsProvider = JdbcStatisticsProvider(dataSource, configuration)
 
-    Timer().schedule(FEM_MINUTTER, FEM_MINUTTER) {
+    fixedRateTimer(
+        daemon = true,
+        initialDelay = 5.minutes.inWholeMilliseconds,
+        period = 5.minutes.inWholeMilliseconds
+    ) {
         if (leaderElectorService.isLeader()) {
             measureTimeMillis("refreshStatistikk") {
                 statisticsProvider.refreshStatistikk()
@@ -82,13 +89,15 @@ fun Application.skrivestotteApp(
     }
 
     routing {
-        route("modiapersonoversikt-skrivestotte") {
-            static {
-                resources("webapp")
-                defaultResource("index.html", "webapp")
+        route(appContextpath) {
+            authenticate(*authproviders) {
+                static {
+                    resources("webapp")
+                    defaultResource("index.html", "webapp")
+                }
             }
 
-            skrivestotteRoutes(storageProvider, statisticsProvider)
+            skrivestotteRoutes(authproviders, storageProvider, statisticsProvider)
         }
     }
 }

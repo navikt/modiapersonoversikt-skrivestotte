@@ -3,9 +3,10 @@ name: Build, push, and deploy
 on: [push]
 
 env:
-  IMAGE: docker.pkg.github.com/${{ github.repository }}/modiapersonoversikt-skrivestotte:${{ github.sha }}
+  IMAGE: ghcr.io/${{ github.repository }}/modiapersonoversikt-skrivestotte:${{ github.sha }}
   CI: true
   TZ: Europe/Oslo
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 jobs:
   build:
     name: Test and build
@@ -39,11 +40,9 @@ jobs:
       - name: Build
         run: ./gradlew build
       - name: Publish Docker image
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           docker build --tag ${IMAGE} .
-          docker login docker.pkg.github.com -u ${GITHUB_REPOSITORY} -p ${GITHUB_TOKEN}
+          docker login ghcr.io -u ${GITHUB_REPOSITORY} -p ${GITHUB_TOKEN}
           docker push ${IMAGE}
   deploy-qa:
     name: Deploy to preprod

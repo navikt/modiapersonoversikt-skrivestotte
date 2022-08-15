@@ -14,6 +14,7 @@ suspend fun <T : Any> measureTimeMillisSuspended(name: String, fn: suspend () ->
     log.info("Timedtask: $name Duration: ${end - start}ms")
     return response
 }
+
 fun <T : Any> measureTimeMillis(name: String, fn: suspend () -> T): T {
     return runBlocking {
         measureTimeMillisSuspended(name) {

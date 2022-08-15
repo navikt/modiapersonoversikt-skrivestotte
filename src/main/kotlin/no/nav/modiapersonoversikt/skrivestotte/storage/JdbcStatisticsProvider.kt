@@ -63,7 +63,6 @@ class JdbcStatisticsProvider(private val dataSource: DataSource, private val con
             FROM $rawTable
             GROUP BY years, months, days, hours
             """.trimIndent()
-            println(sql)
 
             tx.run(
                 queryOf(sql)
@@ -169,7 +168,7 @@ class JdbcStatisticsProvider(private val dataSource: DataSource, private val con
     }
 
     private fun createSqlInterval(amount: Long, unit: PostgreSqlIntervalUnits): String {
-        if (configuration.jdbcUrl.contains(":h2:")) {
+        if (configuration.database.jdbcUrl.contains(":h2:")) {
             val fraction = Duration.of(amount, unit.chronoUnit).seconds.toDouble() / secondsInADay
             return fraction.toString()
         }
