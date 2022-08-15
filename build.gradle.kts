@@ -71,11 +71,11 @@ dependencies {
     implementation("no.nav.personoversikt:crypto:$modiaCommonVersion")
     implementation("org.flywaydb:flyway-core:8.5.12")
     implementation("com.github.seratch:kotliquery:1.8.0")
-    
+
     implementation("com.squareup.okhttp3:mockwebserver:4.4.0")
     implementation("io.ktor:ktor-server-netty-jvm:$ktorVersion")
     implementation("io.ktor:ktor-client-apache-jvm:$ktorVersion")
-    
+
     testRuntimeOnly("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
     testImplementation("io.ktor:ktor-server-test-host-jvm:$ktorVersion")
     testImplementation("org.testcontainers:postgresql:1.17.2")
