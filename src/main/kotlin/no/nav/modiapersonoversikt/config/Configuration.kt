@@ -1,5 +1,6 @@
 package no.nav.modiapersonoversikt.config
 
+import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
 import no.nav.personoversikt.ktor.utils.OidcClient
 import no.nav.personoversikt.ktor.utils.Security
@@ -33,6 +34,16 @@ data class AzureAdConfig(
         runBlocking {
             client.fetch()
         }
+    }
+
+    val providerConfig: AuthProviderConfig by lazy {
+        AuthProviderConfig(
+            name = "azuread",
+            jwksConfig = Security.JwksConfig.JwksUrl(oidc.jwksUrl, oidc.issuer),
+            tokenLocations = listOf(
+                Security.TokenLocation.Header(HttpHeaders.Authorization)
+            )
+        )
     }
 }
 
