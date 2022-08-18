@@ -13,19 +13,23 @@ import kotlin.test.assertEquals
 class ApplicationTest : WithDatabase {
     @Test
     fun `should load backup if database is empty`() {
-        withTestApp(connectionUrl()) {
-            val response = getTexts()
-            assertEquals(response.status, 200)
-            assertEquals(response.data.size, 811)
+        withExternalDependencies {
+            withTestApp(connectionUrl()) {
+                val response = getTexts()
+                assertEquals(response.status, 200)
+                assertEquals(response.data.size, 811)
+            }
         }
     }
 
     @Test
     fun `should filter resultset based on tags`() {
-        withTestApp(connectionUrl()) {
-            val response = getTexts(tags = listOf("sto"))
-            assertEquals(response.status, 200)
-            assertEquals(response.data.size, 231)
+        withExternalDependencies {
+            withTestApp(connectionUrl()) {
+                val response = getTexts(tags = listOf("sto"))
+                assertEquals(response.status, 200)
+                assertEquals(response.data.size, 231)
+            }
         }
     }
 }
