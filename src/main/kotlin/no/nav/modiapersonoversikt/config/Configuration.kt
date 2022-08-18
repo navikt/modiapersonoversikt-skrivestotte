@@ -42,7 +42,10 @@ data class AzureAdConfig(
             jwksConfig = Security.JwksConfig.JwksUrl(oidc.jwksUrl, oidc.issuer),
             tokenLocations = listOf(
                 Security.TokenLocation.Header(HttpHeaders.Authorization)
-            )
+            ),
+            overrides = {
+                challenge { _, _ ->  }
+            }
         )
     }
 }
