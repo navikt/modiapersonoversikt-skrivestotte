@@ -6,7 +6,6 @@ import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import io.ktor.client.*
 import io.ktor.client.engine.*
-import io.ktor.client.engine.ProxyBuilder.http
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.http.*
@@ -43,7 +42,7 @@ typealias UserSession = String
 
 
 fun Application.setupSecurity(configuration: Configuration, useMock: Boolean, runLocally: Boolean): Array<out String?> {
-    val security = Security(configuration.openam)
+    val security = Security(configuration.azuread.providerConfig, configuration.openam)
     val log = LoggerFactory.getLogger("Security")
     install(Sessions) {
         cookie<UserSession>(sessionCookie) {
