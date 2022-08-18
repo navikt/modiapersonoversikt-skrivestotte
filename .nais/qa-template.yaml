@@ -44,15 +44,15 @@ spec:
       claims:
         extra:
           - "NAVident"
-    accessPolicy:
-      inbound:
-        rules:
-          - application: modiapersonoversikt-q0
-            namespace: personoversikt
-            cluster: dev-fss
-          - application: modiapersonoversikt-q1
-            namespace: personoversikt
-            cluster: dev-fss
+  accessPolicy:
+    inbound:
+      rules:
+        - application: modiapersonoversikt-q0
+          namespace: personoversikt
+          cluster: dev-fss
+        - application: modiapersonoversikt-q1
+          namespace: personoversikt
+          cluster: dev-fss
   vault:
     enabled: true
     paths:
