@@ -42,12 +42,12 @@ spec:
       claims:
         extra:
           - "NAVident"
-    accessPolicy:
-      inbound:
-        rules:
-          - application: modiapersonoversikt
-            namespace: personoversikt
-            cluster: prod-fss
+  accessPolicy:
+    inbound:
+      rules:
+        - application: modiapersonoversikt
+          namespace: personoversikt
+          cluster: prod-fss
   vault:
     enabled: true
     paths:
