@@ -1,11 +1,11 @@
 import React from 'react';
-import useFetch, {hasError, isPending} from "@nutgaard/use-fetch";
 import TagInput from "@navikt/tag-input";
 import {Tidsrom} from "../../visning";
-import {DetaljertStatistikk, DetaljertStatistikkTekst} from "../../../../model";
-import {tagsQuerySearch, toMaybe} from "../../../../utils";
+import {DetaljertStatistikkTekst} from "../../../../model";
+import {tagsQuerySearch} from "../../../../utils";
 import StatistikkTabell from "./statistikk-tabell";
 import {useFieldState} from "../../../../hooks";
+import statistikkResource from './statistikkResource';
 
 interface Props {
     tidsrom: Tidsrom | undefined;
@@ -18,8 +18,6 @@ function queryParams(tidsrom: Tidsrom | undefined): string {
     return `?from=${tidsrom.start}&to=${tidsrom.end}`
 }
 
-const emptyData : DetaljertStatistikk = [];
-const fetchOptions = {};
 const matcher = tagsQuerySearch<DetaljertStatistikkTekst>(
     tekst => tekst.tags,
     tekst => [tekst.overskrift, tekst.tags.join('\u0000')],
@@ -29,24 +27,22 @@ function sokEtterTekster(tekster: Array<DetaljertStatistikkTekst>, query: string
 }
 
 function Statistikk(props: Props) {
-    const statistikk = useFetch<DetaljertStatistikk>(`/modiapersonoversikt-skrivestotte/skrivestotte/statistikk/detaljertbruk${queryParams(props.tidsrom)}`, fetchOptions, {
-        lazy: props.tidsrom === undefined
-    });
-    const data = toMaybe(statistikk).withDefault(emptyData);
+    const statistikk = statistikkResource.useFetch(queryParams(props.tidsrom), props.tidsrom);
+    const data = statistikk.data ?? [];
     const sok = useFieldState('');
 
-    if (isPending(statistikk)) {
+    if (statistikk.isLoading) {
         return <div className="center-block statistikk">Laster...</div>
     }
 
-    if (hasError(statistikk)) {
+    if (statistikk.isError) {
         return (
             <div className="center-block statistikk">
                 <p>
-                    `Det skjedde en feil ved lasting av statistikk (${statistikk.statusCode}).`
+                    `Det skjedde en feil ved lasting av statistikk (${statistikk?.error?.response?.status}).`
                 </p>
                 <pre>
-                    {statistikk.error}
+                    {statistikk?.error?.message}
                 </pre>
             </div>
         );
@@ -66,4 +62,5 @@ function Statistikk(props: Props) {
         </div>
     );
 }
+
 export default Statistikk;
