@@ -1,18 +1,17 @@
 import React, {MutableRefObject, useEffect, useMemo, useRef, useState} from 'react';
-import useFetch, { isPending, hasError } from "@nutgaard/use-fetch";
 import {StatistikkEntry} from "../../../../model";
-import {toMaybe, throttle} from "../../../../utils";
+import {throttle} from "../../../../utils";
 import './tidslinje.scss';
 import CoordinateIndex from "./coordinate-index";
 import {Tidsrom} from "../../visning";
 import useWindowSize from "../../../../hooks/use-window-size";
 import {Systemtittel, Element} from "nav-frontend-typografi";
+import tidslinjeResource from "./tidslinjeResource";
 
 const graphScale = 4;
 const xSize = 720 * graphScale;
 const ySize = 60 * graphScale;
 const padding = 10 * graphScale;
-const emptyData : Array<StatistikkEntry> = [];
 
 type PointData = { x: number; y: number; entry: StatistikkEntry }
 interface GraphMetadata {
@@ -266,21 +265,21 @@ interface Props {
 }
 
 function Tidslinje(props: Props) {
-    const statistikk = useFetch<Array<StatistikkEntry>>('/modiapersonoversikt-skrivestotte/skrivestotte/statistikk/overordnetbruk');
-    const data = toMaybe(statistikk).withDefault(emptyData);
+    const statistikk = tidslinjeResource.useFetch();;
+    const data: StatistikkEntry[] = statistikk.data ?? [];
 
-    if (isPending(statistikk)) {
+    if (statistikk.isLoading) {
         return <>Laster...</>
     }
 
-    if (hasError(statistikk)) {
+    if (statistikk.isError) {
         return (
             <>
                 <p>
-                   `Det skjedde en feil ved lasting av statistikk (${statistikk.statusCode}).`
+                   `Det skjedde en feil ved lasting av statistikk (${statistikk?.error?.response?.status}).`
                 </p>
                 <pre>
-                    {statistikk.error}
+                    {statistikk?.error?.message}
                 </pre>
             </>
         );

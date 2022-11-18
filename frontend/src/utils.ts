@@ -1,5 +1,3 @@
-import {FetchResult, hasData} from "@nutgaard/use-fetch";
-import {MaybeCls as Maybe} from "@nutgaard/maybe-ts";
 import {parseTekst} from "@navikt/tag-input";
 
 export function cyclicgroup(size: number, value: number): number {
@@ -22,13 +20,6 @@ export function fjernTomtInnhold(obj: { [key: string]: string }):{ [key: string]
     return Object.entries(obj)
         .filter(([, value]) => value && value.trim().length > 0)
         .reduce((acc, [key, value]) => ({...acc, [key]: value}), {});
-}
-
-export function toMaybe<TYPE>(fetchresult: FetchResult<TYPE>): Maybe<TYPE> {
-    if (hasData(fetchresult)) {
-        return Maybe.of(fetchresult.data)
-    }
-    return Maybe.nothing();
 }
 
 export function throttle<T extends (...args: any[]) => void>(fn: T, interval: number): T {
