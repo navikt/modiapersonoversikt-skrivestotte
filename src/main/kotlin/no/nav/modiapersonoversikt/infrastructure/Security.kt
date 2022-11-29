@@ -42,7 +42,7 @@ typealias UserSession = String
 
 
 fun Application.setupSecurity(configuration: Configuration, useMock: Boolean, runLocally: Boolean): Array<out String?> {
-    val security = Security(configuration.azuread.providerConfig, configuration.openam)
+    val security = Security(configuration.azuread.providerConfig)
     val log = LoggerFactory.getLogger("Security")
     install(Sessions) {
         cookie<UserSession>(sessionCookie) {
