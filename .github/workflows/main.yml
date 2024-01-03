@@ -6,12 +6,8 @@ env:
   CI: true
   TZ: Europe/Oslo
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-jobs:
-  permissions:
-    packages: write
-    contents: read
-    id-token: write
 
+jobs:
   build:
     name: Test and build
     runs-on: ubuntu-latest
@@ -31,6 +27,10 @@ jobs:
     name: Build and push Docker container
     if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+      id-token: write
     outputs:
       image: ${{ steps.docker-build-push.outputs.image }}
     steps:
@@ -56,27 +56,33 @@ jobs:
     needs: build-and-push
     if: github.ref == 'refs/heads/dev'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@v3
-      - uses: nais/deploy/actions/deploy@v2
+      - uses: nais/deploy/actions/deploy@v1
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           PRINT_PAYLOAD: true
           CLUSTER: dev-fss
           RESOURCE: .nais/qa-template.yaml
-          VAR: image=${{ needs.build-and-push.outputs.image }}
 
   deploy-prod:
     name: Deploy to prod
     needs: build-and-push
     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@v3
-      - uses: nais/deploy/actions/deploy@v2
+      - uses: nais/deploy/actions/deploy@v1
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           PRINT_PAYLOAD: true
           CLUSTER: prod-fss
           RESOURCE: .nais/prod.yaml
-          VAR: image=${{ needs.build-and-push.outputs.image }}
