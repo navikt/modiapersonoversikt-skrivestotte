@@ -64,6 +64,6 @@ spec:
     - name: DATABASE_JDBC_URL
       value: "jdbc:postgresql://b27dbvl008.preprod.local:5432/modiapersonoversikt-skrivestotte"
     - name: VAULT_MOUNTPATH
-      value: "postgresql/preprod-fss"
+      value: "postgresql/preprod-fss/"
     - name: USE_STATISTICS_SORT
       value: "true"
