@@ -9,7 +9,6 @@ spec:
   image: {{ image }}
   port: 7070
   webproxy: true
-  team: personoversikt
   liveness:
     path: /modiapersonoversikt-skrivestotte/internal/isAlive
     initialDelay: 20
