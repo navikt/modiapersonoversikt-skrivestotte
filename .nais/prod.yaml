@@ -61,3 +61,5 @@ spec:
       value: "postgresql/prod-fss/"
     - name: USE_STATISTICS_SORT
       value: "true"
+    - name: DB_NAME
+      value: "modiapersonoversikt-skrivestotte"

@@ -16,7 +16,7 @@ private val defaultValues = mapOf(
     "AZURE_APP_WELL_KNOWN_URL" to "http://localhost",
     "AZURE_APP_CLIENT_ID" to "",
     "AZURE_APP_CLIENT_SECRET" to "",
-    "DB_NAME" to "modiapersonoversikt-skrivestotte"
+    "DB_NAME" to "modiapersonoversikt-skrivestotte-pg15"
 )
 
 data class DatabaseConfig(
