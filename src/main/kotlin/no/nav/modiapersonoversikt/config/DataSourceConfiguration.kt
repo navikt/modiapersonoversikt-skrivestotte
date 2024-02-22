@@ -36,13 +36,13 @@ class DataSourceConfiguration(val env: Configuration) {
         return HikariCPVaultUtil.createHikariDataSourceWithVaultIntegration(
             config,
             mountPath,
-            dbRole(user)
+            dbRole(env.database.databaseName, user)
         )
     }
 
     companion object {
         private val log: Logger = LoggerFactory.getLogger(DataSourceConfiguration::class.java)
-        private fun dbRole(user: String): String = "modiapersonoversikt-skrivestotte-$user"
+        private fun dbRole(dbName: String, user: String): String = "$dbName-$user"
 
         fun migrateDb(configuration: Configuration, dataSource: DataSource) {
             Flyway
@@ -50,7 +50,7 @@ class DataSourceConfiguration(val env: Configuration) {
                 .dataSource(dataSource)
                 .also {
                     if (dataSource is HikariDataSource && configuration.clusterName != "local") {
-                        val dbUser = dbRole("admin")
+                        val dbUser = dbRole(configuration.database.databaseName, "admin")
                         it.initSql("SET ROLE '$dbUser'")
                     }
                 }

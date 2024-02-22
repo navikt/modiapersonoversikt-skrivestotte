@@ -15,12 +15,14 @@ private val defaultValues = mapOf(
     "USE_STATISTICS_SORT" to "false",
     "AZURE_APP_WELL_KNOWN_URL" to "http://localhost",
     "AZURE_APP_CLIENT_ID" to "",
-    "AZURE_APP_CLIENT_SECRET" to ""
+    "AZURE_APP_CLIENT_SECRET" to "",
+    "DB_NAME" to "modiapersonoversikt-skrivestotte"
 )
 
 data class DatabaseConfig(
     val jdbcUrl: String = getRequiredConfig("DATABASE_JDBC_URL", defaultValues),
-    val vaultMountpath: String = getRequiredConfig("VAULT_MOUNTPATH", defaultValues)
+    val vaultMountpath: String = getRequiredConfig("VAULT_MOUNTPATH", defaultValues),
+    val databaseName: String = getRequiredConfig("DB_NAME", defaultValues)
 )
 data class AzureAdConfig(
     val wellKnownUrl: String = getRequiredConfig("AZURE_APP_WELL_KNOWN_URL", defaultValues),
