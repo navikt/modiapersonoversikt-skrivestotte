@@ -9,7 +9,6 @@ spec:
   image: {{ image }}
   port: 7070
   webproxy: true
-  team: personoversikt
   liveness:
     path: /modiapersonoversikt-skrivestotte/internal/isAlive
     initialDelay: 20
@@ -57,8 +56,10 @@ spec:
   leaderElection: true
   env:
     - name: DATABASE_JDBC_URL
-      value: "jdbc:postgresql://A01DBVL009.adeo.no:5432/modiapersonoversikt-skrivestotte"
+      value: "jdbc:postgresql://A01DBVL033.adeo.no:5432/modiapersonoversikt-skrivestotte-pg15"
     - name: VAULT_MOUNTPATH
       value: "postgresql/prod-fss/"
     - name: USE_STATISTICS_SORT
       value: "true"
+    - name: DB_NAME
+      value: "modiapersonoversikt-skrivestotte-pg15"
