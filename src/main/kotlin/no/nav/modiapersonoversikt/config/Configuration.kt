@@ -20,7 +20,7 @@ private val defaultValues = mapOf(
 )
 
 data class DatabaseConfig(
-    val dbName: String = getRequiredConfig("DATABASE_NAME", defaultValues),
+    val dbName: String = getRequiredConfig("DB_NAME", defaultValues),
     val jdbcUrl: String,
     val vaultMountpath: String? = null,
 )
