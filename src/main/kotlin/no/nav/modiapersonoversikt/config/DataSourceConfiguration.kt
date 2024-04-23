@@ -2,10 +2,9 @@ package no.nav.modiapersonoversikt.config
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
+import no.nav.modiapersonoversikt.log
 import no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil
 import org.flywaydb.core.Flyway
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import javax.sql.DataSource
 
 class DataSourceConfiguration(val env: Configuration) {
@@ -14,6 +13,20 @@ class DataSourceConfiguration(val env: Configuration) {
 
     fun userDataSource() = userDataSource
     fun adminDataSource() = adminDataSource
+
+    fun runFlyway() {
+        Flyway
+            .configure()
+            .dataSource(adminDataSource)
+            .also {
+                if (adminDataSource is HikariDataSource && (env.clusterName == "dev-fss" || env.clusterName == "prod-fss")) {
+                    val dbUser = dbRole(env.database.dbName, "admin")
+                    it.initSql("SET ROLE '$dbUser'")
+                }
+            }
+            .load()
+            .migrate()
+    }
 
     private fun createDatasource(user: String): DataSource {
         val mountPath = env.database.vaultMountpath
@@ -33,29 +46,16 @@ class DataSourceConfiguration(val env: Configuration) {
             return HikariDataSource(config)
         }
 
+        if (env.clusterName == "dev-gcp" || env.clusterName == "prod-gcp") {
+            return HikariDataSource(config)
+        }
+
         return HikariCPVaultUtil.createHikariDataSourceWithVaultIntegration(
             config,
             mountPath,
-            dbRole(env.database.databaseName, user)
+            dbRole(env.database.dbName, user)
         )
     }
 
-    companion object {
-        private val log: Logger = LoggerFactory.getLogger(DataSourceConfiguration::class.java)
-        private fun dbRole(dbName: String, user: String): String = "$dbName-$user"
-
-        fun migrateDb(configuration: Configuration, dataSource: DataSource) {
-            Flyway
-                .configure()
-                .dataSource(dataSource)
-                .also {
-                    if (dataSource is HikariDataSource && configuration.clusterName != "local") {
-                        val dbUser = dbRole(configuration.database.databaseName, "admin")
-                        it.initSql("SET ROLE '$dbUser'")
-                    }
-                }
-                .load()
-                .migrate()
-        }
-    }
+    private fun dbRole(dbName: String, user: String): String = "$dbName-$user"
 }

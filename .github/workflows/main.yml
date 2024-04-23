@@ -68,6 +68,23 @@ jobs:
           RESOURCE: .nais/qa-template.yaml
           VAR: image=${{ needs.build-and-push.outputs.image }}
 
+  deploy-dev-gcp:
+    name: Deploy to dev gcp
+    needs: build-and-push
+    if: github.ref == 'refs/heads/dev'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v3
+      - uses: nais/deploy/actions/deploy@v2
+        env:
+          PRINT_PAYLOAD: true
+          CLUSTER: dev-gcp
+          RESOURCE: .nais/dev.yaml
+          VAR: image=${{ needs.build-and-push.outputs.image }}
+
   deploy-prod:
     name: Deploy to prod
     needs: build-and-push

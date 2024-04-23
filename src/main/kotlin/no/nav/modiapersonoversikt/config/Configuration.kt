@@ -20,10 +20,11 @@ private val defaultValues = mapOf(
 )
 
 data class DatabaseConfig(
-    val jdbcUrl: String = getRequiredConfig("DATABASE_JDBC_URL", defaultValues),
-    val vaultMountpath: String = getRequiredConfig("VAULT_MOUNTPATH", defaultValues),
-    val databaseName: String = getRequiredConfig("DB_NAME", defaultValues)
+    val dbName: String = getRequiredConfig("DB_NAME", defaultValues),
+    val jdbcUrl: String,
+    val vaultMountpath: String? = null,
 )
+
 data class AzureAdConfig(
     val wellKnownUrl: String = getRequiredConfig("AZURE_APP_WELL_KNOWN_URL", defaultValues),
     val clientId: String = getRequiredConfig("AZURE_APP_CLIENT_ID", defaultValues),
@@ -53,9 +54,22 @@ data class AzureAdConfig(
 class Configuration(
     val clusterName: String = getRequiredConfig("NAIS_CLUSTER_NAME", defaultValues),
     val azuread: AzureAdConfig = AzureAdConfig(),
-    val database: DatabaseConfig = DatabaseConfig(),
     val electorPath: String = createUrl(getRequiredConfig("ELECTOR_PATH", defaultValues)),
-    val useStatisticsSort: Boolean = getRequiredConfig("USE_STATISTICS_SORT", defaultValues).toBoolean()
+    val useStatisticsSort: Boolean = getRequiredConfig("USE_STATISTICS_SORT", defaultValues).toBoolean(),
+    val database: DatabaseConfig = if (clusterName == "dev-gcp" || clusterName == "prod-gcp") {
+        DatabaseConfig(
+            jdbcUrl = getRequiredConfig(
+                "NAIS_DATABASE_MODIAPERSONOVERSIKT_SKRIVESTOTTE_MODIAPERSONOVERSIKT_SKRIVESTOTTE_DB_JDBC_URL",
+                defaultValues
+            ),
+        )
+
+    } else {
+        DatabaseConfig(
+            jdbcUrl = getRequiredConfig("DATABASE_JDBC_URL", defaultValues),
+            vaultMountpath = getRequiredConfig("VAULT_MOUNTPATH", defaultValues),
+        )
+    }
 )
 
 private fun createUrl(path: String): String =
