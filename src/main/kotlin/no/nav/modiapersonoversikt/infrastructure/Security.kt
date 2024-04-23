@@ -87,9 +87,6 @@ fun Application.setupSecurity(configuration: Configuration, useMock: Boolean, ru
                     )
                 }
                 client = HttpClient(CIO) {
-                    engine {
-                        proxy = ProxyBuilder.http(EnvUtils.getRequiredConfig("HTTP_PROXY"))
-                    }
                     install(ContentNegotiation) {
                         jackson()
                     }
