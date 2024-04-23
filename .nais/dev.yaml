@@ -5,10 +5,12 @@ metadata:
   namespace: personoversikt
   labels:
     team: personoversikt
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
 spec:
   image: {{ image }}
   port: 7070
-  webproxy: true
   liveness:
     path: /modiapersonoversikt-skrivestotte/internal/isAlive
     initialDelay: 20
@@ -62,6 +64,7 @@ spec:
           cluster: dev-fss
 
   leaderElection: true
+  webproxy: true
   env:
     - name: DB_NAME
       value: "modiapersonoversikt-skrivestotte-db"
