@@ -56,7 +56,7 @@ class Configuration(
     val azuread: AzureAdConfig = AzureAdConfig(),
     val electorPath: String = createUrl(getRequiredConfig("ELECTOR_PATH", defaultValues)),
     val useStatisticsSort: Boolean = getRequiredConfig("USE_STATISTICS_SORT", defaultValues).toBoolean(),
-    val appContextpath: String = if (clusterName == "dev-gcp" || clusterName == "prod-gcp") "" else "modiapersonoversikt-skrivestotte",
+    val appContextpath: String = "modiapersonoversikt-skrivestotte",
     val database: DatabaseConfig = if (clusterName == "dev-gcp" || clusterName == "prod-gcp") {
         DatabaseConfig(
             jdbcUrl = getRequiredConfig(
