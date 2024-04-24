@@ -66,7 +66,8 @@ fun Application.setupSecurity(configuration: Configuration, useMock: Boolean, ru
             security.setupJWT(this)
 
             oauth(oauthAuthProvider) {
-                urlProvider = { redirectUrl("/$${configuration.appContextpath}/oauth2/callback", runLocally) }
+                val basePath = if(configuration.appContextpath != "") "/${configuration.appContextpath}" else ""
+                urlProvider = { redirectUrl("${basePath}/oauth2/callback", runLocally) }
                 skipWhen { call ->
                     call.sessions.get(sessionCookie) != null ||
                             call.request.path().endsWith("/manifest.json")
@@ -109,7 +110,7 @@ fun Application.setupSecurity(configuration: Configuration, useMock: Boolean, ru
                 }
                 challenge {
                     call.sessions.clear(sessionCookie)
-                    call.respondRedirect("/$${configuration.appContextpath}")
+                    call.respondRedirect("/${configuration.appContextpath}")
                 }
             }
         }
@@ -126,7 +127,7 @@ fun Application.setupSecurity(configuration: Configuration, useMock: Boolean, ru
                     val idToken = principal?.extraParameters?.get("id_token")
                     if (idToken != null) {
                         call.sessions.set(sessionCookie, idToken)
-                        call.respondRedirect(url = "/$${configuration.appContextpath}", permanent = false)
+                        call.respondRedirect(url = "/${configuration.appContextpath}", permanent = false)
                     } else {
                         call.respond(HttpStatusCode.BadRequest, "Could not get accesstoken/idtoken from AAD")
                     }
