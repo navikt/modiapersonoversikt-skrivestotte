@@ -48,12 +48,12 @@ fun Application.skrivestotteApp(
     }
 
     install(Metrics.Plugin) {
-        contextpath = appContextpath
+        contextpath = configuration.appContextpath
     }
 
     install(Selftest.Plugin) {
         appname = appName
-        contextpath = appContextpath
+        contextpath = configuration.appContextpath
         version = appImage
     }
 
@@ -89,7 +89,7 @@ fun Application.skrivestotteApp(
     }
 
     routing {
-        route(appContextpath) {
+        route(configuration.appContextpath) {
             authenticate(*authproviders) {
                 static {
                     resources("webapp")
