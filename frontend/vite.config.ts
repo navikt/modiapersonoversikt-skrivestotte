@@ -6,7 +6,7 @@ import tsconfigPaths from "vite-tsconfig-paths";
 export default defineConfig({
   build: {
     target: "esnext",
-    sourcemap: true
+    sourcemap: true,
   },
   plugins: [tsconfigPaths(), react(), TanStackRouterVite()],
 });

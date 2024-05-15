@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 export function tagsQuerySearch<T>(
   getTags: (t: T) => Array<string>,
   getText: (t: T) => Array<string>,
@@ -28,3 +30,13 @@ export function tagsQuerySearch<T>(
       });
   };
 }
+
+export const usePreviousValue = <T>(value: T) => {
+  const [prev, setPrev] = useState<T>();
+
+  useEffect(() => {
+    setPrev(value);
+  }, [value]);
+
+  return prev;
+};

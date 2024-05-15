@@ -14,6 +14,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { Locale, LocaleValues, Tekst, localeString } from "src/model";
 import { useMutateText } from "src/queries";
+import { usePreviousValue } from "src/utils";
 
 type Props =
   | {
@@ -63,9 +64,14 @@ const TextEditor = ({ text, isNew }: Props) => {
     },
   });
 
+  const prevTextId = usePreviousValue(text?.id);
+
   useEffect(() => {
-    form.reset();
-  }, [text?.id, form]);
+    if (text?.id !== prevTextId) {
+      form.reset();
+    }
+  }, [text?.id, prevTextId, form]);
+
   return (
     <Box>
       <form
@@ -125,7 +131,18 @@ const TextEditor = ({ text, isNew }: Props) => {
             children={(field) => (
               <>
                 {field.state.value.map(({ locale }, i) => (
-                  <form.Field key={locale} name={`innhold[${i}].content`}>
+                  <form.Field
+                    key={locale}
+                    name={`innhold[${i}].content`}
+                    validators={{
+                      onChange: ({ value }) =>
+                        !value
+                          ? "Teksten kan ikke være tom"
+                          : value.length < 1
+                            ? "Teksten kan ikke være tom"
+                            : undefined,
+                    }}
+                  >
                     {(subfield) => (
                       <HStack gap="2">
                         <Box className="grow">
@@ -137,6 +154,7 @@ const TextEditor = ({ text, isNew }: Props) => {
                             onChange={(e) =>
                               subfield.handleChange(e.currentTarget.value)
                             }
+                            error={subfield.state.meta.errors[0]}
                           />
                         </Box>
                         <Box style={{ marginTop: "2em" }}>
@@ -144,7 +162,11 @@ const TextEditor = ({ text, isNew }: Props) => {
                             type="button"
                             variant="danger"
                             icon={<TrashIcon />}
-                            onClick={() => field.removeValue(i)}
+                            onClick={() =>
+                              form.removeFieldValue("innhold", i, {
+                                touch: true,
+                              })
+                            }
                           >
                             Slett
                           </Button>
@@ -177,14 +199,27 @@ const TextEditor = ({ text, isNew }: Props) => {
               state.isTouched,
             ]}
             children={([canSubmit, isSubmitting, isTouched]) => (
-              <Button
-                type="submit"
-                disabled={!canSubmit || !isTouched}
-                variant="primary"
-                loading={isSubmitting}
-              >
-                Lagre
-              </Button>
+              <HStack gap="16">
+                <Button
+                  className="grow"
+                  type="submit"
+                  disabled={!canSubmit || !isTouched}
+                  variant="primary"
+                  loading={isSubmitting}
+                >
+                  Lagre
+                </Button>
+
+                <Button
+                  className="grow"
+                  type="button"
+                  disabled={!isTouched}
+                  variant="secondary"
+                  onClick={() => form.reset()}
+                >
+                  Avbryt
+                </Button>
+              </HStack>
             )}
           />
         </VStack>
