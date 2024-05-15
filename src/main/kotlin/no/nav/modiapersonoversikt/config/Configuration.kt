@@ -16,7 +16,8 @@ private val defaultValues = mapOf(
     "AZURE_APP_WELL_KNOWN_URL" to "http://localhost",
     "AZURE_APP_CLIENT_ID" to "",
     "AZURE_APP_CLIENT_SECRET" to "",
-    "DB_NAME" to "modiapersonoversikt-skrivestotte-pg15"
+    "DB_NAME" to "modiapersonoversikt-skrivestotte-pg15",
+    "BASE_PATH" to "modiapersonoversikt-skrivestotte"
 )
 
 data class DatabaseConfig(
@@ -56,7 +57,7 @@ class Configuration(
     val azuread: AzureAdConfig = AzureAdConfig(),
     val electorPath: String = createUrl(getRequiredConfig("ELECTOR_PATH", defaultValues)),
     val useStatisticsSort: Boolean = getRequiredConfig("USE_STATISTICS_SORT", defaultValues).toBoolean(),
-    val appContextpath: String = "modiapersonoversikt-skrivestotte",
+    val appContextpath: String = getRequiredConfig("BASE_PATH", defaultValues),
     val database: DatabaseConfig = if (clusterName == "dev-gcp" || clusterName == "prod-gcp") {
         DatabaseConfig(
             jdbcUrl = getRequiredConfig(

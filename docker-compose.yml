@@ -1,0 +1,14 @@
+services:
+  postgres:
+    image: postgres:14.6-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test
+      POSTGRES_DB: "modiapersonoversikt-skrivestotte"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d modiapersonoversikt-skrivestotte"]
+      interval: 10s
+      timeout: 5s
+      retries: 5

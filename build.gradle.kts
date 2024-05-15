@@ -111,26 +111,20 @@ task<YarnInstallTask>("yarnInstall") {
 }
 
 val syncFrontend = copy {
-    from("frontend/build")
-    into("src/main/resources/webapp")
+    from("${project.projectDir}/frontend/dist")
+    into("${project.projectDir}/src/main/resources/webapp")
 }
 task<YarnTask>("yarnBuild") {
     workingDir.set(file("${project.projectDir}/frontend"))
     args.set(listOf("build"))
 
     doLast {
-        copy {
-            from("frontend/dist")
-            into("build/resources/main/webapp")
-        }
+        syncFrontend
     }
 }
 
 task("syncFrontend") {
-    copy {
-        from("frontend/build")
-        into("src/main/resources/webapp")
-    }
+    syncFrontend
 }
 
 task<Jar>("fatJar") {
