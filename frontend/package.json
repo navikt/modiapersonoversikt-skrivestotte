@@ -1,71 +1,44 @@
 {
   "name": "frontend",
-  "version": "0.1.0",
   "private": true,
-  "proxy": "http://localhost:8080/modiapersonoversikt-skrivestotte/",
-  "homepage": "/modiapersonoversikt-skrivestotte",
+  "version": "0.0.0",
+  "type": "module",
   "scripts": {
-    "start": "react-scripts start",
-    "start:mock": "cross-env REACT_APP_MOCK=true react-scripts start",
-    "start:nosecurity": "react-scripts start --proxy http://localhost:7070",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "rebuild-nav-frontend": "lessc src/nav-frontend/nav-frontend.less src/nav-frontend/nav-frontend.css"
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview"
   },
   "dependencies": {
-    "@navikt/fnrvalidator": "^1.3.0",
-    "@navikt/tag-input": "^2.0.0",
-    "@nutgaard/maybe-ts": "1.4.0",
-    "@tanstack/react-query": "^4.16.1",
-    "classnames": "2.3.1",
-    "lodash.throttle": "4.1.1",
-    "nav-frontend-alertstriper": "4.0.2",
-    "nav-frontend-alertstriper-style": "3.0.2",
-    "nav-frontend-core": "6.0.1",
-    "nav-frontend-ikoner-assets": "^3.0.1",
-    "nav-frontend-js-utils": "1.0.20",
-    "nav-frontend-knapper": "3.1.3",
-    "nav-frontend-knapper-style": "2.1.2",
-    "nav-frontend-lenker": "^2.0.2",
-    "nav-frontend-lenker-style": "^2.0.2",
-    "nav-frontend-paneler-style": "2.0.2",
-    "nav-frontend-skjema": "4.0.6",
-    "nav-frontend-skjema-style": "3.0.3",
-    "nav-frontend-tabell-style": "^2.1.2",
-    "nav-frontend-typografi": "4.0.2",
-    "nav-frontend-typografi-style": "2.0.2",
-    "prop-types": "15.8.1",
-    "react": "18.2.0",
-    "react-app-polyfill": "3.0.0",
-    "react-dom": "18.2.0",
-    "react-scripts": "5.0.1"
+    "@navikt/aksel-icons": "^6.7.0",
+    "@navikt/ds-css": "^6.7.0",
+    "@navikt/ds-react": "^6.7.0",
+    "@tanstack/react-form": "^0.19.4",
+    "@tanstack/react-query": "^5.35.1",
+    "@tanstack/router": "^0.0.1-beta.53",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@types/classnames": "2.3.0",
-    "@types/jest": "28.1.6",
-    "@types/node": "18.6.5",
-    "@types/react": "18.0.17",
-    "@types/react-dom": "18.0.6",
-    "cross-env": "7.0.3",
-    "less": "^4.1.3",
-    "sass": "^1.54.4",
-    "typescript": "4.7.4",
-    "yargs": "17.5.1",
-    "yet-another-fetch-mock": "^4.1.0"
+    "@tanstack/router-devtools": "^1.31.20",
+    "@tanstack/router-vite-plugin": "^1.31.18",
+    "@types/react": "^18.2.66",
+    "@types/react-dom": "^18.2.22",
+    "@typescript-eslint/eslint-plugin": "^7.2.0",
+    "@typescript-eslint/parser": "^7.2.0",
+    "@vitejs/plugin-react": "^4.2.1",
+    "eslint": "^8.57.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.6",
+    "msw": "^2.2.14",
+    "type-fest": "^4.18.2",
+    "typescript": "^5.2.2",
+    "vite": "^5.2.0",
+    "vite-tsconfig-paths": "^4.3.2"
   },
-  "eslintConfig": {
-    "extends": "react-app"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
+  "msw": {
+    "workerDirectory": [
+      "public"
     ]
   }
 }
