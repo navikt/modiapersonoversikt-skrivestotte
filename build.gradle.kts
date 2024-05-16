@@ -3,8 +3,8 @@ import com.github.gradle.node.yarn.task.YarnInstallTask
 import com.github.gradle.node.yarn.task.YarnTask
 
 val mainClass = "no.nav.modiapersonoversikt.MainKt"
-val kotlinVersion = "1.7.10"
-val ktorVersion = "2.0.3"
+val kotlinVersion = "1.9.24"
+val ktorVersion = "2.3.8"
 val javaVersion = "17"
 val prometheusVersion = "1.9.0"
 val logbackVersion = "1.2.11"
@@ -12,7 +12,7 @@ val logstashVersion = "7.2"
 val modiaCommonVersion = "1.2022.08.01-11.26-97308e41bb8d"
 
 plugins {
-    kotlin("jvm") version "1.7.10"
+    kotlin("jvm") version "1.9.24"
     id("com.github.node-gradle.node") version "7.0.2"
     idea
 }
@@ -117,6 +117,9 @@ val syncFrontend = copy {
 task<YarnTask>("yarnBuild") {
     workingDir.set(file("${project.projectDir}/frontend"))
     args.set(listOf("build"))
+    if(System.getenv("BASE_PATH") != null) {
+        args.addAll("--base", System.getenv("BASE_PATH"))
+    }
 
     doLast {
         syncFrontend

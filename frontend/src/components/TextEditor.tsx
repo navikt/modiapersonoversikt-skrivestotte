@@ -74,7 +74,7 @@ const TextEditor = ({ text, isNew }: Props) => {
   }, [text?.id, prevTextId, form]);
 
   return (
-    <Box>
+    <Box className="grow">
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -109,21 +109,23 @@ const TextEditor = ({ text, isNew }: Props) => {
           <form.Field
             name="tags"
             children={(field) => (
-              <UNSAFE_Combobox
-                label="Tags"
-                name={field.name}
-                isMultiSelect
-                allowNewValues
-                options={field.state.value}
-                onToggleSelected={(option, isSelected) => {
-                  isSelected
-                    ? field.handleChange((prev) => [...prev, option])
-                    : field.handleChange((prev) =>
-                        prev.filter((o) => o !== option),
-                      );
-                }}
-                selectedOptions={field.state.value}
-              />
+              <Box style={{ width: "100%" }}>
+                <UNSAFE_Combobox
+                  label="Tags"
+                  name={field.name}
+                  isMultiSelect
+                  allowNewValues
+                  options={field.state.value}
+                  onToggleSelected={(option, isSelected) => {
+                    isSelected
+                      ? field.handleChange((prev) => [...prev, option])
+                      : field.handleChange((prev) =>
+                          prev.filter((o) => o !== option),
+                        );
+                  }}
+                  selectedOptions={field.state.value}
+                />
+              </Box>
             )}
           />
           <form.Field

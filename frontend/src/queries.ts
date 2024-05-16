@@ -8,9 +8,11 @@ import { del, get, post, put } from "./fetch-utils";
 import { Tekst, Tekster } from "./model";
 import type { SetOptional } from "type-fest";
 
+const basePath = import.meta.env.BASE_URL.replace(/^\/$/, "");
+
 export const textsQueryOptions = queryOptions({
   queryKey: ["skrivestotte"],
-  queryFn: () => get<Tekster>("/skrivestotte?usageSort=true"),
+  queryFn: () => get<Tekster>(`${basePath}/skrivestotte?usageSort=true`),
 });
 
 export const useText = (textId: string) => {
@@ -25,9 +27,13 @@ export const useMutateText = () => {
     mutationFn: (text: SetOptional<Omit<Tekst, "vekttall">, "id">) => {
       const id = text.id;
       if (id)
-        return put<Tekst>(`/skrivestotte`, { body: JSON.stringify(text) });
+        return put<Tekst>(`${basePath}/skrivestotte`, {
+          body: JSON.stringify(text),
+        });
 
-      return post<Tekst>("/skrivestotte", { body: JSON.stringify(text) });
+      return post<Tekst>(`${basePath}/skrivestotte`, {
+        body: JSON.stringify(text),
+      });
     },
     onSuccess: () =>
       queryClient.invalidateQueries({
@@ -41,7 +47,7 @@ export const useDeleteText = () => {
 
   return useMutation({
     mutationFn: (id: Tekst["id"]) => {
-      return del(`/skrivestotte/${id}`);
+      return del(`${basePath}/skrivestotte/${id}`);
     },
     onSuccess: () =>
       queryClient.invalidateQueries({
