@@ -89,15 +89,18 @@ fun Application.skrivestotteApp(
     }
 
     routing {
-        route(configuration.appContextpath) {
+        route(configuration.appContextpath)  {
+
+            skrivestotteRoutes(authproviders, storageProvider, statisticsProvider)
+
             authenticate(*authproviders) {
-                static {
-                    resources("webapp")
-                    defaultResource("index.html", "webapp")
+                singlePageApplication {
+                    useResources= true
+                    defaultPage = "index.html"
+                    filesPath = "webapp"
                 }
             }
 
-            skrivestotteRoutes(authproviders, storageProvider, statisticsProvider)
         }
     }
 }

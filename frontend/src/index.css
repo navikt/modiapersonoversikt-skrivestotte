@@ -1,0 +1,10 @@
+.grow {
+  flex-grow: 1;
+}
+
+.hover-selected {
+  cursor: pointer;
+  &:hover {
+    background-color: var(--a-surface-action-subtle-hover);
+  }
+}
