@@ -66,7 +66,7 @@ fun Application.skrivestotteApp(
     install(CallLogging) {
         level = Level.INFO
         disableDefaultColors()
-        filter { call -> call.request.path().startsWith("/modiapersonoversikt-skrivestotte/skrivestotte") }
+        filter { call -> call.request.path().startsWith("/${configuration.appContextpath}/skrivestotte") }
         mdc("userId") {
             it.principal<Security.SubjectPrincipal>()?.subject ?: "Unauthenticated"
         }
@@ -94,13 +94,14 @@ fun Application.skrivestotteApp(
             skrivestotteRoutes(authproviders, storageProvider, statisticsProvider)
 
             authenticate(*authproviders) {
-                singlePageApplication {
-                    useResources= true
-                    defaultPage = "index.html"
-                    filesPath = "webapp"
+                staticResources(
+                    remotePath = "",
+                    basePackage = "webapp",
+                    index = "index.html"
+                ) {
+                    default("index.html")
                 }
             }
-
         }
     }
 }

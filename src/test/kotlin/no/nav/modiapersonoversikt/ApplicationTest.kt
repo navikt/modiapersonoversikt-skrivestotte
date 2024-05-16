@@ -2,6 +2,7 @@ package no.nav.modiapersonoversikt
 
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
+import no.nav.modiapersonoversikt.config.Configuration
 import io.ktor.server.testing.*
 import no.nav.modiapersonoversikt.skrivestotte.model.Tekst
 import no.nav.modiapersonoversikt.skrivestotte.model.Tekster
@@ -36,6 +37,8 @@ class ApplicationTest : WithDatabase {
 
 class JsonResponse<T>(val status: Int, val data: T)
 
+val config = Configuration()
+
 suspend fun ApplicationTestBuilder.getTexts(
     tags: List<String> = emptyList(),
     usageSort: Boolean = false
@@ -47,7 +50,7 @@ suspend fun ApplicationTestBuilder.getTexts(
         .joinToString("&")
         .let { if (it.isNotEmpty()) "?$it" else "" }
 
-    val response = client.get("/modiapersonoversikt-skrivestotte/skrivestotte$queryParams")
+    val response = client.get("${config.appContextpath}/skrivestotte$queryParams")
     val data = response.bodyAsText().fromJson<Map<UUID, Tekst>>()
     return JsonResponse(response.status.value, data)
 }
