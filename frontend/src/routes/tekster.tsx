@@ -43,7 +43,11 @@ function Texts() {
   const navigate = useNavigate({ from: Route.path });
   const texts = useSuspenseQuery(textsQueryOptions);
 
-  const filteredTexsts = searchTexts(Object.values(texts.data), search, "");
+  const filteredTexsts = searchTexts(
+    Object.values(texts.data),
+    search,
+    textId ?? "",
+  );
 
   const selectedText = textId;
   const onSelect = (textId: string) =>
@@ -63,6 +67,7 @@ function Texts() {
               label="Søk i tekster"
               variant="simple"
               onInput={(e) => setSearch(e.currentTarget.value)}
+              onClear={() => setSearch("")}
             />
           </form>
         </Box>

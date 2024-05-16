@@ -13,7 +13,7 @@ import { useForm } from "@tanstack/react-form";
 import { useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { Locale, LocaleValues, Tekst, localeString } from "src/model";
-import { useMutateText } from "src/queries";
+import { useDeleteText, useMutateText } from "src/queries";
 import { usePreviousValue } from "src/utils";
 
 type Props =
@@ -28,6 +28,7 @@ type Props =
 
 const TextEditor = ({ text, isNew }: Props) => {
   const mutateText = useMutateText();
+  const deleteText = useDeleteText();
   const navigate = useNavigate();
 
   const form = useForm({
@@ -222,6 +223,30 @@ const TextEditor = ({ text, isNew }: Props) => {
               </HStack>
             )}
           />
+
+          {!isNew && (
+            <Box style={{ marginTop: "1em" }}>
+              <Button
+                type="button"
+                variant="danger"
+                icon={<TrashIcon />}
+                onClick={async () => {
+                  const id = text?.id;
+                  if (id) {
+                    const confirmation = confirm(
+                      `Vil du slette teksten "${text?.overskrift}"?`,
+                    );
+                    if (confirmation) {
+                      await deleteText.mutateAsync(id);
+                      navigate({ to: "/tekster" });
+                    }
+                  }
+                }}
+              >
+                Slett tekst
+              </Button>
+            </Box>
+          )}
         </VStack>
       </form>
     </Box>

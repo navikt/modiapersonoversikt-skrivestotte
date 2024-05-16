@@ -16,7 +16,7 @@ export const Route = createRootRoute({
           </InternalHeader.Title>
           <Box padding="4">
             <HStack gap="4">
-              <Link as={RouterLink} to="/">
+              <Link as={RouterLink} to="/tekster">
                 Hjem
               </Link>
               <Link as={RouterLink}>Statistikk</Link>

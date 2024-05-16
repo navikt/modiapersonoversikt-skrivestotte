@@ -14,20 +14,17 @@ export function tagsQuerySearch<T>(
       .map((word) => word.toLowerCase().replace("#", ""))
       .filter((word) => word);
 
-    return data
-      .filter((element) => {
-        const searchTags = getTags(element).map((tag) => tag.toLowerCase());
-        return (
-          isSelected(element) || words.every((tag) => searchTags.includes(tag))
-        );
-      })
-      .filter((element) => {
-        const matchtext = getText(element).join("\u0000").toLowerCase();
+    return data.filter((element) => {
+      const matchtext = getText(element).join("\u0000").toLowerCase();
+      const searchTags = getTags(element).map((tag) => tag.toLowerCase());
 
-        return (
-          isSelected(element) || words.every((word) => matchtext.includes(word))
-        );
-      });
+      return (
+        isSelected(element) ||
+        words.every(
+          (word) => matchtext.includes(word) || searchTags.includes(word),
+        )
+      );
+    });
   };
 }
 
