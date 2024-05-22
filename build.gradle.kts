@@ -122,7 +122,10 @@ task<YarnTask>("yarnBuild") {
     }
 
     doLast {
-        syncFrontend
+        copy {
+            from("frontend/dist")
+            into("build/resources/main/webapp")
+        }
     }
 }
 
