@@ -5,7 +5,6 @@ import com.auth0.jwk.JwkProviderBuilder
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import io.ktor.client.*
-import io.ktor.client.engine.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.http.*
@@ -17,11 +16,9 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
-import no.nav.modiapersonoversikt.appContextpath
 import no.nav.modiapersonoversikt.config.Configuration
 import no.nav.personoversikt.ktor.utils.OidcClient
 import no.nav.personoversikt.ktor.utils.Security
-import no.nav.personoversikt.utils.EnvUtils
 import org.slf4j.LoggerFactory
 import java.net.URL
 import java.security.interfaces.RSAPublicKey
@@ -47,7 +44,7 @@ fun Application.setupSecurity(configuration: Configuration, useMock: Boolean, ru
     install(Sessions) {
         cookie<UserSession>(sessionCookie) {
             cookie.encoding = CookieEncoding.RAW
-            cookie.path = "/$appContextpath"
+            cookie.path = "/${configuration.appContextpath}"
             cookie.httpOnly = true
             serializer = object : SessionSerializer<UserSession> {
                 override fun deserialize(text: String): UserSession = text
@@ -69,7 +66,8 @@ fun Application.setupSecurity(configuration: Configuration, useMock: Boolean, ru
             security.setupJWT(this)
 
             oauth(oauthAuthProvider) {
-                urlProvider = { redirectUrl("/$appContextpath/oauth2/callback", runLocally) }
+                val basePath = if(configuration.appContextpath != "") "/${configuration.appContextpath}" else ""
+                urlProvider = { redirectUrl("${basePath}/oauth2/callback", runLocally) }
                 skipWhen { call ->
                     call.sessions.get(sessionCookie) != null ||
                             call.request.path().endsWith("/manifest.json")
@@ -87,9 +85,6 @@ fun Application.setupSecurity(configuration: Configuration, useMock: Boolean, ru
                     )
                 }
                 client = HttpClient(CIO) {
-                    engine {
-                        proxy = ProxyBuilder.http(EnvUtils.getRequiredConfig("HTTP_PROXY"))
-                    }
                     install(ContentNegotiation) {
                         jackson()
                     }
@@ -115,7 +110,7 @@ fun Application.setupSecurity(configuration: Configuration, useMock: Boolean, ru
                 }
                 challenge {
                     call.sessions.clear(sessionCookie)
-                    call.respondRedirect("/$appContextpath")
+                    call.respondRedirect("/${configuration.appContextpath}")
                 }
             }
         }
@@ -123,7 +118,7 @@ fun Application.setupSecurity(configuration: Configuration, useMock: Boolean, ru
 
     val authproviders = if (useMock) arrayOf("session") else arrayOf(*security.authproviders, "oauth", "session")
     routing {
-        route(appContextpath) {
+        route(configuration.appContextpath) {
             authenticate(*authproviders) {
                 get("/login") {} // Needed, but is automatically redirected to oauth authorization-page
 
@@ -132,7 +127,7 @@ fun Application.setupSecurity(configuration: Configuration, useMock: Boolean, ru
                     val idToken = principal?.extraParameters?.get("id_token")
                     if (idToken != null) {
                         call.sessions.set(sessionCookie, idToken)
-                        call.respondRedirect(url = "/$appContextpath", permanent = false)
+                        call.respondRedirect(url = "/${configuration.appContextpath}", permanent = false)
                     } else {
                         call.respond(HttpStatusCode.BadRequest, "Could not get accesstoken/idtoken from AAD")
                     }

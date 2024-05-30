@@ -17,7 +17,7 @@ fun runLocally(useMock: Boolean) {
     val configuration = Configuration(database = DatabaseConfig(jdbcUrl = db.jdbcUrl))
     val dbConfig = DataSourceConfiguration(configuration)
 
-    DataSourceConfiguration.migrateDb(configuration, dbConfig.adminDataSource())
+    dbConfig.runFlyway()
 
     KtorServer.create(Netty, 7070) {
         skrivestotteApp(

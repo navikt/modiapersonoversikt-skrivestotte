@@ -1,18 +1,19 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import com.github.gradle.node.npm.task.NpmTask
+import com.github.gradle.node.yarn.task.YarnInstallTask
+import com.github.gradle.node.yarn.task.YarnTask
 
 val mainClass = "no.nav.modiapersonoversikt.MainKt"
-val kotlinVersion = "1.7.10"
-val ktorVersion = "2.0.3"
-val javaVersion = "11"
+val kotlinVersion = "1.9.24"
+val ktorVersion = "2.3.8"
+val javaVersion = "17"
 val prometheusVersion = "1.9.0"
 val logbackVersion = "1.2.11"
 val logstashVersion = "7.2"
 val modiaCommonVersion = "1.2022.08.01-11.26-97308e41bb8d"
 
 plugins {
-    kotlin("jvm") version "1.7.10"
-    id("com.github.node-gradle.node") version "3.1.1"
+    kotlin("jvm") version "1.9.24"
+    id("com.github.node-gradle.node") version "7.0.2"
     idea
 }
 
@@ -56,7 +57,6 @@ dependencies {
     implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-serialization-jackson:$ktorVersion")
 
-
     implementation("io.ktor:ktor-server-metrics-micrometer:$ktorVersion")
     implementation("io.micrometer:micrometer-registry-prometheus:$prometheusVersion")
 
@@ -84,12 +84,12 @@ dependencies {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
 node {
-    version.set("16.14.0")
+    version.set("20.13.1")
     download.set(true)
 }
 
@@ -105,32 +105,32 @@ tasks.test {
     }
 }
 
-task<NpmTask>("npmCI") {
+task<YarnInstallTask>("yarnInstall") {
     workingDir.set(file("${project.projectDir}/frontend"))
-    args.set(listOf("ci"))
+    args.set(listOf("--frozen-lockfile"))
 }
 
 val syncFrontend = copy {
-    from("frontend/build")
-    into("src/main/resources/webapp")
+    from("${project.projectDir}/frontend/dist")
+    into("${project.projectDir}/src/main/resources/webapp")
 }
-task<NpmTask>("npmBuild") {
+task<YarnTask>("yarnBuild") {
     workingDir.set(file("${project.projectDir}/frontend"))
-    args.set(listOf("run", "build"))
+    args.set(listOf("build"))
+    if(System.getenv("BASE_PATH") != null) {
+        args.addAll("--base", System.getenv("BASE_PATH"))
+    }
 
     doLast {
         copy {
-            from("frontend/build")
+            from("frontend/dist")
             into("build/resources/main/webapp")
         }
     }
 }
 
 task("syncFrontend") {
-    copy {
-        from("frontend/build")
-        into("src/main/resources/webapp")
-    }
+    syncFrontend
 }
 
 task<Jar>("fatJar") {
@@ -145,11 +145,11 @@ task<Jar>("fatJar") {
 }
 
 tasks {
-    "npmBuild" {
-        dependsOn("npmCI")
+    "yarnBuild" {
+        dependsOn("yarnInstall")
     }
     "fatJar" {
-        dependsOn("npmBuild")
+        dependsOn("yarnBuild")
     }
     "build" {
         dependsOn("fatJar")

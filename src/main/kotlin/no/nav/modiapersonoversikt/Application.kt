@@ -48,12 +48,12 @@ fun Application.skrivestotteApp(
     }
 
     install(Metrics.Plugin) {
-        contextpath = appContextpath
+        contextpath = configuration.appContextpath
     }
 
     install(Selftest.Plugin) {
         appname = appName
-        contextpath = appContextpath
+        contextpath = configuration.appContextpath
         version = appImage
     }
 
@@ -66,7 +66,7 @@ fun Application.skrivestotteApp(
     install(CallLogging) {
         level = Level.INFO
         disableDefaultColors()
-        filter { call -> call.request.path().startsWith("/modiapersonoversikt-skrivestotte/skrivestotte") }
+        filter { call -> call.request.path().startsWith("/${configuration.appContextpath}/skrivestotte") }
         mdc("userId") {
             it.principal<Security.SubjectPrincipal>()?.subject ?: "Unauthenticated"
         }
@@ -89,15 +89,19 @@ fun Application.skrivestotteApp(
     }
 
     routing {
-        route(appContextpath) {
-            authenticate(*authproviders) {
-                static {
-                    resources("webapp")
-                    defaultResource("index.html", "webapp")
-                }
-            }
+        route(configuration.appContextpath)  {
 
             skrivestotteRoutes(authproviders, storageProvider, statisticsProvider)
+
+            authenticate(*authproviders) {
+                staticResources(
+                    remotePath = "",
+                    basePackage = "webapp",
+                    index = "index.html"
+                ) {
+                    default("index.html")
+                }
+            }
         }
     }
 }
