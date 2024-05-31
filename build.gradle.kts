@@ -9,7 +9,7 @@ val javaVersion = "17"
 val prometheusVersion = "1.9.0"
 val logbackVersion = "1.2.11"
 val logstashVersion = "7.2"
-val modiaCommonVersion = "1.2022.08.01-11.26-97308e41bb8d"
+val modiaCommonVersion = "1.2024.05.31-12.22-e61d6fb8f19f"
 
 plugins {
     kotlin("jvm") version "1.9.24"
@@ -66,9 +66,9 @@ dependencies {
     implementation("net.logstash.logback:logstash-logback-encoder:$logstashVersion")
 
     implementation("no.nav:vault-jdbc:1.3.9")
-    implementation("no.nav.personoversikt:kotlin-utils:$modiaCommonVersion")
-    implementation("no.nav.personoversikt:ktor-utils:$modiaCommonVersion")
-    implementation("no.nav.personoversikt:crypto:$modiaCommonVersion")
+    implementation("com.github.navikt.modia-common-utils:kotlin-utils:$modiaCommonVersion")
+    implementation("com.github.navikt.modia-common-utils:ktor-utils:$modiaCommonVersion")
+    implementation("com.github.navikt.modia-common-utils:crypto:$modiaCommonVersion")
     implementation("org.flywaydb:flyway-core:8.5.12")
     implementation("com.github.seratch:kotliquery:1.8.0")
 
