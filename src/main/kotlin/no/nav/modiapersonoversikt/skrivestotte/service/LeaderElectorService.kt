@@ -9,7 +9,7 @@ import kotlinx.coroutines.runBlocking
 import no.nav.modiapersonoversikt.config.Configuration
 import no.nav.modiapersonoversikt.utils.fromJson
 import no.nav.modiapersonoversikt.utils.measureTimeMillis
-import no.nav.personoversikt.utils.SelftestGenerator
+import no.nav.personoversikt.common.utils.SelftestGenerator
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.net.InetAddress

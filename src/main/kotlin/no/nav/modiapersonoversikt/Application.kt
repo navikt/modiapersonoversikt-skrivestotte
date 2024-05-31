@@ -20,9 +20,9 @@ import no.nav.modiapersonoversikt.skrivestotte.storage.JdbcStatisticsProvider
 import no.nav.modiapersonoversikt.skrivestotte.storage.JdbcStorageProvider
 import no.nav.modiapersonoversikt.utils.JacksonUtils
 import no.nav.modiapersonoversikt.utils.measureTimeMillis
-import no.nav.personoversikt.ktor.utils.Metrics
-import no.nav.personoversikt.ktor.utils.Security
-import no.nav.personoversikt.ktor.utils.Selftest
+import no.nav.personoversikt.common.ktor.utils.Metrics
+import no.nav.personoversikt.common.ktor.utils.Security
+import no.nav.personoversikt.common.ktor.utils.Selftest
 import org.slf4j.event.Level
 import javax.sql.DataSource
 import kotlin.concurrent.fixedRateTimer

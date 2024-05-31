@@ -17,8 +17,8 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import no.nav.modiapersonoversikt.config.Configuration
-import no.nav.personoversikt.ktor.utils.OidcClient
-import no.nav.personoversikt.ktor.utils.Security
+import no.nav.personoversikt.common.ktor.utils.OidcClient
+import no.nav.personoversikt.common.ktor.utils.Security
 import org.slf4j.LoggerFactory
 import java.net.URL
 import java.security.interfaces.RSAPublicKey
