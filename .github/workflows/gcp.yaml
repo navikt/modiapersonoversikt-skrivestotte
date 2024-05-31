@@ -33,12 +33,13 @@ jobs:
         uses: nais/docker-build-push@v0
         id: docker-build-push
         with:
-          iamge_suffix: -gcp
+          image_suffix: -gcp
           team: personoversikt
           identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
           project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
 
   deploy-dev-gcp:
+    environment: dev-gcp
     name: Deploy to dev gcp
     needs: build-and-push
     if: github.ref == 'refs/heads/dev'
@@ -53,4 +54,22 @@ jobs:
           PRINT_PAYLOAD: true
           CLUSTER: dev-gcp
           RESOURCE: .nais/dev.yaml
+          VAR: image=${{ needs.build-and-push.outputs.image }}
+
+  deploy-prod-gcp:
+    environment: prod-gcp
+    name: Deploy to prod gcp
+    needs: build-and-push
+    if: github.ref == 'refs/heads/dev'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: nais/deploy/actions/deploy@v2
+        env:
+          PRINT_PAYLOAD: true
+          CLUSTER: prod-gcp
+          RESOURCE: .nais/prod-gcp.yaml
           VAR: image=${{ needs.build-and-push.outputs.image }}
