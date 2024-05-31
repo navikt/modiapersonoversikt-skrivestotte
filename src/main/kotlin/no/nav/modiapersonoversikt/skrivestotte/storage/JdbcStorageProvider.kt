@@ -11,7 +11,7 @@ import no.nav.modiapersonoversikt.skrivestotte.model.Tekst
 import no.nav.modiapersonoversikt.skrivestotte.model.Tekster
 import no.nav.modiapersonoversikt.utils.JsonBackupLoader
 import no.nav.modiapersonoversikt.utils.measureTimeMillisSuspended
-import no.nav.personoversikt.utils.SelftestGenerator
+import no.nav.personoversikt.common.utils.SelftestGenerator
 import java.util.*
 import javax.sql.DataSource
 import kotlin.concurrent.fixedRateTimer

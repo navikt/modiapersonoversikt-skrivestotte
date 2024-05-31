@@ -4,7 +4,7 @@ import io.ktor.server.netty.*
 import no.nav.modiapersonoversikt.config.Configuration
 import no.nav.modiapersonoversikt.config.DataSourceConfiguration
 import no.nav.modiapersonoversikt.config.DatabaseConfig
-import no.nav.personoversikt.ktor.utils.KtorServer
+import no.nav.personoversikt.common.ktor.utils.KtorServer
 
 fun runLocally(useMock: Boolean) {
     System.setProperty("AZURE_APP_WELL_KNOWN_URL", "http://localhost:8080/azuread/.well-known/openid-configuration")
