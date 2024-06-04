@@ -9,17 +9,17 @@ spec:
   image: "{{ image }}"
   port: 7070
   liveness:
-    path: /modiapersonoversikt-skrivestotte/internal/isAlive
+    path: /internal/isAlive
     initialDelay: 20
     periodSeconds: 5
     failureThreshold: 10
   readiness:
-    path: /modiapersonoversikt-skrivestotte/internal/isReady
+    path: /internal/isReady
     initialDelay: 20
     timeout: 1
   prometheus:
     enabled: true
-    path: /modiapersonoversikt-skrivestotte/internal/metrics
+    path: /internal/metrics
   resources:
     requests:
       cpu: 50m
