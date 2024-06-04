@@ -76,7 +76,7 @@ jobs:
     environment: prod-gcp
     name: Deploy to prod gcp
     needs: build-and-push
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/dev'
     runs-on: ubuntu-latest
     permissions:
       contents: read
