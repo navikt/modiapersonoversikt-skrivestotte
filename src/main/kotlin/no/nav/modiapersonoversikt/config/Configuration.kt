@@ -9,7 +9,7 @@ import no.nav.personoversikt.common.utils.EnvUtils.getRequiredConfig
 
 private val defaultValues = mapOf(
     "NAIS_CLUSTER_NAME" to "local",
-    "DATABASE_JDBC_URL" to "jdbc:postgresql://localhost:5432/modiapersonoversikt-skrivestotte",
+    "NAIS_DATABASE_MODIAPERSONOVERSIKT_SKRIVESTOTTE_MODIAPERSONOVERSIKT_SKRIVESTOTTE_DB_JDBC_URL" to "jdbc:postgresql://localhost:5432/modiapersonoversikt-skrivestotte",
     "VAULT_MOUNTPATH" to "",
     "ELECTOR_PATH" to "",
     "USE_STATISTICS_SORT" to "false",
@@ -58,7 +58,7 @@ class Configuration(
     val electorPath: String = createUrl(getRequiredConfig("ELECTOR_PATH", defaultValues)),
     val useStatisticsSort: Boolean = getRequiredConfig("USE_STATISTICS_SORT", defaultValues).toBoolean(),
     val appContextpath: String = getRequiredConfig("BASE_PATH", defaultValues).let { if(it == "/") "" else it },
-    val database: DatabaseConfig = if (clusterName == "dev-gcp" || clusterName == "prod-gcp") {
+    val database: DatabaseConfig =
         DatabaseConfig(
             jdbcUrl = getRequiredConfig(
                 "NAIS_DATABASE_MODIAPERSONOVERSIKT_SKRIVESTOTTE_MODIAPERSONOVERSIKT_SKRIVESTOTTE_DB_JDBC_URL",
@@ -66,12 +66,6 @@ class Configuration(
             ),
         )
 
-    } else {
-        DatabaseConfig(
-            jdbcUrl = getRequiredConfig("DATABASE_JDBC_URL", defaultValues),
-            vaultMountpath = getRequiredConfig("VAULT_MOUNTPATH", defaultValues),
-        )
-    }
 )
 
 private fun createUrl(path: String): String =

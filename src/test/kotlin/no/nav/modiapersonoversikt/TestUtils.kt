@@ -38,7 +38,7 @@ interface WithDatabase {
     @BeforeEach
     fun clearDatabase() {
         runBlocking {
-            transactional(dbConfig.adminDataSource()) { tx ->
+            transactional(dbConfig.userDataSource()) { tx ->
                 tx.run(queryOf("DELETE FROM innhold").asExecute)
                 tx.run(queryOf("DELETE FROM tekst").asExecute)
                 tx.run(queryOf("DELETE FROM statistikk_raw").asExecute)
