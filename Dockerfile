@@ -1,6 +1,7 @@
-FROM navikt/java:17-appdynamics
+FROM gcr.io/distroless/java17-debian12
 
-ENV APPD_ENABLED=true
-COPY java-debug.sh /init-scripts/08-java-debug.sh
+USER nonroot
 
 COPY build/libs/app.jar app.jar
+
+CMD ["app.jar"]
