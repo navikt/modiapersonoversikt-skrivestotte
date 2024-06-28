@@ -5,6 +5,7 @@ import {
   Outlet,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
+import { ToastContainer } from "react-toastify";
 
 export const Route = createRootRoute({
   component: () => (
@@ -29,7 +30,12 @@ export const Route = createRootRoute({
           </Page.Block>
         </Box>
       </Page>
-      <TanStackRouterDevtools />
+      <ToastContainer
+        position="bottom-right"
+        autoClose={4000}
+        theme="colored"
+      />
+      {import.meta.env.DEV && <TanStackRouterDevtools />}
     </>
   ),
 });
