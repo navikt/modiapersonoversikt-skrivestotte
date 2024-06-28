@@ -7,6 +7,7 @@ import {
 import { del, get, post, put } from "./fetch-utils";
 import { Tekst, Tekster } from "./model";
 import type { SetOptional } from "type-fest";
+import { toast } from "react-toastify";
 
 const basePath = import.meta.env.BASE_URL.replace(/^\/$/, "");
 
@@ -26,14 +27,30 @@ export const useMutateText = () => {
   return useMutation({
     mutationFn: (text: SetOptional<Omit<Tekst, "vekttall">, "id">) => {
       const id = text.id;
-      if (id)
-        return put<Tekst>(`${basePath}/skrivestotte`, {
+      if (id) {
+        const updatePromise = put<Tekst>(`${basePath}/skrivestotte`, {
           body: JSON.stringify(text),
         });
 
-      return post<Tekst>(`${basePath}/skrivestotte`, {
+        toast.promise(updatePromise, {
+          pending: "Lagrer tekst...",
+          success: "Tekst lagret",
+          error: "Klarte ikke å lagre teksten",
+        });
+
+        return updatePromise;
+      }
+
+      const createPromise = post<Tekst>(`${basePath}/skrivestotte`, {
         body: JSON.stringify(text),
       });
+      toast.promise(createPromise, {
+        pending: "Lagrer tekst...",
+        success: "Tekst lagret",
+        error: "Klarte ikke å lagre teksten",
+      });
+
+      return createPromise;
     },
     onSuccess: () =>
       queryClient.invalidateQueries({
@@ -47,7 +64,11 @@ export const useDeleteText = () => {
 
   return useMutation({
     mutationFn: (id: Tekst["id"]) => {
-      return del(`${basePath}/skrivestotte/${id}`);
+      return toast.promise(del(`${basePath}/skrivestotte/${id}`), {
+        pending: "Sletter tekst...",
+        success: "Tekst slettet",
+        error: "Noe gikk galt under sletting av tekst",
+      });
     },
     onSuccess: () =>
       queryClient.invalidateQueries({
