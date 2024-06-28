@@ -8,3 +8,8 @@
     background-color: var(--a-surface-action-subtle-hover);
   }
 }
+
+:root {
+  --toastify-color-success: var(--a-surface-success);
+  --toastify-color-error: var(--a-surface-danger);
+}
