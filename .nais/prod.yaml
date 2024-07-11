@@ -51,9 +51,6 @@ spec:
       rules:
         - application: modiapersonoversikt
           namespace: personoversikt
-          cluster: prod-fss
-        - application: modiapersonoversikt
-          namespace: personoversikt
           cluster: prod-gcp
   leaderElection: true
   env:
