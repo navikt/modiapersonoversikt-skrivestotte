@@ -52,6 +52,9 @@ spec:
         - application: modiapersonoversikt
           namespace: personoversikt
           cluster: prod-gcp
+        - application: modiapersonoversikt
+          namespace: personoversikt
+          cluster: prod-fss
   leaderElection: true
   env:
     - name: USE_STATISTICS_SORT
