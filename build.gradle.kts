@@ -5,7 +5,7 @@ import com.github.gradle.node.yarn.task.YarnTask
 val mainClass = "no.nav.modiapersonoversikt.MainKt"
 val kotlinVersion = "1.9.24"
 val ktorVersion = "2.3.8"
-val javaVersion = "17"
+val javaVersion = "21"
 val prometheusVersion = "1.9.0"
 val logbackVersion = "1.2.11"
 val logstashVersion = "7.2"
@@ -84,8 +84,8 @@ dependencies {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
 
 node {
