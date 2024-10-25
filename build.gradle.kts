@@ -9,7 +9,7 @@ val javaVersion = "21"
 val prometheusVersion = "1.9.0"
 val logbackVersion = "1.2.11"
 val logstashVersion = "8.0"
-val modiaCommonVersion = "1.2024.05.31-12.22-e61d6fb8f19f"
+val modiaCommonVersion = "1.2024.10.25-12.01-5d2c60264f4e"
 
 plugins {
     kotlin("jvm") version "1.9.24"
