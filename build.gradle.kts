@@ -8,7 +8,7 @@ val ktorVersion = "2.3.8"
 val javaVersion = "21"
 val prometheusVersion = "1.9.0"
 val logbackVersion = "1.2.11"
-val logstashVersion = "7.2"
+val logstashVersion = "8.0"
 val modiaCommonVersion = "1.2024.05.31-12.22-e61d6fb8f19f"
 
 plugins {
