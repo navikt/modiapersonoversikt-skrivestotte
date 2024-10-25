@@ -13,7 +13,7 @@ val modiaCommonVersion = "1.2024.10.25-12.01-5d2c60264f4e"
 
 plugins {
     kotlin("jvm") version "2.0.21"
-    id("com.github.node-gradle.node") version "7.0.2"
+    id("com.github.node-gradle.node") version "7.1.0"
     idea
 }
 
