@@ -7,7 +7,7 @@ val kotlinVersion = "1.9.24"
 val ktorVersion = "3.0.0"
 val javaVersion = "21"
 val prometheusVersion = "1.9.0"
-val logbackVersion = "1.2.11"
+val logbackVersion = "1.5.11"
 val logstashVersion = "8.0"
 val modiaCommonVersion = "1.2024.10.25-12.01-5d2c60264f4e"
 
