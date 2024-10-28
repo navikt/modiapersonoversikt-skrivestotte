@@ -10,6 +10,7 @@ val prometheusVersion = "1.13.6"
 val logbackVersion = "1.2.11"
 val logstashVersion = "8.0"
 val modiaCommonVersion = "1.2024.10.25-12.01-5d2c60264f4e"
+val flywayVersion = "10.20.1"
 
 plugins {
     kotlin("jvm") version "2.0.21"
@@ -69,7 +70,8 @@ dependencies {
     implementation("com.github.navikt.modia-common-utils:kotlin-utils:$modiaCommonVersion")
     implementation("com.github.navikt.modia-common-utils:ktor-utils:$modiaCommonVersion")
     implementation("com.github.navikt.modia-common-utils:crypto:$modiaCommonVersion")
-    implementation("org.flywaydb:flyway-core:10.20.1")
+    implementation("org.flywaydb:flyway-core:$flywayVersion")
+    implementation("org.flywaydb:flyway-database-postgresql:$flywayVersion")
     implementation("com.github.seratch:kotliquery:1.9.0")
 
     implementation("com.squareup.okhttp3:mockwebserver:4.12.0")
