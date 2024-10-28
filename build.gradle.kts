@@ -69,7 +69,7 @@ dependencies {
     implementation("com.github.navikt.modia-common-utils:kotlin-utils:$modiaCommonVersion")
     implementation("com.github.navikt.modia-common-utils:ktor-utils:$modiaCommonVersion")
     implementation("com.github.navikt.modia-common-utils:crypto:$modiaCommonVersion")
-    implementation("org.flywaydb:flyway-core:8.5.12")
+    implementation("org.flywaydb:flyway-core:10.20.1")
     implementation("com.github.seratch:kotliquery:1.9.0")
 
     implementation("com.squareup.okhttp3:mockwebserver:4.12.0")
