@@ -1,6 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import com.github.gradle.node.yarn.task.YarnInstallTask
 import com.github.gradle.node.yarn.task.YarnTask
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 val mainClass = "no.nav.modiapersonoversikt.MainKt"
 val kotlinVersion = "1.9.24"
@@ -11,10 +12,13 @@ val logbackVersion = "1.5.12"
 val logstashVersion = "8.0"
 val modiaCommonVersion = "1.2024.10.25-12.01-5d2c60264f4e"
 val flywayVersion = "10.20.1"
+val hikariVersion = "6.0.0"
+val postgresVersion = "42.7.4"
 
 plugins {
     kotlin("jvm") version "2.0.21"
     id("com.github.node-gradle.node") version "7.1.0"
+    id("com.gradleup.shadow") version "8.3.3"
     idea
 }
 
@@ -66,12 +70,13 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
     implementation("net.logstash.logback:logstash-logback-encoder:$logstashVersion")
 
-    implementation("no.nav:vault-jdbc:1.3.9")
+    implementation("com.zaxxer:HikariCP:$hikariVersion")
+    runtimeOnly("org.postgresql:postgresql:$postgresVersion")
     implementation("com.github.navikt.modia-common-utils:kotlin-utils:$modiaCommonVersion")
     implementation("com.github.navikt.modia-common-utils:ktor-utils:$modiaCommonVersion")
     implementation("com.github.navikt.modia-common-utils:crypto:$modiaCommonVersion")
-    implementation("org.flywaydb:flyway-core:$flywayVersion")
-    implementation("org.flywaydb:flyway-database-postgresql:$flywayVersion")
+    compileOnly("org.flywaydb:flyway-core:$flywayVersion")
+    runtimeOnly("org.flywaydb:flyway-database-postgresql:$flywayVersion")
     implementation("com.github.seratch:kotliquery:1.9.0")
 
     implementation("com.squareup.okhttp3:mockwebserver:4.12.0")
@@ -96,8 +101,10 @@ node {
 }
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = javaVersion
-    kotlinOptions.freeCompilerArgs = listOf("-Xcontext-receivers")
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_21)
+        freeCompilerArgs.set(listOf("-Xcontext-receivers"))
+    }
 }
 
 tasks.test {
@@ -135,25 +142,25 @@ task("syncFrontend") {
     syncFrontend
 }
 
-task<Jar>("fatJar") {
-    archiveBaseName.set("app")
-    duplicatesStrategy = DuplicatesStrategy.INCLUDE
-
-    manifest {
-        attributes["Main-Class"] = mainClass
-    }
-    from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
-    with(tasks.jar.get() as CopySpec)
-}
-
 tasks {
     "yarnBuild" {
         dependsOn("yarnInstall")
     }
-    "fatJar" {
+    shadowJar {
         dependsOn("yarnBuild")
+
+        archiveBaseName.set("app")
+        archiveClassifier.set("")
+        duplicatesStrategy = DuplicatesStrategy.INCLUDE
+
+        manifest {
+            attributes["Main-Class"] = mainClass
+        }
+        from(sourceSets.main.get().output)
+        configurations = listOf(project.configurations.runtimeClasspath.get())
     }
+
     "build" {
-        dependsOn("fatJar")
+        dependsOn("shadowJar")
     }
 }

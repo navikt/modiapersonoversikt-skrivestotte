@@ -3,12 +3,11 @@ package no.nav.modiapersonoversikt.config
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import no.nav.modiapersonoversikt.log
-import no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil
 import org.flywaydb.core.Flyway
 import javax.sql.DataSource
 
 class DataSourceConfiguration(val env: Configuration) {
-    private var dataSource = createDatasource("user")
+    private var dataSource = createDatasource()
 
     fun userDataSource() = dataSource
 
@@ -20,7 +19,7 @@ class DataSourceConfiguration(val env: Configuration) {
             .migrate()
     }
 
-    private fun createDatasource(user: String): DataSource {
+    private fun createDatasource(): DataSource {
         val config = HikariConfig()
         config.jdbcUrl = env.database.jdbcUrl
         config.minimumIdle = 0
