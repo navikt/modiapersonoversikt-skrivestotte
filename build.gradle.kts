@@ -11,7 +11,7 @@ val prometheusVersion = "1.14.2"
 val logbackVersion = "1.5.16"
 val logstashVersion = "8.0"
 val modiaCommonVersion = "1.2025.01.07-08.19-3cff166d0d1d"
-val flywayVersion = "11.1.0"
+val flywayVersion = "11.1.1"
 val hikariVersion = "6.2.1"
 val postgresVersion = "42.7.4"
 
