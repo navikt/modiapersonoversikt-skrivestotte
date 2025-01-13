@@ -77,7 +77,7 @@ dependencies {
     implementation("com.github.navikt.modia-common-utils:crypto:$modiaCommonVersion")
     compileOnly("org.flywaydb:flyway-core:$flywayVersion")
     runtimeOnly("org.flywaydb:flyway-database-postgresql:$flywayVersion")
-    implementation("com.github.seratch:kotliquery:1.9.0")
+    implementation("com.github.seratch:kotliquery:1.9.1")
 
     implementation("com.squareup.okhttp3:mockwebserver:4.12.0")
     implementation("io.ktor:ktor-server-netty-jvm:$ktorVersion")
