@@ -4,7 +4,7 @@ import com.github.gradle.node.yarn.task.YarnTask
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 val mainClass = "no.nav.modiapersonoversikt.MainKt"
-val kotlinVersion = "2.1.0"
+val kotlinVersion = "2.1.10"
 val ktorVersion = "3.0.3"
 val javaVersion = "21"
 val prometheusVersion = "1.14.3"
