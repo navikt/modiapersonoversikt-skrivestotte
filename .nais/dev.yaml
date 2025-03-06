@@ -24,6 +24,10 @@ spec:
   prometheus:
     enabled: true
     path: /modiapersonoversikt-skrivestotte/internal/metrics
+  observability:
+    autoInstrumentation:
+      enabled: true
+      runtime: java
   resources:
     requests:
       cpu: 50m
@@ -33,6 +37,7 @@ spec:
       memory: 512Mi
   ingresses:
     - https://modiapersonoversikt-skrivestotte.intern.dev.nav.no
+    - https://modiapersonoversikt-skrivestotte.ansatt.dev.nav.no
   replicas:
     min: 1
     max: 2
