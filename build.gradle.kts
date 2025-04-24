@@ -85,7 +85,7 @@ dependencies {
 
     testRuntimeOnly("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
     testImplementation("io.ktor:ktor-server-test-host-jvm:$ktorVersion")
-    testImplementation("org.testcontainers:postgresql:1.20.6")
+    testImplementation("org.testcontainers:postgresql:1.21.0")
     testImplementation("org.junit.jupiter:junit-jupiter:5.12.2")
     testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlinVersion")
 }
