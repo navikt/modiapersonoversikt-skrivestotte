@@ -18,7 +18,7 @@ val postgresVersion = "42.7.7"
 plugins {
     kotlin("jvm") version "2.2.20"
     id("com.github.node-gradle.node") version "7.1.0"
-    id("com.gradleup.shadow") version "8.3.9"
+    id("com.gradleup.shadow") version "9.1.0"
     idea
 }
 
