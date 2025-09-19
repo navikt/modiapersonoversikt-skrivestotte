@@ -13,7 +13,7 @@ val logstashVersion = "8.1"
 val modiaCommonVersion = "1.2025.08.20-10.02-d99e24c2fbbe"
 val flywayVersion = "11.12.0"
 val hikariVersion = "7.0.2"
-val postgresVersion = "42.7.7"
+val postgresVersion = "42.7.8"
 
 plugins {
     kotlin("jvm") version "2.2.20"
