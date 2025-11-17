@@ -79,7 +79,7 @@ dependencies {
     runtimeOnly("org.flywaydb:flyway-database-postgresql:$flywayVersion")
     implementation("com.github.seratch:kotliquery:1.9.1")
 
-    implementation("com.squareup.okhttp3:mockwebserver:5.3.0")
+    implementation("com.squareup.okhttp3:mockwebserver:5.3.1")
     implementation("io.ktor:ktor-server-netty-jvm:$ktorVersion")
     implementation("io.ktor:ktor-client-apache-jvm:$ktorVersion")
 
