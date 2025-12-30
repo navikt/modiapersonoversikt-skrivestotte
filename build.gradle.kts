@@ -148,7 +148,6 @@ tasks {
     }
     shadowJar {
         dependsOn("yarnBuild")
-
         archiveBaseName.set("app")
         archiveClassifier.set("")
         duplicatesStrategy = DuplicatesStrategy.INCLUDE
@@ -158,6 +157,8 @@ tasks {
         }
         from(sourceSets.main.get().output)
         configurations = listOf(project.configurations.runtimeClasspath.get())
+
+        mergeServiceFiles()
     }
 
     "build" {
