@@ -15,6 +15,7 @@ class DataSourceConfiguration(val env: Configuration) {
         Flyway
             .configure()
             .dataSource(userDataSource())
+            .locations("classpath:db/migration")
             .load()
             .migrate()
     }
