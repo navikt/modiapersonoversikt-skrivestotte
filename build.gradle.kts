@@ -3,7 +3,6 @@ import com.github.gradle.node.yarn.task.YarnInstallTask
 import com.github.gradle.node.yarn.task.YarnTask
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
-val mainClass = "no.nav.modiapersonoversikt.MainKt"
 val kotlinVersion = "2.3.0"
 val ktorVersion = "3.3.3"
 val javaVersion = "21"
@@ -151,9 +150,10 @@ tasks {
         archiveBaseName.set("app")
         archiveClassifier.set("")
         duplicatesStrategy = DuplicatesStrategy.INCLUDE
-
         manifest {
-            attributes["Main-Class"] = mainClass
+            attributes(
+                "Main-Class" to "no.nav.modiapersonoversikt.MainKt"
+            )
         }
         from(sourceSets.main.get().output)
         configurations = listOf(project.configurations.runtimeClasspath.get())
