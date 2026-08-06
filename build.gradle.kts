@@ -4,7 +4,7 @@ import com.github.gradle.node.yarn.task.YarnTask
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 val kotlinVersion = "2.3.20"
-val ktorVersion = "3.4.0"
+val ktorVersion = "3.5.2"
 val javaVersion = "21"
 val prometheusVersion = "1.16.4"
 val logbackVersion = "1.5.32"
