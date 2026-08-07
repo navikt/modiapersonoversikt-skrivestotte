@@ -4,12 +4,12 @@ import com.github.gradle.node.yarn.task.YarnTask
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 val kotlinVersion = "2.3.20"
-val ktorVersion = "3.4.0"
+val ktorVersion = "3.5.2"
 val javaVersion = "21"
 val prometheusVersion = "1.16.4"
 val logbackVersion = "1.5.32"
 val logstashVersion = "9.0"
-val modiaCommonVersion = "1.2025.12.29-09.14-bbbf737775be"
+val modiaCommonVersion = "1.2026.08.06-12.11-d922f6248916"
 val flywayVersion = "11.20.2"
 val hikariVersion = "7.0.2"
 val postgresVersion = "42.7.9"
