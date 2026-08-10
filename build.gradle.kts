@@ -17,7 +17,7 @@ val postgresVersion = "42.7.9"
 plugins {
     kotlin("jvm") version "2.3.0"
     id("com.github.node-gradle.node") version "7.1.0"
-    id("com.gradleup.shadow") version "9.3.1"
+    application
     idea
 }
 
@@ -74,8 +74,8 @@ dependencies {
     implementation("com.github.navikt.modia-common-utils:kotlin-utils:$modiaCommonVersion")
     implementation("com.github.navikt.modia-common-utils:ktor-utils:$modiaCommonVersion")
     implementation("com.github.navikt.modia-common-utils:crypto:$modiaCommonVersion")
-    compileOnly("org.flywaydb:flyway-core:$flywayVersion")
-    runtimeOnly("org.flywaydb:flyway-database-postgresql:$flywayVersion")
+    implementation("org.flywaydb:flyway-core:$flywayVersion")
+    implementation("org.flywaydb:flyway-database-postgresql:$flywayVersion")
     implementation("com.github.seratch:kotliquery:1.9.1")
 
     implementation("com.squareup.okhttp3:mockwebserver:5.4.0")
@@ -144,24 +144,5 @@ task("syncFrontend") {
 tasks {
     "yarnBuild" {
         dependsOn("yarnInstall")
-    }
-    shadowJar {
-        dependsOn("yarnBuild")
-        archiveBaseName.set("app")
-        archiveClassifier.set("")
-        duplicatesStrategy = DuplicatesStrategy.INCLUDE
-        manifest {
-            attributes(
-                "Main-Class" to "no.nav.modiapersonoversikt.MainKt"
-            )
-        }
-        from(sourceSets.main.get().output)
-        configurations = listOf(project.configurations.runtimeClasspath.get())
-
-        mergeServiceFiles()
-    }
-
-    "build" {
-        dependsOn("shadowJar")
     }
 }
