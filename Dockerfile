@@ -2,6 +2,6 @@ FROM gcr.io/distroless/java21-debian12
 
 USER nonroot
 
-COPY build/install/*/lib /lib
+COPY build/libs/app.jar app.jar
 
-ENTRYPOINT ["java", "-cp", "/lib/*", "no.nav.modiapersonoversikt.MainKt"]
+CMD ["app.jar"]
