@@ -41,7 +41,7 @@ jobs:
           java-version: 21
           cache: 'gradle'
       - name: Build
-        run: ./gradlew build
+        run: ./gradlew installDist
         env:
           BASE_PATH: "/"
       - name: Publish Docker image
