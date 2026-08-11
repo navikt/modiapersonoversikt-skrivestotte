@@ -128,13 +128,6 @@ task<YarnTask>("yarnBuild") {
     if(System.getenv("BASE_PATH") != null) {
         args.addAll("--base", System.getenv("BASE_PATH"))
     }
-
-    doLast {
-        copy {
-            from("frontend/dist")
-            into("build/resources/main/webapp")
-        }
-    }
 }
 
 task("syncFrontend") {
@@ -144,5 +137,11 @@ task("syncFrontend") {
 tasks {
     "yarnBuild" {
         dependsOn("yarnInstall")
+    }
+    processResources {
+        dependsOn("yarnBuild")
+        from("frontend/dist") {
+            into("webapp")
+        }
     }
 }
