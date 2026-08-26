@@ -15,7 +15,7 @@ val hikariVersion = "7.1.0"
 val postgresVersion = "42.7.13"
 
 plugins {
-    kotlin("jvm") version "2.3.0"
+    kotlin("jvm") version "2.4.10"
     id("com.github.node-gradle.node") version "7.1.0"
     application
     idea
@@ -94,6 +94,10 @@ java {
     targetCompatibility = JavaVersion.VERSION_21
 }
 
+application {
+    mainClass.set("no.nav.modiapersonoversikt.MainKt")
+}
+
 node {
     version.set("20.13.1")
     download.set(true)
@@ -102,7 +106,6 @@ node {
 tasks.withType<KotlinCompile> {
     compilerOptions {
         jvmTarget.set(JvmTarget.JVM_21)
-        freeCompilerArgs.set(listOf("-Xcontext-receivers"))
     }
 }
 
@@ -113,25 +116,17 @@ tasks.test {
     }
 }
 
-task<YarnInstallTask>("yarnInstall") {
+tasks.register<YarnInstallTask>("yarnInstall") {
     workingDir.set(file("${project.projectDir}/frontend"))
     args.set(listOf("--frozen-lockfile"))
 }
 
-val syncFrontend = copy {
-    from("${project.projectDir}/frontend/dist")
-    into("${project.projectDir}/src/main/resources/webapp")
-}
-task<YarnTask>("yarnBuild") {
+tasks.register<YarnTask>("yarnBuild") {
     workingDir.set(file("${project.projectDir}/frontend"))
     args.set(listOf("build"))
     if(System.getenv("BASE_PATH") != null) {
         args.addAll("--base", System.getenv("BASE_PATH"))
     }
-}
-
-task("syncFrontend") {
-    syncFrontend
 }
 
 tasks {
