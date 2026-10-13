@@ -1,7 +1,11 @@
 package no.nav.modiapersonoversikt
 
-import io.ktor.server.application.*
-import io.ktor.server.testing.*
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.cio.CIO
+import io.ktor.client.plugins.HttpTimeout
+import io.ktor.client.plugins.defaultRequest
+import io.ktor.server.engine.embeddedServer
+import io.ktor.server.netty.Netty
 import kotlinx.coroutines.runBlocking
 import kotliquery.queryOf
 import no.nav.modiapersonoversikt.config.Configuration
@@ -52,22 +56,31 @@ interface WithDatabase {
     fun connectionUrl(): String = postgreSQLContainer.jdbcUrl
 }
 
-fun <R> withTestApp(jdbcUrl: String? = null, test: suspend ApplicationTestBuilder.() -> R) {
-    val dataAwareApp = fun Application.() {
-        if (jdbcUrl != null) {
-            val config = Configuration(database = DatabaseConfig(jdbcUrl = jdbcUrl))
-            val dbConfig = DataSourceConfiguration(config)
-            skrivestotteApp(config, dbConfig.userDataSource(), useMock = true, runLocally = true)
+fun <R> withTestApp(
+    jdbcUrl: String,
+    dataSource: DataSource,
+    test: suspend HttpClient.() -> R
+): R = runBlocking {
+    val configuration = Configuration(database = DatabaseConfig(jdbcUrl = jdbcUrl))
+    // Use a real server to avoid Ktor 3.6.0's streamed-response test-engine hang.
+    val server = embeddedServer(Netty, host = "127.0.0.1", port = 0) {
+        skrivestotteApp(configuration, dataSource, useMock = true, runLocally = true)
+    }
+    try {
+        server.startSuspend()
+        val port = server.engine.resolvedConnectors().single().port
+        HttpClient(CIO) {
+            defaultRequest {
+                url("http://127.0.0.1:$port")
+            }
+            install(HttpTimeout) {
+                requestTimeoutMillis = 60_000
+            }
+        }.use { client ->
+            client.test()
         }
-    }
-
-    val moduleFunction: Application.() -> Unit = {
-        dataAwareApp()
-    }
-
-    return testApplication {
-        application(moduleFunction)
-        test()
+    } finally {
+        server.stopSuspend(0, 5_000)
     }
 }
 

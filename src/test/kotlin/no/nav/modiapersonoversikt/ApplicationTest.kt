@@ -1,9 +1,9 @@
 package no.nav.modiapersonoversikt
 
+import io.ktor.client.HttpClient
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import no.nav.modiapersonoversikt.config.Configuration
-import io.ktor.server.testing.*
 import no.nav.modiapersonoversikt.skrivestotte.model.Tekst
 import no.nav.modiapersonoversikt.skrivestotte.model.Tekster
 import no.nav.modiapersonoversikt.utils.fromJson
@@ -15,7 +15,7 @@ class ApplicationTest : WithDatabase {
     @Test
     fun `should load backup if database is empty`() {
         withExternalDependencies {
-            withTestApp(connectionUrl()) {
+            withTestApp(connectionUrl(), dataSource()) {
                 val response = getTexts()
                 assertEquals(response.status, 200)
                 assertEquals(response.data.size, 811)
@@ -26,7 +26,7 @@ class ApplicationTest : WithDatabase {
     @Test
     fun `should filter resultset based on tags`() {
         withExternalDependencies {
-            withTestApp(connectionUrl()) {
+            withTestApp(connectionUrl(), dataSource()) {
                 val response = getTexts(tags = listOf("sto"))
                 assertEquals(response.status, 200)
                 assertEquals(response.data.size, 231)
@@ -39,7 +39,7 @@ class JsonResponse<T>(val status: Int, val data: T)
 
 val config = Configuration()
 
-suspend fun ApplicationTestBuilder.getTexts(
+suspend fun HttpClient.getTexts(
     tags: List<String> = emptyList(),
     usageSort: Boolean = false
 ): JsonResponse<Tekster> {
@@ -50,7 +50,7 @@ suspend fun ApplicationTestBuilder.getTexts(
         .joinToString("&")
         .let { if (it.isNotEmpty()) "?$it" else "" }
 
-    val response = client.get("${config.appContextpath}/skrivestotte$queryParams")
+    val response = get("${config.appContextpath}/skrivestotte$queryParams")
     val data = response.bodyAsText().fromJson<Map<UUID, Tekst>>()
     return JsonResponse(response.status.value, data)
 }
