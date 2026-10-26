@@ -99,7 +99,7 @@ application {
 }
 
 node {
-    version.set("20.13.1")
+    version.set("24.22.1")
     download.set(true)
 }
 
