@@ -1,6 +1,6 @@
 FROM gcr.io/distroless/java21-debian13:nonroot
 
-WORKDIR /home/nonroot
+WORKDIR /app
 
 COPY build/install/*/lib /lib
 
