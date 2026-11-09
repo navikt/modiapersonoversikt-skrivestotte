@@ -6,7 +6,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 val kotlinVersion = "2.4.21"
 val ktorVersion = "3.6.0"
 val javaVersion = "21"
-val prometheusVersion = "1.17.1"
+val prometheusVersion = "1.17.2"
 val logbackVersion = "1.6.5"
 val logstashVersion = "9.0"
 val modiaCommonVersion = "1.2026.08.06-12.11-d922f6248916"
