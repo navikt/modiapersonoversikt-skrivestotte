@@ -114,18 +114,6 @@ case "$( uname )" in                #(
   NONSTOP* )        nonstop=true ;;
 esac
 
-# Colima exposes different socket paths on macOS and inside its Linux VM.
-if "$darwin"; then
-    if [ -z "${DOCKER_HOST:-}" ] && [ -S "$HOME/.colima/default/docker.sock" ]; then
-        export DOCKER_HOST="unix://$HOME/.colima/default/docker.sock"
-    fi
-    case "${DOCKER_HOST:-}" in
-        unix://"$HOME"/.colima/*/docker.sock)
-            export TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE="${TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE:-/var/run/docker.sock}"
-            ;;
-    esac
-fi
-
 
 
 # Determine the Java command to use to start the JVM.
