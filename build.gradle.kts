@@ -6,11 +6,11 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 val kotlinVersion = "2.4.21"
 val ktorVersion = "3.6.0"
 val javaVersion = "21"
-val prometheusVersion = "1.17.1"
+val prometheusVersion = "1.17.2"
 val logbackVersion = "1.6.5"
 val logstashVersion = "9.0"
 val modiaCommonVersion = "1.2026.08.06-12.11-d922f6248916"
-val flywayVersion = "13.9.0"
+val flywayVersion = "13.11.1"
 val hikariVersion = "7.1.0"
 val postgresVersion = "42.7.14"
 
@@ -79,7 +79,7 @@ dependencies {
     implementation("org.flywaydb:flyway-database-postgresql:$flywayVersion")
     implementation("com.github.seratch:kotliquery:1.9.1")
 
-    implementation("com.squareup.okhttp3:mockwebserver:5.5.0")
+    implementation("com.squareup.okhttp3:mockwebserver:5.5.1")
     implementation("io.ktor:ktor-server-netty-jvm:$ktorVersion")
     implementation("io.ktor:ktor-client-apache-jvm:$ktorVersion")
 
