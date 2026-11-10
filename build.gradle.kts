@@ -4,13 +4,13 @@ import com.github.gradle.node.yarn.task.YarnTask
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 val kotlinVersion = "2.4.21"
-val ktorVersion = "3.6.0"
+val ktorVersion = "3.6.1"
 val javaVersion = "21"
 val prometheusVersion = "1.17.2"
-val logbackVersion = "1.6.5"
+val logbackVersion = "1.6.6"
 val logstashVersion = "9.0"
 val modiaCommonVersion = "1.2026.08.06-12.11-d922f6248916"
-val flywayVersion = "13.11.1"
+val flywayVersion = "13.12.1"
 val hikariVersion = "7.1.0"
 val postgresVersion = "42.7.14"
 
@@ -67,7 +67,7 @@ dependencies {
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
 
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
-    implementation(platform("tools.jackson:jackson-bom:3.1.4"))
+    implementation(platform("tools.jackson:jackson-bom:3.2.4"))
     implementation("net.logstash.logback:logstash-logback-encoder:$logstashVersion")
 
     implementation("com.zaxxer:HikariCP:$hikariVersion")
