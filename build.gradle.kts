@@ -67,7 +67,7 @@ dependencies {
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
 
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
-    implementation(platform("tools.jackson:jackson-bom:3.2.4"))
+    implementation(platform("tools.jackson:jackson-bom:3.3.0"))
     implementation("net.logstash.logback:logstash-logback-encoder:$logstashVersion")
 
     implementation("com.zaxxer:HikariCP:$hikariVersion")
