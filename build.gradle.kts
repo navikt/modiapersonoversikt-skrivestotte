@@ -3,20 +3,11 @@ import com.github.gradle.node.yarn.task.YarnInstallTask
 import com.github.gradle.node.yarn.task.YarnTask
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
-val kotlinVersion = "2.4.21"
-val ktorVersion = "3.6.1"
 val javaVersion = "21"
-val prometheusVersion = "1.17.2"
-val logbackVersion = "1.6.6"
-val logstashVersion = "9.0"
-val modiaCommonVersion = "1.2026.08.06-12.11-d922f6248916"
-val flywayVersion = "13.12.1"
-val hikariVersion = "7.1.0"
-val postgresVersion = "42.7.14"
 
 plugins {
-    kotlin("jvm") version "2.4.21"
-    id("com.github.node-gradle.node") version "7.1.0"
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.node.gradle)
     application
     idea
 }
@@ -42,6 +33,10 @@ repositories {
     }
 }
 
+dependencyLocking {
+    lockAllConfigurations()
+}
+
 idea {
     module {
         isDownloadSources = true
@@ -50,44 +45,49 @@ idea {
 }
 
 dependencies {
-    implementation(kotlin("stdlib"))
-    implementation("io.ktor:ktor-server-auth:$ktorVersion")
-    implementation("io.ktor:ktor-server-auth-jwt:$ktorVersion")
-    implementation("io.ktor:ktor-server-status-pages:$ktorVersion")
-    implementation("io.ktor:ktor-server-cors:$ktorVersion")
-    implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
-    implementation("io.ktor:ktor-server-forwarded-header:$ktorVersion")
+    implementation(libs.kotlin.stdlib)
+    implementation(libs.ktor.server.auth)
+    implementation(libs.ktor.server.auth.jwt)
+    implementation(libs.ktor.server.status.pages)
+    implementation(libs.ktor.server.cors)
+    implementation(libs.ktor.server.call.logging)
+    implementation(libs.ktor.server.forwarded.header)
 
-    implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
-    implementation("io.ktor:ktor-serialization-jackson:$ktorVersion")
+    implementation(libs.ktor.server.content.negotiation)
+    implementation(libs.ktor.serialization.jackson)
 
-    implementation("io.ktor:ktor-server-metrics-micrometer:$ktorVersion")
-    implementation("io.micrometer:micrometer-registry-prometheus:$prometheusVersion")
+    implementation(libs.ktor.server.metrics.micrometer)
+    implementation(libs.micrometer.registry.prometheus)
 
-    implementation("io.ktor:ktor-client-cio:$ktorVersion")
+    implementation(libs.ktor.client.cio)
 
-    implementation("ch.qos.logback:logback-classic:$logbackVersion")
-    implementation(platform("tools.jackson:jackson-bom:3.3.0"))
-    implementation("net.logstash.logback:logstash-logback-encoder:$logstashVersion")
+    implementation(libs.logback.classic)
+    implementation(platform(libs.jackson3.bom))
+    implementation(platform(libs.jackson2.bom))
+    implementation(libs.logstash.logback.encoder)
 
-    implementation("com.zaxxer:HikariCP:$hikariVersion")
-    runtimeOnly("org.postgresql:postgresql:$postgresVersion")
-    implementation("com.github.navikt.modia-common-utils:kotlin-utils:$modiaCommonVersion")
-    implementation("com.github.navikt.modia-common-utils:ktor-utils:$modiaCommonVersion")
-    implementation("com.github.navikt.modia-common-utils:crypto:$modiaCommonVersion")
-    implementation("org.flywaydb:flyway-core:$flywayVersion")
-    implementation("org.flywaydb:flyway-database-postgresql:$flywayVersion")
-    implementation("com.github.seratch:kotliquery:1.9.1")
+    implementation(libs.hikaricp)
+    runtimeOnly(libs.postgresql)
+    implementation(libs.modia.kotlin.utils)
+    implementation(libs.modia.ktor.utils)
+    implementation(libs.modia.crypto)
+    implementation(libs.flyway.core)
+    implementation(libs.flyway.database.postgresql)
+    implementation(libs.kotliquery)
 
-    implementation("com.squareup.okhttp3:mockwebserver:5.5.1")
-    implementation("io.ktor:ktor-server-netty-jvm:$ktorVersion")
-    implementation("io.ktor:ktor-client-apache-jvm:$ktorVersion")
+    implementation(libs.mockwebserver)
+    implementation(libs.ktor.server.netty.jvm)
+    implementation(libs.ktor.client.apache.jvm)
 
-    testRuntimeOnly("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
-    testImplementation("io.ktor:ktor-server-test-host-jvm:$ktorVersion")
-    testImplementation("org.testcontainers:postgresql:1.21.4")
-    testImplementation("org.junit.jupiter:junit-jupiter:6.1.3")
-    testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlinVersion")
+    testRuntimeOnly(libs.kotlin.reflect)
+    testImplementation(libs.ktor.server.test.host.jvm)
+    testImplementation(libs.testcontainers.postgresql)
+    testImplementation(libs.junit.jupiter)
+    testImplementation(libs.kotlin.test)
+
+    constraints {
+        implementation(libs.guava)
+    }
 }
 
 java {
