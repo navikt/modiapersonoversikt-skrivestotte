@@ -111,6 +111,20 @@ tasks.withType<KotlinCompile> {
 }
 
 tasks.test {
+    val dockerHost = providers.environmentVariable("DOCKER_HOST").orElse(
+        providers.exec {
+            commandLine("docker", "context", "inspect", "--format", "{{.Endpoints.docker.Host}}")
+        }.standardOutput.asText.map { it.trim() }
+    ).get()
+    environment("DOCKER_HOST", dockerHost)
+    if (dockerHost.startsWith("unix://") && dockerHost.contains("/.colima/")) {
+        environment(
+            "TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE",
+            providers.environmentVariable("TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE")
+                .getOrElse("/var/run/docker.sock")
+        )
+    }
+
     useJUnitPlatform()
     testLogging {
         events("passed", "skipped", "failed")
