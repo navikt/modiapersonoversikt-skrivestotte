@@ -1,7 +1,7 @@
-FROM gcr.io/distroless/java21-debian13:nonroot
+FROM europe-north1-docker.pkg.dev/cgr-nav/pull-through/nav.no/jre:openjdk-21
 
 WORKDIR /app
 
 COPY build/install/*/lib /lib
 
-ENTRYPOINT ["java", "-cp", "/lib/*", "no.nav.modiapersonoversikt.MainKt"]
+CMD ["-cp", "/lib/*", "no.nav.modiapersonoversikt.MainKt"]
