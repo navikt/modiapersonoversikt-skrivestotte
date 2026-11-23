@@ -47,7 +47,7 @@ jobs:
         env:
           BASE_PATH: "/"
       - name: Publish Docker image
-        uses: nais/docker-build-push@v0
+        uses: nais/docker-build-push@v1
         id: docker-build-push
         with:
           image_suffix: -gcp
